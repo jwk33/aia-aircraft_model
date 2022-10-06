@@ -3,27 +3,41 @@ classdef FuelTank < handle
     
     % set up fuel tank properties
     properties
-        intLength(1,1) double {mustBeNonnegative, mustBeFinite} % interior
-        % diameter if sphere
+        intLength(1,1) double {mustBeNonnegative, mustBeFinite} % interior. diameter if sphere
+        intDiameter(1,1) double {mustBeNonnegative, mustBeFinite}
         fuelTankType (1,:) char {mustBeMember(fuelTankType,{'Cylinder', 'Sphere'})} = 'Cylinder';
+        structure_thickness(1,1) double {mustBeNonnegative, mustBeFinite}
+        insulation_thickness(1,1) double {mustBeNonnegative, mustBeFinite}
+        structure_mass(1,1) double {mustBeNonnegative, mustBeFinite}
+        insulation_mass(1,1) double {mustBeNonnegative, mustBeFinite}
+        empty_mass(1,1) double {mustBeNonnegative, mustBeFinite}
+        fuel_mass(1,1) double {mustBeNonnegative, mustBeFinite} % fuel mass (kg)
+        gravimetric_efficiency
     end
     
     properties (SetAccess = immutable)
         useTankModel logical % Use tank model in weight determination - relevant
         % for new tank models (such as liquid hydrogen)
         fuel Fuel
+        structural_material Material
+        insulation_material Material
+        
     end
     
     properties (Constant)
         fusThickness = 120.0;
         excThickness = 450.0;
         intExtFactor = 0.98;
+        safety_margin = 2.25;
+        storage_pressure = 2.5;
+        design_pressure = 3.4;
+        
     end
     
     methods
         function obj = FuelTank(fuel, bool)
             arguments
-                fuel;
+                fuel Fuel;
                 bool.UseTankModel logical = 0;
             end
             obj.fuel = fuel;
