@@ -3,16 +3,17 @@ classdef Fuel
     
     % builds physical model for different fuel types
     properties (SetAccess = immutable)
-        LHV {mustBePositive, mustBeFinite}
+        lhv {mustBePositive, mustBeFinite}
         density {mustBePositive, mustBeFinite}
-        UseTankModel bool
+        UseTankModel logical
     end
     
     methods
-        function obj = Fuel(rho, lhv)
+        function obj = Fuel(lhv, density, UseTankModel)
             % construct Fuel object
-            obj.LHV = lhv;
-            obj.density = rho;
+            obj.lhv = lhv;
+            obj.density = density;
+            obj.UseTankModel = UseTankModel;
         end
     end
 end
