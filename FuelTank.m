@@ -44,6 +44,101 @@ classdef FuelTank < handle
             obj.useTankModel = bool.UseTankModel;
             
         end
+        
+        function obj = find_gravimetric_efficiency(obj)
+            % percentage of fuel weight out of total weight of tank 
+            obj.gravimetric_efficiency = 100 * obj.fuel_mass / (obj.fuel_mass + obj.empty_mass);
+        end
+        
+        function obj = find_t_total(obj)
+            % find total thickness of the tank (insulation + structural)
+            obj.find_t_structure()
+            obj.find_t_insulation()
+            
+            obj.t_total = obj.t_structure + obj.t_insulation;
+            
+        end
+        
+        function obj = find_m_empty(obj)
+           % find total mass of the tank when empty
+           obj.find_m_structure()
+           obj.find_m_insulation()
+           
+           obj.m_empty = obj.m_structure + obj.m_insulation;
+        end
+        
+        function obj = volume(obj)
+            %calculate internal volume
+            formatSpec = char("Tank Internal Volume:\t %.2f (m^2) \n");
+            radius = obj.diameter / 2;
+            caps_volume = 4*pi/3 * radius^3; % 2 hemispheres
+            cylinder_length = obj.length - obj.diameter;
+            cylinder_volume = cylinder_length * pi * radius^2;
+            tank_volume = caps_volume + cylinder_volume;
+            
+            fprintf(formatSpec,tank_volume);
+        end
+        
+        function obj = find_t_structure(obj)
+            % find structural thickness required for pressure specification
+            denominator = sqrt(1 - sqrt(3)*obj.design_pressure*0.1 / obj.yield_stress);
+            thickness = obj.diameter/2 * (1/denominator - 1)*obj.safety_margin; % m
+            minimum_thickness = 7e-3;
+            obj.t_structure = max(thickness, minimum_thickness);
+        end
+        
+        function obj = find_m_structure(obj)
+            
+            % find structural mass given structural thickness
+            
+            L = obj.length;
+            D = obj.diameter;
+            t = obj.t_structure;
+            R = D/2;
+            rho = obj.structural_material.density;
+            cylinder_mass = rho*(pi*((t+R)^2 - R^2))*(L-D);
+            caps_mass = rho*4*pi/3 * ((t+R)^3 - R^3);
+            obj.m_structure = cylinder_mass + caps_mass;
+        end
+        
+        function obj = find_t_insulation(obj)
+            % taken from MVM v4.4 'Tank Model' sheet
+            
+            % define properties
+            Tliq = 23.9;            % K
+            Tins = 280;             % K
+            k_air = 0.026;          % W / m K
+            k_wall = 0.5;           % W / m K
+            k_ins = 1e-4;           % W / m K
+
+            % calculate allowable heat transfer through insulation
+            boil_off_rate = 0.05;   % percentage of contents per hour
+            M_boil = boil_off_rate*obj.fuel_mass() / 100;     % kg / hour
+            m_boil = M_boil / 3600; % kg / sec
+            H_vap = 222700;         % J / kg
+            Q_boil = m_boil * H_vap;% W
+
+            % heat transfer calculation to find insulation thickness
+            alpha = 2*pi*(Tins - Tliq)*obj.length/Q_boil;
+            R = obj.diameter / 2;
+            beta = (1/k_wall)*log((R + obj.t_structure)/R);
+            gamma = alpha - beta;
+            min_thickness = (R + obj.t_structure)*(exp(gamma*k_ins) - 1);
+
+            obj.t_insulation = min_thickness * obj.safety_margin;
+        end
+        
+        function obj = find_m_insulation(obj)
+            D = obj.diameter;
+            R = D / 2;   % m
+            L = obj.length;
+            t = obj.insulation_thickness;
+            w_t = obj.wall_thickness;
+            cylinder_mass = obj.insulation_material.density*pi*((R + w_t + t)^2 - (R + w_t)^2) * (L - D);
+            caps_mass = obj.insulation_material.density*4*pi/3 * ((R + w_t + t)^3 - (R + w_t)^3);
+            obj.m_insulation = cylinder_mass + caps_mass;
+        end
+        
         function obj = updateInteriorLength(obj, wf, tow, dt)
             arguments
                 obj
