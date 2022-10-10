@@ -62,7 +62,7 @@ classdef Weight < handle
             obj.m_payload = mission.max_pax*mission.load_factor * 105;
             obj.m_max_payload = mission.max_pax*105;
             obj.m_tail = 0.02*obj.m_maxTO;
-            obj.m_OEW = obj.m_maxTO - obj.m_max_payload - obj.fuel_burn.m_fuel;
+            obj.m_OEW = obj.m_maxTO - obj.m_max_payload - fuel_burn.m_fuel;
         end
 
         function obj = Weight_Breakdown(obj)
