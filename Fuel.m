@@ -5,6 +5,7 @@ classdef Fuel
     properties (SetAccess = immutable)
         LHV {mustBePositive, mustBeFinite}
         density {mustBePositive, mustBeFinite}
+        UseTankModel bool
     end
     
     methods
