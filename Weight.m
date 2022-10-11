@@ -21,21 +21,17 @@ classdef Weight < handle
     end
 
     properties (SetAccess = protected)
-        tank FuelTank %gets tank mass
         engine Engine %gets engine mass
         aero Aero %for use in correlations
         fuel_burn FuelBurnModel%used to update m_fuel and MTOW
-        dimension Dimension %for use in correlations
     end
 
     properties (SetAccess = immutable)
+        tank FuelTank %For Tank Mass
         fuel Fuel  %possibly unused
         mission Mission %used to get parameters like number of seats etc.
+        dimension Dimension %for use in correlations
     end
-
-%     properties (Constant)
-%         N_deck = 1;%Should be added into dimension 
-%     end
 
     methods
         function obj = Weight(tank,engine,dimension,aero,fuel_burn,fuel,mission)

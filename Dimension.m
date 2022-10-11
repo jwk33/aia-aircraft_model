@@ -19,18 +19,18 @@ classdef Dimension
 
     properties (Constant)
         cabin_thickness = 0.15;%m
-            seat_height = 1.8;
-            seat_width = 0.45;
-            seat_length = 0.45+0.8;
-            bag_height = 0.25;
-            bag_length = 1.8;
-            bag_width = 0.45;
-            aisle_width = 0.5;
-            aisle_height = 1.8;
-            aisle_length = obj.cabin_length;
-            rear_length = 4;
-            tank_tolerance = 0.2;
-            cabin_height = 1.8+0.25;%only used for initial tank sizing calculation
+        seat_height = 1.8;
+        seat_width = 0.45;
+        seat_length = 0.45+0.8;
+        bag_height = 0.25;
+        bag_length = 1.8;
+        bag_width = 0.45;
+        aisle_width = 0.5;
+        aisle_height = 1.8+0.25;
+        aisle_length = obj.cabin_length;
+        rear_length = 4;
+        tank_tolerance = 0.2;
+        cabin_height = 1.8+0.25;%only used for initial tank sizing calculation
     end
 
     methods
