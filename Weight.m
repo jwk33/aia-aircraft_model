@@ -14,74 +14,40 @@ classdef Weight < handle
         m_payload(1,1) double
         m_max_payload(1,1) double
         m_tail(1,1) double
-%         m_fuel comes from fuel burn class
-%         m_engines comes from engines class
-%         m_tank comes from fueltank class
-%         m_wings comes from aero class
-    end
-
-    properties (SetAccess = protected)
-        engine Engine %gets engine mass
-        aero Aero %for use in correlations
-        fuel_burn FuelBurnModel%used to update m_fuel and MTOW
-    end
-
-    properties (SetAccess = immutable)
-        tank FuelTank %For Tank Mass
-        fuel Fuel  %possibly unused
-        mission Mission %used to get parameters like number of seats etc.
-        dimension Dimension %for use in correlations
     end
 
     methods
-        function obj = Weight(tank,engine,dimension,aero,fuel_burn,fuel,mission)
-            %Constructs a weight class
-            obj.tank = tank;
-            obj.engine = engine;
-            obj.dimension = dimension;
-            obj.aero = aero;
-            obj.fuel_burn = fuel_burn;
-            obj.fuel = fuel;
-            obj.mission = mission;
+        function obj = Weight(tank,aero,engine,fuelburn,dimension,mission)
             if mission.designRange*0.02 - 19.79 > 30
                 obj.m_maxTO = mission.designRange*0.02 - 19.79;
             else
                 obj.m_maxTO = 30;
             end
-            obj.m_shell = 0.06*obj.m_maxTO;
-            obj.m_floor = 0.06*obj.m_maxTO;
-            obj.m_systems = 0.05*obj.m_maxTO;
-            obj.m_furnishings = 0.06*obj.m_maxTO;
-            obj.m_LG = 0.04*obj.m_maxTO;
-            obj.m_seats = 0.05*obj.m_maxTO;
-            obj.m_payload = mission.max_pax*mission.load_factor * 105;
-            obj.m_max_payload = mission.max_pax*105;
-            obj.m_tail = 0.02*obj.m_maxTO;
-            obj.m_OEW = obj.m_maxTO - obj.m_max_payload - fuel_burn.m_fuel;
+            obj.m_shell = 60 * dimension.fuselage_diameter^2 * dimension.cabin_length / 9.81;
+            obj.m_floor = 160 * 3.75^0.5 * dimension.fuselage_diameter * dimension.cabin_length / 9.81;
+            obj.m_systems = (270 * dimension.fuselage_diameter + 150) * dimension.cabin_length / 9.81;
+            obj.m_furnishings = (12 * dimension.fuselage_diameter * (3 * dimension.fuselage_diameter + dimension.N_deck/2 + 1) * dimension.cabin_length + 3500) / 9.81;
+            obj.m_LG = 0.039 * (1 + dimension.cabin_length / 1100) * obj.m_maxTO;
+            obj.m_seats = 350 * mission.max_pax / 9.81;
+            obj.m_payload = mission.max_pax * mission.load_factor * 105;   % Assume each passenger and their cargo weighs 105 kg
+            obj.m_max_payload = mission.max_pax * 105;
+            obj.m_tail = 0.07 * (obj.m_shell + obj.m_floor) + 0.1 * aero.m_wing;
+            obj.m_OEW = engine.m_engines + aero.m_wing + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_payload + obj.m_tail + tank.m_tank;
+            obj.m_maxTO = obj.m_OEW + obj.m_max_payload + fuelburn.m_fuel;
         end
 
-        function obj = Weight_Breakdown(obj)
-            %Calculates all of the weights of each component in tonnes
-%             arguments
-%                 obj
-%                 dimension Dimension
-%                 aero Aero
-%                 mission Mission
-%                 N_deck
-%             end
-            obj.m_shell = 60 * obj.dimension.fuselage_diameter^2 * obj.dimension.cabin_length / 9.81;
-            obj.m_floor = 160 * 3.75^0.5 * obj.dimension.fuselage_diameter * obj.dimension.cabin_length / 9.81;
-            obj.m_systems = (270 * obj.dimension.fuselage_diameter + 150) * obj.dimension.cabin_length / 9.81;
-            obj.m_furnishings = (12 * obj.dimension.fuselage_diameter * (3 * obj.dimension.fuselage_diameter + obj.dimension.N_deck/2 + 1) * obj.dimension.cabin_length + 3500) / 9.81;
-            obj.m_LG = 0.039 * (1 + obj.dimension.cabin_length / 1100) * obj.m_maxTO;
-            obj.m_seats = 350 * obj.mission.max_pax / 9.81;
-            obj.m_payload = obj.mission.max_pax * obj.mission.load_factor * 105;   % Assume each passenger and their cargo weighs 105 kg
-            obj.m_max_payload = obj.mission.max_pax * 105;
-            obj.m_tail = 0.07 * (obj.m_shell + obj.m_floor) + 0.1 * obj.m_wings;
-            obj.m_OEW = obj.engine.m_engines + obj.aero.m_wings + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_payload + obj.m_tail + obj.tank.m_tank;
-        end
-        function obj = MTOW_Calculation(obj)
-            obj.m_maxTO = obj.m_OEW + obj.m_max_payload + obj.fuel_burn.m_fuel;
+        function obj = Weight_Iteration(obj,a)
+            obj.m_shell = 60 * a.dimension.fuselage_diameter^2 * a.dimension.cabin_length / 9.81;
+            obj.m_floor = 160 * 3.75^0.5 * a.dimension.fuselage_diameter * a.dimension.cabin_length / 9.81;
+            obj.m_systems = (270 * a.dimension.fuselage_diameter + 150) * a.dimension.cabin_length / 9.81;
+            obj.m_furnishings = (12 * a.dimension.fuselage_diameter * (3 * a.dimension.fuselage_diameter + a.dimension.N_deck/2 + 1) * a.dimension.cabin_length + 3500) / 9.81;
+            obj.m_LG = 0.039 * (1 + a.dimension.cabin_length / 1100) * obj.m_maxTO;
+            obj.m_seats = 350 * a.mission.max_pax / 9.81;
+            obj.m_payload = a.mission.max_pax * a.mission.load_factor * 105;   % Assume each passenger and their cargo weighs 105 kg
+            obj.m_max_payload = a.mission.max_pax * 105;
+            obj.m_tail = 0.07 * (obj.m_shell + obj.m_floor) + 0.1 * a.aero.m_wing;
+            obj.m_OEW = a.engine.m_engines + a.aero.m_wing + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_payload + obj.m_tail + a.tank.m_tank;
+            obj.m_maxTO = obj.m_OEW + obj.m_max_payload + a.fuelburn.m_fuel;
         end
     end
 end

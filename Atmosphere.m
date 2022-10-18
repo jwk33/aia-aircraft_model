@@ -3,14 +3,15 @@ classdef Atmosphere
     
     % define atmosphere for flight
     properties (SetAccess = immutable)
-        temp
-        density
+        temp(1,1) double
+        density(1,1) double
+        sos(1,1) double %Speed of Sound
+        pressure(1,1) double
     end
     
     methods
-        function obj = Atmosphere(T, rho)
-            obj.temp = T;
-            obj.density = rho;
+        function obj = Atmosphere(altitude)
+            [obj.temp,obj.sos,obj.pressure,obj.density] = atmosisa(altitude);
         end
     end
 end

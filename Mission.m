@@ -9,8 +9,8 @@ classdef Mission
         range
         mach
         cruise_alt
-        atmosphere Atmpshere
-        aircraft Aircraft
+        cruise_speed %m/s
+        angle_TO %degrees
         mission_fuel
         reserve_fuel
         energy

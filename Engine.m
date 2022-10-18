@@ -11,17 +11,17 @@ classdef Engine
         bpr(1,1) double %Bypasss ratio
     end
 
-    properties (SetAccess = protected)
-        aero Aero %gets engine mass
-    end
-
-    properties (SetAccess = immutable)
-        fuel Fuel  %possibly unused
-        mission Mission %used to get parameters like number of seats etc.
-    end
+%     properties (SetAccess = protected)
+%         aero Aero %gets engine mass
+%     end
+% 
+%     properties (SetAccess = immutable)
+%         fuel Fuel  %possibly unused
+%         mission Mission %used to get parameters like number of seats etc.
+%     end
 
     methods
-        function obj = Engine(fuel, mission, aero)
+        function obj = Engine(mission)
             % construct engine object
             if mission.designRange*0.02 - 19.79 > 30
                 m_maxTO = mission.designRange*0.02 - 19.79;
@@ -29,11 +29,11 @@ classdef Engine
                 m_maxTO = 30;
             end
             obj.eng_thrust = 1.28*m_maxTO*9.81/1000;%kN
-            obj.fuel = fuel;
-            obj.mission = mission;
-            obj.aero = aero;
+%             obj.fuel = fuel;
+%             obj.mission = mission;
+%             obj.aero = aero;
             obj.bpr = 9;
-            eng_mass = obj.eng_thrust*(8.7+1.14*bpr); % Jenkinson et al. method
+            eng_mass = obj.eng_thrust*(8.7+1.14*obj.bpr); % Jenkinson et al. method
             if takeoff_thrust < 600
                 nacelle = 6.8*obj.eng_thrust; % Jenkinson et al. approximation of nacelle weight if take-off thrust < 600 kN
             elseif takeoff_thrust > 600
@@ -43,6 +43,27 @@ classdef Engine
             obj.m_eng = eng_mass + nacelle; % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
             obj.eng_eff = 0.6;
             obj.prop_eff = 0.8;
+        end
+
+        function obj = Engine_Iteration(obj,a)
+            obj.eng_thrust = 1.28*a.weight.m_maxTO*9.81/1000;%kN
+            obj.bpr = 9;
+            eng_mass = obj.eng_thrust*(8.7+1.14*obj.bpr); % Jenkinson et al. method
+            if takeoff_thrust < 600
+                nacelle = 6.8*obj.eng_thrust; % Jenkinson et al. approximation of nacelle weight if take-off thrust < 600 kN
+            elseif takeoff_thrust > 600
+                nacelle = 2760 + 2.2*obj.eng_thrust; % Jenkinson et al. approximation of nacelle weight if take-off thrust > 600 kN
+            end
+            if a.weight.m_maxTO/120 < 1.1 && a.weight.m_maxTO/120 > 0.9
+                obj.number_engines = obj.number_engines;
+            else
+                obj.number_engines = 2*ceil(a.weight.m_maxTO/120);
+            end
+            obj.m_eng = eng_mass + nacelle; % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
+            %NEED ACCURATE CALCS HERE
+            obj.eng_eff = 0.6;
+            obj.prop_eff = 0.8;
+
         end
     end
 end
