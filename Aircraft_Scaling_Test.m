@@ -31,4 +31,4 @@ dimension = Dimension(mission,fuselage_diameter,fuselage_length,seats_per_row,nu
 
 %% SETUP AN INSTANCE OF AIRCRAFT CLASS
 aircraft = Aircraft(fuel,mission,struct_material,ins_material,dimension);
-answer = aircraft.iterate(aircraft.aero,aircraft.engine,aircraft.fuelburn,aircraft.weight);
+[answer,previous_iteration] = aircraft.iterate(aircraft.aero,aircraft.engine,aircraft.fuelburn,aircraft.weight);

@@ -77,14 +77,14 @@ classdef FuelTank < handle
 
         function obj = find_fuel_mass(obj,fuel)
             % calculate fuel mass from tank volume
-            obj.volume()
+            obj.volume();
             obj.fuel_mass = fuel.density * obj.fuel_volume;
         end
         
         function obj = find_t_total(obj,struct,ins)
             % find total thickness of the tank (insulation + structural)
-            obj.find_t_structure(struct)
-            obj.find_t_insulation(struct,ins)
+            obj.find_t_structure(struct);
+            obj.find_t_insulation(struct,ins);
             
             obj.t_total = obj.t_structure + obj.t_insulation;
 
@@ -95,8 +95,8 @@ classdef FuelTank < handle
         
         function obj = find_m_empty(obj,struct,ins)
            % find total mass of the tank when empty
-           obj.find_m_structure(struct)
-           obj.find_m_insulation(ins)
+           obj.find_m_structure(struct);
+           obj.find_m_insulation(ins);
            
            obj.m_empty = obj.m_structure + obj.m_insulation;
         end
@@ -158,7 +158,7 @@ classdef FuelTank < handle
 
             syms t
             eqn = t == (R-t)*(exp(2*pi*k_ins*(Tins - Tliq)*(obj.length_ext-obj.t_structure-t)/Q_boil - (k_ins/k_wall)*log((R - t)/(R - t - obj.t_structure)))-1);
-            obj.t_insulation = solve(eqn,t);
+            obj.t_insulation = vpasolve(eqn,t,obj.t_structure);
         end
         
         function obj = find_m_insulation(obj,ins)
