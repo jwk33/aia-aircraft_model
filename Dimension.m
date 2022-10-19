@@ -45,7 +45,7 @@ classdef Dimension
             obj.aisle_length = obj.cabin_length;
             obj.rear_length = obj.fuselage_length - obj.cabin_length - obj.cockpit_length;
             cabin_width = obj.seat_width*seats_per_row + obj.aisle_width*number_aisles;
-            obj.tank_external_diameter = obj.fuselage_internal_diameter - obj.cabin_height - 2*obj.tank_tolerance - (cabin_width^2)/obj.fuselage_internal_diameter;
+            obj.tank_external_diameter = obj.fuselage_internal_diameter/2 - obj.cabin_height - 2*obj.tank_tolerance + ((obj.fuselage_diameter^2)/4 - (cabin_width^2)/4)^0.5;
             obj.tank_external_length = obj.cabin_length + obj.rear_length;
         end
     end

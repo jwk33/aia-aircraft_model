@@ -18,8 +18,8 @@ classdef Mission
             obj.range = range;
             obj.M = M;
             obj.cruise_alt = cruise_alt;
-            [T,a,P,rho] = atmosisa(cruise_alt);
-            obj.cruise_speed = a*M;%m/s
+            [T,sos,P,rho] = atmosisa(cruise_alt);
+            obj.cruise_speed = sos*M;%m/s
             obj.angle_TO = 5; %degrees
             obj.reserve_fuel = 0; %To Be Added Later
             obj.max_pax = max_pax;

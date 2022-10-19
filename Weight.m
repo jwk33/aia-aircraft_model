@@ -32,7 +32,7 @@ classdef Weight < handle
             obj.m_payload = mission.pax * 105;   % Assume each passenger and their cargo weighs 105 kg
             obj.m_max_payload = mission.max_pax * 105;
             obj.m_tail = 0.07 * (obj.m_shell + obj.m_floor) + 0.1 * aero.m_wing;
-            obj.m_OEW = engine.m_engines + aero.m_wing + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_payload + obj.m_tail + tank.m_tank;
+            obj.m_OEW = engine.m_eng + aero.m_wing + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_payload + obj.m_tail + tank.m_tank;
             obj.m_maxTO = obj.m_OEW + obj.m_max_payload + fuelburn.m_fuel;
         end
 
@@ -46,7 +46,7 @@ classdef Weight < handle
             obj.m_payload = a.mission.max_pax * a.mission.load_factor * 105;   % Assume each passenger and their cargo weighs 105 kg
             obj.m_max_payload = a.mission.max_pax * 105;
             obj.m_tail = 0.07 * (obj.m_shell + obj.m_floor) + 0.1 * a.aero.m_wing;
-            obj.m_OEW = a.engine.m_engines + a.aero.m_wing + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_payload + obj.m_tail + a.tank.m_tank;
+            obj.m_OEW = a.engine.m_eng + a.aero.m_wing + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_payload + obj.m_tail + a.tank.m_tank;
             obj.m_maxTO = obj.m_OEW + obj.m_max_payload + a.fuelburn.m_fuel;
         end
     end

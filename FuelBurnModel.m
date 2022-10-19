@@ -27,7 +27,7 @@ classdef FuelBurnModel < handle
             end
 
             m_toc = (m_maxTO - (m_maxTO*mission.cruise_speed^2)/(2*eta_ov*lhv))*exp(-(g*h)*(1+1/(LovD*tand(theta)))/(eta_ov*lhv));
-            climb_fuel = m_max_TO - m_toc;%tonnes
+            climb_fuel = m_maxTO - m_toc;%tonnes
             climb_range = h/tand(theta);
             descent_fuel = 0.1*climb_fuel;%tonnes
             descent_range = climb_range;
@@ -43,7 +43,7 @@ classdef FuelBurnModel < handle
             %   Detailed explanation goes here
             g = 9.81;
             theta = a.mission.angle_TO;
-            if a.mission.range*1000 > 2*mission.cruise_alt/tand(theta)
+            if a.mission.range*1000 > 2*a.mission.cruise_alt/tand(theta)
                 h = a.mission.cruise_alt;
             else
                 h = a.mission.range*1000*tand(theta)/2;
@@ -53,7 +53,7 @@ classdef FuelBurnModel < handle
             LovD = a.aero.LovD;
 
             m_toc = (a.weight.m_maxTO - (a.weight.m_maxTO*a.mission.cruise_speed^2)/(2*eta_ov*lhv))*exp(-(g*h)*(1+1/(LovD*tand(theta)))/(eta_ov*lhv));
-            climb_fuel = a.weight.m_max_TO - m_toc;%tonnes
+            climb_fuel = a.weight.m_maxTO - m_toc;%tonnes
             climb_range = h/tand(theta);
             descent_fuel = 0.1*climb_fuel;%tonnes
             descent_range = climb_range;

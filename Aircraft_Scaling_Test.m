@@ -30,4 +30,5 @@ fuselage_length = fuselage_length + 10; %m
 dimension = Dimension(mission,fuselage_diameter,fuselage_length,seats_per_row,number_aisles,N_deck);
 
 %% SETUP AN INSTANCE OF AIRCRAFT CLASS
-Aircraft(fuel,mission,struct_material,ins_material,dimension)
+aircraft = Aircraft(fuel,mission,struct_material,ins_material,dimension);
+answer = aircraft.iterate(aircraft.aero,aircraft.engine,aircraft.fuelburn,aircraft.weight);

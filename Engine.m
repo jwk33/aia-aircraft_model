@@ -25,9 +25,9 @@ classdef Engine
 %             obj.aero = aero;
             obj.bpr = 9;
             eng_mass = obj.eng_thrust*(8.7+1.14*obj.bpr); % Jenkinson et al. method
-            if takeoff_thrust < 600
+            if obj.eng_thrust < 600
                 nacelle = 6.8*obj.eng_thrust; % Jenkinson et al. approximation of nacelle weight if take-off thrust < 600 kN
-            elseif takeoff_thrust > 600
+            elseif obj.eng_thrust > 600
                 nacelle = 2760 + 2.2*obj.eng_thrust; % Jenkinson et al. approximation of nacelle weight if take-off thrust > 600 kN
             end
             obj.number_engines = 2*ceil(m_maxTO/120);
@@ -40,9 +40,9 @@ classdef Engine
             obj.eng_thrust = 1.28*a.weight.m_maxTO*9.81/1000;%kN
             obj.bpr = 9;
             eng_mass = obj.eng_thrust*(8.7+1.14*obj.bpr); % Jenkinson et al. method
-            if takeoff_thrust < 600
+            if obj.eng_thrust < 600
                 nacelle = 6.8*obj.eng_thrust; % Jenkinson et al. approximation of nacelle weight if take-off thrust < 600 kN
-            elseif takeoff_thrust > 600
+            elseif obj.eng_thrust > 600
                 nacelle = 2760 + 2.2*obj.eng_thrust; % Jenkinson et al. approximation of nacelle weight if take-off thrust > 600 kN
             end
             if a.weight.m_maxTO/120 < 1.1 && a.weight.m_maxTO/120 > 0.9

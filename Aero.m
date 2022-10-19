@@ -19,7 +19,7 @@ classdef Aero
     methods
         function obj = Aero(mission,dimension)
             %UNTITLED5 Construct an instance of this class
-            [T,a,P,rho] = atmosisa(mission.cruise_alt);
+            [T,sos,P,rho] = atmosisa(mission.cruise_alt);
             dyn_pressure = 0.5 * rho * mission.cruise_speed^2;
             if mission.range*0.02 - 19.79 > 30
                 m_maxTO = mission.range*0.02 - 19.79;
@@ -44,11 +44,14 @@ classdef Aero
             %Iterate using the parameters to get the updated Aero numbers
             %Any properties here not updated are assumed constant = 
             %toc, sweep, C_L
-
+            arguments
+                obj Aero
+                a Aircraft
+            end
             %Initial Variables
             m_avg = (a.weight.m_maxTO + a.weight.m_OEW)/2;
             %Get Atmospheric Data
-            [T,a,P,rho] = atmosisa(a.mission.cruise_alt);
+            [T,sos,P,rho] = atmosisa(a.mission.cruise_alt);
             dyn_pressure = 0.5 * rho * a.mission.cruise_speed^2;
             
             %Calculate Wing Performance
@@ -72,7 +75,7 @@ classdef Aero
             %for the wing based on mean chord, and for the fuselage based on length
         
             %Slight error compared to DBs calculation, unsure why
-            c_d_0_w = cf(obj.mac,a.mission.cruise_Speed) * 1.4 * (1 + cosd(obj.Sweep)^2 * (3.3 * obj.toc - 0.008 * obj.toc^2 + 27 * obj.toc^3)) * (S_wet_w / S_ref);
+            c_d_0_w = cf(obj.mac,a.mission.cruise_speed) * 1.4 * (1 + cosd(obj.Sweep)^2 * (3.3 * obj.toc - 0.008 * obj.toc^2 + 27 * obj.toc^3)) * (S_wet_w / S_ref);
             c_d_0_f = cf(a.dimension.cabin_length,a.mission.cruise_speed) * (1 + 2.2 * (a.dimension.cabin_length / a.dimension.fuselage_diameter)^(-1.5) - 0.9 * (a.dimension.cabin_length / a.dimension.fuselage_diameter)^(-3)) * (S_wet_f / S_ref);
         
             c_d_0 = c_d_0_w + c_d_0_f;
@@ -87,7 +90,7 @@ classdef Aero
             %%%% CALCULATE COMPRESSBILE DRAG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
             %Modified Korn equation
-            c_d_compressible = 20 * (a.mission.M - M_crit(obj))^4;
+            c_d_compressible = 20 * (a.mission.M - obj.M_crit())^4;
         
             obj.C_D = c_d_incompressible + c_d_compressible;
 
@@ -101,16 +104,6 @@ classdef Aero
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         end
         
-        function reynolds = Re(U,l,nu)
-            reynolds = U * l / nu;
-        end
-            
-        function skin_friction_coefficient = cf(l,U)
-            %Calculate Cf for a component - for turbulent flow. l = reference
-            %length for Re
-            nu = 3.899*10^(-5); %11000 - is there a toolbox?
-            skin_friction_coefficient = 0.027/(Re(U,l,nu)^(1/7));
-        end
         
         function critical_mach_no = M_crit(obj)
         %function to calculate drag coefficient based on diameter, length, lift
