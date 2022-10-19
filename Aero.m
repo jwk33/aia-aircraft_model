@@ -2,18 +2,18 @@ classdef Aero
     %Holds information about the wing weight, structure and aircraft aerodynamics 
 
     properties (SetAccess = public)
-        m_wing(1,1) double % Mass of wing tonnes
-        LovD(1,1) double % Aircraft Lift to Drag
-        AR(1,1) double %Wing Aspect Ratio
-        b(1,1) double %Wingspan
-        toc(1,1) double %Thickness over Chord
-        S(1,1) double %Wing area (excluding fuselage)
-        mac(1,1) double %Mean Absolute Chord
-        root_c(1,1) double %Root Chord
-        Sweep(1,1) double %wing sweep angle degrees
-        C_L(1,1) double %Wing Coefficient of Lift
-        wing_loading(1,1) double %Wing loading
-        C_D(1,1) double % Coefficient of drag ffor aircraft normalised to wing area
+        m_wing(1,1) double {mustBeNonnegative, mustBeFinite} % Mass of wing tonnes
+        LovD(1,1) double {mustBeNonnegative, mustBeFinite} % Aircraft Lift to Drag
+        AR(1,1) double {mustBeNonnegative, mustBeFinite} %Wing Aspect Ratio
+        b(1,1) double {mustBeNonnegative, mustBeFinite} %Wingspan
+        toc(1,1) double {mustBeNonnegative, mustBeFinite} %Thickness over Chord
+        S(1,1) double {mustBeNonnegative, mustBeFinite} %Wing area (excluding fuselage)
+        mac(1,1) double {mustBeNonnegative, mustBeFinite} %Mean Absolute Chord
+        root_c(1,1) double {mustBeNonnegative, mustBeFinite} %Root Chord
+        Sweep(1,1) double {mustBeNonnegative, mustBeFinite} %wing sweep angle degrees
+        C_L(1,1) double {mustBeNonnegative, mustBeFinite} %Wing Coefficient of Lift
+        wing_loading(1,1) double {mustBeNonnegative, mustBeFinite} %Wing loading
+        C_D(1,1) double {mustBeNonnegative, mustBeFinite} % Coefficient of drag ffor aircraft normalised to wing area
     end
 
     methods
@@ -119,9 +119,6 @@ classdef Aero
             %%%% CALCULATE M_crit %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             M_dd = 0.95/cosd(obj.Sweep) - obj.toc/(cosd(obj.Sweep)^2) - obj.C_L/(10*cosd(obj.Sweep)^3);
             critical_mach_no = M_dd - 0.1;
-        end
-
-
         end
     end
 end

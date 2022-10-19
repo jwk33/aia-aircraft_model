@@ -3,28 +3,19 @@ classdef Engine
     
     % define engine properties
     properties (SetAccess = public)
-        m_eng(1,1) double
-        eng_eff(1,1) double
-        prop_eff(1,1) double
-        eng_thrust(1,1) double
-        number_engines(1,1) double
-        bpr(1,1) double %Bypasss ratio
+        m_eng(1,1) double {mustBeNonnegative, mustBeFinite}
+        eng_eff(1,1) double {mustBeNonnegative, mustBeFinite}
+        prop_eff(1,1) double {mustBeNonnegative, mustBeFinite}
+        eng_thrust(1,1) double {mustBeNonnegative, mustBeFinite}
+        number_engines(1,1) double {mustBeNonnegative, mustBeFinite}
+        bpr(1,1) double {mustBeNonnegative, mustBeFinite} %Bypasss ratio
     end
-
-%     properties (SetAccess = protected)
-%         aero Aero %gets engine mass
-%     end
-% 
-%     properties (SetAccess = immutable)
-%         fuel Fuel  %possibly unused
-%         mission Mission %used to get parameters like number of seats etc.
-%     end
 
     methods
         function obj = Engine(mission)
             % construct engine object
-            if mission.designRange*0.02 - 19.79 > 30
-                m_maxTO = mission.designRange*0.02 - 19.79;
+            if mission.range*0.02 - 19.79 > 30
+                m_maxTO = mission.range*0.02 - 19.79;
             else
                 m_maxTO = 30;
             end

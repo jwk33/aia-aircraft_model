@@ -5,15 +5,22 @@ classdef FuelTank < handle
     properties
         length_int(1,1) double {mustBeNonnegative, mustBeFinite} % interior. diameter if sphere
         length_ext(1,1) double {mustBeNonnegative, mustBeFinite}
+        length_ext_max(1,1) double {mustBeNonnegative, mustBeFinite}
+        diam_ext_max(1,1) double {mustBeNonnegative, mustBeFinite}
         diam_ext(1,1) double {mustBeNonnegative, mustBeFinite}
         diam_int(1,1) double {mustBeNonnegative, mustBeFinite}
         fuelTankType (1,:) char {mustBeMember(fuelTankType,{'Cylinder', 'Sphere'})} = 'Cylinder';
-        gravimetric_efficiency(1,1) double {mustBeNonnegative, mustBeFinite}
-        m_tank(1,1) double {mustBeNonnegative, mustBeFinite}
+        
+        gravimetric_efficiency
     end
     
     properties (SetAccess = immutable)
-        useTankModel logical % Use tank model in weight determination - relevant       
+        useTankModel logical % Use tank model in weight determination - relevant
+        % for new tank models (such as liquid hydrogen)
+        fuel Fuel
+        structural_material Material
+        insulation_material Material
+        
     end
     
     properties (SetAccess = private)
@@ -34,16 +41,20 @@ classdef FuelTank < handle
         safety_margin = 2.25;
         storage_pressure = 2.5;
         design_pressure = 3.4;
+        
     end
     
     methods
-        function obj = FuelTank(fuel,struct,ins)
-%             arguments
-%                 fuel Fuel;
-%                 structural_material Material;
-%                 insulation_material Material;
-%              end
+        function obj = FuelTank(fuel,structural_material,insulation_material)
+            arguments
+                fuel Fuel;
+                structural_material Material;
+                insulation_material Material;
+             end
+            obj.fuel = fuel;
             obj.useTankModel = fuel.UseTankModel;
+            obj.structural_material = structural_material;
+            obj.insulation_material = insulation_material;
             
         end
         

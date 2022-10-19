@@ -3,8 +3,8 @@ classdef Fuel
     
     % builds physical model for different fuel types
     properties (SetAccess = immutable)
-        lhv {mustBePositive, mustBeFinite}
-        density {mustBePositive, mustBeFinite}
+        lhv(1,1) double {mustBeNonnegative, mustBeFinite}
+        density(1,1) double {mustBeNonnegative, mustBeFinite}
         UseTankModel logical
     end
     

@@ -3,18 +3,8 @@ classdef FuelBurnModel < handle
     %   Detailed explanation goes here
 
     properties (SetAccess = public)
-        m_fuel(1,1) double
+        m_fuel(1,1) double {mustBeNonnegative, mustBeFinite}
     end
-
-%     properties (SetAccess = protected)
-%         aero Aero 
-%         engine Engine
-%     end
-% 
-%     properties (SetAccess = immutable)
-%         fuel Fuel  %possibly unused
-%         mission Mission %used to get parameters like number of seats etc.
-%     end
 
     methods
         function obj = FuelBurnModel(fuel,mission,aero,engine)
@@ -22,16 +12,16 @@ classdef FuelBurnModel < handle
             %   Detailed explanation goes here
             g = 9.81;
             theta = mission.angle_TO;
-            if mission.range > 2*mission.cruise_alt/tand(theta)
+            if mission.range*1000 > 2*mission.cruise_alt/tand(theta)
                 h = mission.cruise_alt;
             else
-                h = mission.range*tand(theta)/2;
+                h = mission.range*1000*1000*tand(theta)/2;
             end
             eta_ov = engine.prop_eff*engine.eng_eff;
             lhv = fuel.lhv;
             LovD = aero.LovD;
-            if mission.designRange*0.02 - 19.79 > 30
-                m_maxTO = mission.designRange*0.02 - 19.79;
+            if mission.range*0.02 - 19.79 > 30
+                m_maxTO = mission.range*0.02 - 19.79;
             else
                 m_maxTO = 30;
             end
@@ -42,7 +32,7 @@ classdef FuelBurnModel < handle
             descent_fuel = 0.1*climb_fuel;%tonnes
             descent_range = climb_range;
 
-            cruise_range = mission.range-climb_range-descent_range;
+            cruise_range = mission.range*1000-climb_range-descent_range;
             cruise_fuel = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));
 
             obj.m_fuel = cruise_fuel+climb_fuel+descent_fuel;%tonnes
@@ -53,10 +43,10 @@ classdef FuelBurnModel < handle
             %   Detailed explanation goes here
             g = 9.81;
             theta = a.mission.angle_TO;
-            if a.mission.range > 2*mission.cruise_alt/tand(theta)
+            if a.mission.range*1000 > 2*mission.cruise_alt/tand(theta)
                 h = a.mission.cruise_alt;
             else
-                h = a.mission.range*tand(theta)/2;
+                h = a.mission.range*1000*tand(theta)/2;
             end
             eta_ov = a.engine.prop_eff*a.engine.eng_eff;
             lhv = a.fuel.lhv;
@@ -68,7 +58,7 @@ classdef FuelBurnModel < handle
             descent_fuel = 0.1*climb_fuel;%tonnes
             descent_range = climb_range;
 
-            cruise_range = a.mission.range-climb_range-descent_range;
+            cruise_range = a.mission.range*1000-climb_range-descent_range;
             cruise_fuel = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));
 
             obj.m_fuel = cruise_fuel+climb_fuel+descent_fuel;%tonnes

@@ -3,11 +3,11 @@ classdef Material
     %   Detailed explanation goes here
     
     properties
-        name                    % material name
-        type                    % type (structural/insulator)
-        density                 % kg/m3
-        yield_strength          % MPa
-        thermal_conductivity    % W / m K
+        name string                                                           % material name
+        type string                                                           % type (structural/insulator)
+        density(1,1) double {mustBeNonnegative, mustBeFinite}                 % kg/m3
+        yield_strength(1,1) double {mustBeNonnegative, mustBeFinite}          % MPa
+        thermal_conductivity(1,1) double {mustBeNonnegative, mustBeFinite}    % W / m K
     end
     
     methods

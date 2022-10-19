@@ -3,23 +3,23 @@ classdef Weight < handle
     %well as MTOW
 
     properties (SetAccess = public)
-        m_maxTO(1,1) double % take-off weight in tons
-        m_OEW (1,1) double %OEW = ZFW - max payload
-        m_shell(1,1) double
-        m_floor(1,1) double
-        m_systems(1,1) double
-        m_furnishings(1,1) double
-        m_LG(1,1) double 
-        m_seats(1,1) double {mustBeInRange(m_seats,0,1000)};
-        m_payload(1,1) double
-        m_max_payload(1,1) double
-        m_tail(1,1) double
+        m_maxTO(1,1) double {mustBeNonnegative, mustBeFinite} % take-off weight in tons
+        m_OEW (1,1) double {mustBeNonnegative, mustBeFinite} %OEW = ZFW - max payload
+        m_shell(1,1) double {mustBeNonnegative, mustBeFinite}
+        m_floor(1,1) double {mustBeNonnegative, mustBeFinite}
+        m_systems(1,1) double {mustBeNonnegative, mustBeFinite}
+        m_furnishings(1,1) double {mustBeNonnegative, mustBeFinite}
+        m_LG(1,1) double {mustBeNonnegative, mustBeFinite} 
+        m_seats(1,1) double {mustBeNonnegative, mustBeFinite}
+        m_payload(1,1) double {mustBeNonnegative, mustBeFinite}
+        m_max_payload(1,1) double {mustBeNonnegative, mustBeFinite}
+        m_tail(1,1) double {mustBeNonnegative, mustBeFinite}
     end
 
     methods
         function obj = Weight(tank,aero,engine,fuelburn,dimension,mission)
-            if mission.designRange*0.02 - 19.79 > 30
-                obj.m_maxTO = mission.designRange*0.02 - 19.79;
+            if mission.range*0.02 - 19.79 > 30
+                obj.m_maxTO = mission.range*0.02 - 19.79;
             else
                 obj.m_maxTO = 30;
             end
@@ -29,7 +29,7 @@ classdef Weight < handle
             obj.m_furnishings = (12 * dimension.fuselage_diameter * (3 * dimension.fuselage_diameter + dimension.N_deck/2 + 1) * dimension.cabin_length + 3500) / 9.81;
             obj.m_LG = 0.039 * (1 + dimension.cabin_length / 1100) * obj.m_maxTO;
             obj.m_seats = 350 * mission.max_pax / 9.81;
-            obj.m_payload = mission.max_pax * mission.load_factor * 105;   % Assume each passenger and their cargo weighs 105 kg
+            obj.m_payload = mission.pax * 105;   % Assume each passenger and their cargo weighs 105 kg
             obj.m_max_payload = mission.max_pax * 105;
             obj.m_tail = 0.07 * (obj.m_shell + obj.m_floor) + 0.1 * aero.m_wing;
             obj.m_OEW = engine.m_engines + aero.m_wing + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_payload + obj.m_tail + tank.m_tank;
