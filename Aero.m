@@ -97,7 +97,7 @@ classdef Aero
             %Wing Mass Calcs
             obj.wing_loading = a.weight.m_maxTO*9.81/obj.S;
             obj.m_wing = 0.86 / 9.81^0.5 * (obj.AR^2 / obj.wing_loading^3 * a.weight.m_maxTO)^0.25 * a.weight.m_maxTO;
-        
+            obj.LovD = obj.C_L/obj.C_D;
             %%%%%% MANUAL OVERRIDE to set L/D = 17 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %a.c_d = a.c_l / 17; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
