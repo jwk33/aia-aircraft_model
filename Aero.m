@@ -26,17 +26,18 @@ classdef Aero
             else
                 m_maxTO = 30;
             end
+            m_maxTO = 1000;
             obj.LovD = 16;
             obj.AR = 14;
-            obj.b = dimension.fuselage_length*(((m_maxTO/1000)^2)*4e-6 - 0.002*m_maxTO/1000 + 1.0949);
+            obj.b = dimension.fuselage_length*(((m_maxTO)^2)*4e-6 - 0.002*m_maxTO + 1.0949);
             obj.toc = 0.15;
             obj.mac = obj.b/5;
             obj.root_c = obj.b/obj.AR;
             obj.Sweep = 25;
             obj.C_L = 0.5;
-            obj.S = m_maxTO * 9.81 / obj.C_L / dyn_pressure;
-            obj.wing_loading = m_maxTO*9.81/obj.S;
-            obj.m_wing = 0.86 / 9.81^0.5 * (obj.AR^2 / obj.wing_loading^3 * m_maxTO)^0.25 * m_maxTO;
+            obj.S = m_maxTO*1000 * 9.81 / obj.C_L / dyn_pressure;
+            obj.wing_loading = m_maxTO*1000/obj.S;%kg/m2
+            obj.m_wing = 0.86 / 9.81^0.5 * (obj.AR^2 / obj.wing_loading^3 * m_maxTO*1000)^0.25 * m_maxTO;
             obj.C_D = obj.C_L/obj.LovD;
         end
 
@@ -44,10 +45,6 @@ classdef Aero
             %Iterate using the parameters to get the updated Aero numbers
             %Any properties here not updated are assumed constant = 
             %toc, sweep, C_L
-            arguments
-                obj Aero
-                a Aircraft
-            end
             %Initial Variables
             m_avg = (a.weight.m_maxTO + a.weight.m_OEW)/2;
             %Get Atmospheric Data
@@ -55,9 +52,9 @@ classdef Aero
             dyn_pressure = 0.5 * rho * a.mission.cruise_speed^2;
             
             %Calculate Wing Performance
-            obj.S = m_avg*9.81/obj.C_L/dyn_pressure;
-            b_ker = a.dimension.fuselage_length*(((a.weight.m_maxTO/1000)^2)*4e-6 - 0.002*a.weight.m_maxTO/1000 + 1.0949);%empirical relationship based on data for wingspan to length ratios for different MTOWs
-            obj.b = b_ker*(1-(3/400)*(11+0.064*a.weight.m_maxTO/1000));
+            obj.S = m_avg*1000*9.81/obj.C_L/dyn_pressure;
+            b_ker = a.dimension.fuselage_length*(((a.weight.m_maxTO)^2)*4e-6 - 0.002*a.weight.m_maxTO + 1.0949);%empirical relationship based on data for wingspan to length ratios for different MTOWs
+            obj.b = b_ker*(1-(3/400)*(11+0.064*a.weight.m_maxTO));
             obj.AR = (obj.b^2)/obj.S;
             old_mac = obj.mac;
             obj.mac = obj.b/obj.AR;
@@ -95,8 +92,8 @@ classdef Aero
             obj.C_D = c_d_incompressible + c_d_compressible;
 
             %Wing Mass Calcs
-            obj.wing_loading = a.weight.m_maxTO*9.81/obj.S;
-            obj.m_wing = 0.86 / 9.81^0.5 * (obj.AR^2 / obj.wing_loading^3 * a.weight.m_maxTO)^0.25 * a.weight.m_maxTO;
+            obj.wing_loading = a.weight.m_maxTO*1000/obj.S;%kg/m2
+            obj.m_wing = 0.86 / 9.81^0.5 * (obj.AR^2 / obj.wing_loading^3 * a.weight.m_maxTO*1000)^0.25 * a.weight.m_maxTO;
             obj.LovD = obj.C_L/obj.C_D;
             %%%%%% MANUAL OVERRIDE to set L/D = 17 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

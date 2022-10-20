@@ -48,7 +48,7 @@ classdef FuelTank < handle
             obj.find_t_total(struct,ins);
             obj.find_m_empty(struct,ins);
             obj.find_gravimetric_efficiency();
-            obj.m_tank = obj.m_empty;
+            obj.m_tank = obj.m_empty/1000; %tonnes
         end
         
        
@@ -69,7 +69,7 @@ classdef FuelTank < handle
             cylinder_volume = cylinder_length * pi * radius^2;
             obj.fuel_volume = caps_volume + cylinder_volume;
             
-            fprintf(formatSpec,obj.fuel_volume);
+%             fprintf(formatSpec,obj.fuel_volume);
         end
        
     end

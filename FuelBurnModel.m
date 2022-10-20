@@ -25,17 +25,19 @@ classdef FuelBurnModel < handle
             else
                 m_maxTO = 30;
             end
+            m_maxTO = 1000;
 
-            m_toc = (m_maxTO - (m_maxTO*mission.cruise_speed^2)/(2*eta_ov*lhv))*exp(-(g*h)*(1+1/(LovD*tand(theta)))/(eta_ov*lhv));
-            climb_fuel = m_maxTO - m_toc;%tonnes
+            m_toc = m_maxTO*1000*(1 - (mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
+%             disp(m_toc)
+            climb_fuel = m_maxTO*1000 - m_toc;%kg
             climb_range = h/tand(theta);
-            descent_fuel = 0.1*climb_fuel;%tonnes
+            descent_fuel = 0.1*climb_fuel;%kg
             descent_range = climb_range;
-
+%             disp(climb_fuel)
             cruise_range = mission.range*1000-climb_range-descent_range;
-            cruise_fuel = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));
+            cruise_fuel = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));%kg
 
-            obj.m_fuel = cruise_fuel+climb_fuel+descent_fuel;%tonnes
+            obj.m_fuel = (cruise_fuel+climb_fuel+descent_fuel)/1000;%tonnes
         end
 
         function obj = FuelBurn_Iteration(obj,a)
@@ -52,16 +54,18 @@ classdef FuelBurnModel < handle
             lhv = a.fuel.lhv;
             LovD = a.aero.LovD;
 
-            m_toc = (a.weight.m_maxTO - (a.weight.m_maxTO*a.mission.cruise_speed^2)/(2*eta_ov*lhv))*exp(-(g*h)*(1+1/(LovD*tand(theta)))/(eta_ov*lhv));
-            climb_fuel = a.weight.m_maxTO - m_toc;%tonnes
+            m_toc = a.weight.m_maxTO*1000*(1 - (a.mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
+%             disp(m_toc)
+            climb_fuel = a.weight.m_maxTO*1000 - m_toc;%kg
+%             disp(climb_fuel)
             climb_range = h/tand(theta);
-            descent_fuel = 0.1*climb_fuel;%tonnes
+            descent_fuel = 0.1*climb_fuel;%kg
             descent_range = climb_range;
 
             cruise_range = a.mission.range*1000-climb_range-descent_range;
-            cruise_fuel = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));
+            cruise_fuel = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));%kg
 
-            obj.m_fuel = cruise_fuel+climb_fuel+descent_fuel;%tonnes
+            obj.m_fuel = (cruise_fuel+climb_fuel+descent_fuel)/1000;%tonnes
         end
     end
 end
