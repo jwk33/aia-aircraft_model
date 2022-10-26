@@ -21,16 +21,18 @@ classdef Dimension
     properties (Constant)
         cabin_thickness = 0.15;%m
         seat_height = 1.8;
-        seat_width = 0.45;
-        seat_length = 0.45+0.8;
+        seat_width = 0.4;
+        seat_length = 0.81;
         bag_height = 0.25;
         bag_length = 1.8;
-        bag_width = 0.45;
+        bag_width = 0.4;
         aisle_width = 0.5;
         aisle_height = 1.8+0.25;
         cockpit_length = 4;
         tank_tolerance = 0.2;
         cabin_height = 1.8+0.25;%only used for initial tank sizing calculation
+        toilet_length = 2;
+        kitchen_length = 4;
     end
 
     methods
@@ -43,7 +45,7 @@ classdef Dimension
             obj.fuselage_internal_diameter = obj.fuselage_diameter - 2*obj.cabin_thickness;
             obj.cabin_length = ceil(mission.max_pax/(N_deck*seats_per_row))*obj.seat_length;
             obj.aisle_length = obj.cabin_length;
-            obj.rear_length = obj.fuselage_length - obj.cabin_length - obj.cockpit_length;
+            obj.rear_length = obj.fuselage_length - obj.cabin_length - obj.cockpit_length - obj.toilet_length - obj.kitchen_length;
             cabin_width = obj.seat_width*seats_per_row + obj.aisle_width*number_aisles;
             obj.tank_external_diameter = obj.fuselage_internal_diameter/2 - obj.cabin_height - 2*obj.tank_tolerance + ((obj.fuselage_diameter^2)/4 - (cabin_width^2)/4)^0.5;
             obj.tank_external_length = obj.cabin_length + obj.rear_length;

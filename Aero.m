@@ -34,7 +34,7 @@ classdef Aero
             obj.mac = obj.b/5;
             obj.root_c = obj.b/obj.AR;
             obj.Sweep = 25;
-            obj.C_L = 0.5;
+            obj.C_L = 0.467;
             obj.S = m_maxTO*1000 * 9.81 / obj.C_L / dyn_pressure;
             obj.wing_loading = m_maxTO*1000/obj.S;%kg/m2
             obj.m_wing = 0.86 / 9.81^0.5 * (obj.AR^2 / obj.wing_loading^3 * m_maxTO*1000)^0.25 * m_maxTO;
@@ -46,7 +46,7 @@ classdef Aero
             %Any properties here not updated are assumed constant = 
             %toc, sweep, C_L
             %Initial Variables
-            m_avg = (a.weight.m_maxTO + a.weight.m_OEW)/2;
+            m_avg = (a.weight.m_maxTO + a.weight.m_OEW+a.weight.m_max_payload)/2;
             %Get Atmospheric Data
             [T,sos,P,rho] = atmosisa(a.mission.cruise_alt);
             dyn_pressure = 0.5 * rho * a.mission.cruise_speed^2;
@@ -55,6 +55,7 @@ classdef Aero
             obj.S = m_avg*1000*9.81/obj.C_L/dyn_pressure;
             b_ker = a.dimension.fuselage_length*(((a.weight.m_maxTO)^2)*4e-6 - 0.002*a.weight.m_maxTO + 1.0949);%empirical relationship based on data for wingspan to length ratios for different MTOWs
             obj.b = b_ker*(1-(3/400)*(11+0.064*a.weight.m_maxTO));
+            obj.b = b_ker;
             obj.AR = (obj.b^2)/obj.S;
             old_mac = obj.mac;
             obj.mac = obj.b/obj.AR;

@@ -48,7 +48,11 @@ classdef FuelTank < handle
             obj.find_t_total(struct,ins);
             obj.find_m_empty(struct,ins);
             obj.find_gravimetric_efficiency();
-            obj.m_tank = obj.m_empty/1000; %tonnes
+            if obj.useTankModel == 1
+                obj.m_tank = obj.m_empty/1000; %tonnes
+            else
+                obj.m_tank = 0;
+            end
         end
         
        
