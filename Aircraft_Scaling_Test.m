@@ -1,57 +1,58 @@
 close all
 clear all
-%% CONSTANT INPUTS
-lhv = 120e6;%J/kg
-density = 71;%kg/m3
-fuel = Fuel(lhv,density,1);
-fuel = Fuel(44e6,8.5,0);
+%% set fuel properties
 
-range = 4600;%km
+Ker = Fuel(43.2e6,807.5,0);
+save("Ker_Fuel.mat","Ker")
+
+LH2 = Fuel(120e6,70.17,1);
+save("LH2_Fuel.mat","LH2")
+
+%% CONSTANT INPUTS
+load("Ker_Fuel.mat","Ker")
+
+load("LH2_Fuel.mat","LH2")
+
+range = 3900;%km
 M = 0.78;
 cruise_alt = 10000; %m
 max_pax = 180;
-load_factor = 0.75;
+load_factor = 1.0;
 mission = Mission(range, M, cruise_alt, max_pax,load_factor);
-
-density = 2700; %kg/m3
-yield_strength = 276; %MPa
-thermal_conductivity = 0.5; %W / m K
-struct_material = Material("Aluminium","Structural",density,yield_strength,thermal_conductivity);
-
-density = 50; %kg/m3
-yield_strength = 1; %MPa
-thermal_conductivity = 1e-4; %W / m K
-ins_material = Material("Insulation","Insulation",density,yield_strength,thermal_conductivity);
 
 seats_per_row = 6;
 number_aisles = 1;
 N_deck = 1;
-[fuselage_length, fuselage_diameter] = Find_Dimensions(mission,seats_per_row,number_aisles,N_deck)
 
-fuselage_diameter = 4;%4.83;%fuselage_diameter + 0.5; %m
-fuselage_length = 37.5;%fuselage_length + 10; %m
-dimension = Dimension(mission,fuselage_diameter,fuselage_length,seats_per_row,number_aisles,N_deck);
+dimension = Dimension(mission,seats_per_row,number_aisles,N_deck);
+dimension.fuselage_length = 37.5;
+dimension.fuselage_diameter = 3.74;
+dimension = dimension.finalise();
+
+%% Setup a fuel tank
+% define tank structural material
+density = 2700; %kg/m3
+yield_strength = 276e6; %MPa
+thermal_conductivity = 0.5; %W / m K
+struct_material = Material("Aluminium","Structural",density,yield_strength,thermal_conductivity);
+
+
+% define tank insulation material
+density = 50; %kg/m3
+yield_strength = 1e6; %MPa
+thermal_conductivity = 1e-4; %W / m K
+ins_material = Material("Insulation","Insulation",density,yield_strength,thermal_conductivity);
+
+
+h2_tank = FuelTank(LH2,struct_material, ins_material);
 
 %% SETUP AN INSTANCE OF AIRCRAFT CLASS
-a = Aircraft(fuel,mission,struct_material,ins_material,dimension);
-b = Aircraft(fuel,mission,struct_material,ins_material,dimension);
-save('bee','b');
-in = Aircraft(fuel,mission,struct_material,ins_material,dimension);
-% in = a;
-% b = a;
 
+fuel = Ker;
+B737 = Aircraft(fuel,mission,dimension);
+save('B737.mat','B737');
 
-convergence = 0.0001; %Percentage delta in MTOW
-max_iterations = 50;
-iterations = 1;
-convergence_factor = 100;
-aircraft_list(1) = b;
-while iterations < max_iterations && convergence_factor > convergence
-    iterations = iterations + 1;
-%     load('bee')
-    s = load('bee');
-    [a,convergence_factor] = a.iterate(s.b);
-    b = a;
-    save('bee','b');
-    aircraft_list(iterations) = s.b;
-end
+% All inputs defined. Now for the aircraft sizing loop to begin to
+% calculate MTOW
+B737 = B737.finalise();
+save('B737.mat','B737');
