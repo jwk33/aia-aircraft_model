@@ -40,29 +40,29 @@ classdef FuelBurnModel < handle
             obj.m_fuel = (cruise_fuel+climb_fuel+descent_fuel)/1000;%tonnes
         end
 
-        function obj = FuelBurn_Iteration(obj,a)
+        function obj = FuelBurn_Iteration(obj,aircraft)
             %METHOD1 Summary of this method goes here
             %   Detailed explanation goes here
             g = 9.81;
-            theta = a.mission.angle_TO;
-            if a.mission.range*1000 > 2*a.mission.cruise_alt/tand(theta)
-                h = a.mission.cruise_alt;
+            theta = aircraft.mission.angle_TO;
+            if aircraft.mission.range*1000 > 2*aircraft.mission.cruise_alt/tand(theta)
+                h = aircraft.mission.cruise_alt;
             else
-                h = a.mission.range*1000*tand(theta)/2;
+                h = aircraft.mission.range*1000*tand(theta)/2;
             end
-            eta_ov = a.engine.prop_eff*a.engine.eng_eff;
-            lhv = a.fuel.lhv;
-            LovD = a.aero.LovD;
+            eta_ov = aircraft.engine.prop_eff*aircraft.engine.eng_eff;
+            lhv = aircraft.fuel.lhv;
+            LovD = aircraft.aero.LovD;
 
-            m_toc = a.weight.m_maxTO*1000*(1 - (a.mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
+            m_toc = aircraft.weight.m_maxTO*1000*(1 - (aircraft.mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
 %             disp(m_toc)
-            climb_fuel = a.weight.m_maxTO*1000 - m_toc;%kg
+            climb_fuel = aircraft.weight.m_maxTO*1000 - m_toc;%kg
 %             disp(climb_fuel)
             climb_range = h/tand(theta);
             descent_fuel = 0.1*climb_fuel;%kg
             descent_range = climb_range;
 
-            cruise_range = a.mission.range*1000-climb_range-descent_range;
+            cruise_range = aircraft.mission.range*1000-climb_range-descent_range;
             cruise_fuel = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));%kg
 
             obj.m_fuel = (cruise_fuel+climb_fuel+descent_fuel)/1000;%tonnes
