@@ -1,5 +1,6 @@
 classdef FuelBurnModel < handle
-    %UNTITLED2 Summary of this class goes here
+    %FuelBurnModel class handles the operation of the aircraft for the
+    %input mission. It calculates fuel mass.
     %   Detailed explanation goes here
 
     properties (SetAccess = public)
