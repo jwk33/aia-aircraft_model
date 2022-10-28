@@ -37,8 +37,12 @@ classdef FuelBurnModel < handle
 %             disp(climb_fuel)
             cruise_range = mission.range*1000-climb_range-descent_range;
             cruise_fuel = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));%kg
-
-            obj.m_fuel = (cruise_fuel+climb_fuel+descent_fuel)/1000;%tonnes
+            
+            fuel_mass1 = 1.05*(cruise_fuel+climb_fuel+descent_fuel);%kg including a 5% reserve
+            reserve_range = 45*60*mission.cruise_speed%m
+            reserve_fuel_range = (m_toc-fuel_mass1)*(1-exp(-reserve_range*g/(lhv*eta_ov*LovD)));%kg
+            
+            obj.m_fuel = (fuel_mass1 + reserve_fuel_range)/1000;%tonnes
         end
 
         function obj = FuelBurn_Iteration(obj,aircraft)
@@ -66,7 +70,11 @@ classdef FuelBurnModel < handle
             cruise_range = aircraft.mission.range*1000-climb_range-descent_range;
             cruise_fuel = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));%kg
 
-            obj.m_fuel = (cruise_fuel+climb_fuel+descent_fuel)/1000;%tonnes
+            fuel_mass1 = 1.05*(cruise_fuel+climb_fuel+descent_fuel);%kg including a 5% reserve
+            reserve_range = 45*60*aircraft.mission.cruise_speed%m
+            reserve_fuel_range = (m_toc-fuel_mass1)*(1-exp(-reserve_range*g/(lhv*eta_ov*LovD)));%kg
+            
+            obj.m_fuel = (fuel_mass1 + reserve_fuel_range)/1000;%tonnes
         end
     end
 end
