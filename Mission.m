@@ -10,11 +10,12 @@ classdef Mission
         angle_TO(1,1) double {mustBeNonnegative, mustBeFinite} %degrees
         reserve_fuel(1,1) double {mustBeNonnegative, mustBeFinite} %To Be Added Later  
         max_pax(1,1) double {mustBeNonnegative, mustBeFinite}
-        load_factor(1,1) double {mustBeNonnegative, mustBeFinite}
+        load_factor(1,1) double {mustBeNonnegative, mustBeFinite} % TODO: check this is between 0 and 1
         pax(1,1) double {mustBeNonnegative, mustBeFinite}
+        m_cargo (1,1) double {mustBeNonnegative, mustBeFinite}
     end
     methods
-        function obj = Mission(range, M, cruise_alt, max_pax,load_factor)
+        function obj = Mission(range, M, cruise_alt, max_pax,load_factor, m_cargo)
             obj.range = range;
             obj.M = M;
             obj.cruise_alt = cruise_alt;
@@ -25,6 +26,7 @@ classdef Mission
             obj.max_pax = max_pax;
             obj.load_factor = load_factor;
             obj.pax = ceil(max_pax*load_factor);
+            obj.m_cargo = m_cargo;
         end
     end
 end

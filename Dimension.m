@@ -12,9 +12,9 @@ classdef Dimension
         tank_external_diameter(1,1) double {mustBeNonnegative, mustBeFinite}
         tank_external_length(1,1) double {mustBeNonnegative, mustBeFinite}
         N_deck(1,1) double {mustBeNonnegative, mustBeFinite}
-        number_aisles int8
-        max_seats int8
-        seats_per_row int8
+        number_aisles double
+        max_seats double
+        seats_per_row double
         cabin_width double
     end
 
