@@ -13,7 +13,7 @@ load("Ker_Fuel.mat","Ker")
 
 load("LH2_Fuel.mat","LH2")
 
-range = 3900;%km
+range = 3790;%km
 M = 0.78;
 cruise_alt = 10000; %m
 max_pax = 180;
