@@ -13,7 +13,10 @@ classdef FuelTank < handle
     end
     
     properties (SetAccess = immutable)
-        useTankModel logical % Use tank model in weight determination - relevant       
+        useTankModel logical % Use tank model in weight determination - relevant
+        fuel Fuel
+        structural_material Material
+        insulation_material Material
     end
     
     properties (SetAccess = private)
@@ -37,24 +40,28 @@ classdef FuelTank < handle
     end
     
     methods
-        function obj = FuelTank(fuel,dimension,struct,ins)
+        function obj = FuelTank(fuel,struct_material,ins_material)
             obj.useTankModel = fuel.UseTankModel;
-            obj.length_ext = dimension.tank_external_length;
-            obj.diam_ext = dimension.tank_external_diameter;
+            obj.fuel = fuel;
+            obj.structural_material = struct_material;
+            obj.insulation_material = ins_material;
+            
 
-            % put it all together: calculate tank empty mass and
-            % gravimetric efficiency
-            obj.find_fuel_mass(fuel);
-            obj.find_t_total(struct,ins);
-            obj.find_m_empty(struct,ins);
-            obj.find_gravimetric_efficiency();
-            if obj.useTankModel == 1
-                obj.m_tank = obj.m_empty/1000; %tonnes
-            else
-                obj.m_tank = 0;
-            end
+            
         end
         
+        function obj = finalise(obj, dimension)
+            disp('calculating tank parameters')
+            obj.length_ext = dimension.tank_external_length;
+            obj.diam_ext = dimension.tank_external_diameter;
+            % put it all together: calculate tank empty mass and
+            % gravimetric efficiency
+            obj.find_fuel_mass();
+            obj.find_t_total();
+            obj.find_m_empty();
+            obj.find_gravimetric_efficiency();
+            obj.m_tank = obj.m_empty/1000; %tonnes
+        end
        
         function obj = find_gravimetric_efficiency(obj)
             % percentage of fuel weight out of total weight of tank 
@@ -79,47 +86,47 @@ classdef FuelTank < handle
     end
     methods (Access = private)
 
-        function obj = find_fuel_mass(obj,fuel)
+        function obj = find_fuel_mass(obj)
             % calculate fuel mass from tank volume
             obj.volume();
-            obj.fuel_mass = fuel.density * obj.fuel_volume;
+            obj.fuel_mass = obj.fuel.density * obj.fuel_volume;
         end
         
-        function obj = find_t_total(obj,struct,ins)
+        function obj = find_t_total(obj)
             % find total thickness of the tank (insulation + structural)
-            obj.find_t_structure(struct);
-            obj.find_t_insulation(struct,ins);
+            obj.find_t_structure();
+            obj.find_t_insulation();
             
             obj.t_total = obj.t_structure + obj.t_insulation;
 
-            % update external dimensions
+            %update internal dimensions
             obj.length_int = obj.length_ext - 2*obj.t_total;
             obj.diam_int = obj.diam_ext - 2*obj.t_total;
         end
         
-        function obj = find_m_empty(obj,struct,ins)
+        function obj = find_m_empty(obj)
            % find total mass of the tank when empty
-           obj.find_m_structure(struct);
-           obj.find_m_insulation(ins);
+           obj.find_m_structure();
+           obj.find_m_insulation();
            
            obj.m_empty = obj.m_structure + obj.m_insulation;
         end
 
-        function obj = find_t_structure(obj,struct)
+        function obj = find_t_structure(obj)
             % find structural thickness required for pressure specification
             minimum_thickness = 7e-3;
-            tcc = obj.design_pressure*obj.diam_ext/(2*(struct.yield_strength + 0.4*obj.design_pressure));%m
-            tcl = obj.design_pressure*obj.diam_ext/(2*(2*struct.yield_strength + 1.4*obj.design_pressure));%m
-            th = obj.design_pressure*obj.diam_ext/(2*(2*struct.yield_strength + 0.8*obj.design_pressure));%m
+            tcc = obj.design_pressure*obj.diam_ext/(2*(obj.structural_material.yield_strength + 0.4*obj.design_pressure));%m
+            tcl = obj.design_pressure*obj.diam_ext/(2*(2*obj.structural_material.yield_strength + 1.4*obj.design_pressure));%m
+            th = obj.design_pressure*obj.diam_ext/(2*(2*obj.structural_material.yield_strength + 0.8*obj.design_pressure));%m
             %http://docs.codecalculation.com/mechanical/pressure-vessel/thickness-calculation.html
             obj.t_structure = max([minimum_thickness,tcc,tcl,th]);
             %A larger diamter for constant everything else increases the
-            %thockness, therefore it is fine to calculate this and then
+            %thickness, therefore it is fine to calculate this and then
             %shrink the tank down in size but keep the same thickness.
 
         end
         
-        function obj = find_m_structure(obj,struct)
+        function obj = find_m_structure(obj)
             
             % find structural mass given structural thickness
             
@@ -127,21 +134,21 @@ classdef FuelTank < handle
             D = obj.diam_int;
             t = obj.t_structure;
             R = D/2;
-            rho = struct.density;
+            rho = obj.structural_material.density;
             cylinder_mass = rho*(pi*((t+R)^2 - R^2))*(L-D);
             caps_mass = rho*4*pi/3 * ((t+R)^3 - R^3);   % mass of hemisphere
             obj.m_structure = cylinder_mass + caps_mass;
         end
         
-        function obj = find_t_insulation(obj,struct,ins)
+        function obj = find_t_insulation(obj)
             % taken from MVM v4.4 'Tank Model' sheet
             
             % define properties
             Tliq = 23.9;            % K
             Tins = 280;             % K
             k_air = 0.026;          % W / m K
-            k_wall = struct.thermal_conductivity;           % W / m K
-            k_ins = ins.thermal_conductivity;           % W / m K
+            k_wall = obj.structural_material.thermal_conductivity;           % W / m K
+            k_ins = obj.insulation_material.thermal_conductivity;           % W / m K
 
             % calculate allowable heat transfer through insulation
             boil_off_rate = 0.05;   % percentage of contents per hour
@@ -165,14 +172,14 @@ classdef FuelTank < handle
             obj.t_insulation = vpasolve(eqn,t,obj.t_structure);
         end
         
-        function obj = find_m_insulation(obj,ins)
+        function obj = find_m_insulation(obj)
             D = obj.diam_int;
             R = D / 2;   % m
             L = obj.length_int;
             t = obj.t_insulation;
             w_t = obj.t_structure;
-            cylinder_mass = ins.density*pi*((R + w_t + t)^2 - (R + w_t)^2) * (L - D);
-            caps_mass = ins.density*4*pi/3 * ((R + w_t + t)^3 - (R + w_t)^3);
+            cylinder_mass = obj.insulation_material.density*pi*((R + w_t + t)^2 - (R + w_t)^2) * (L - D);
+            caps_mass = obj.insulation_material.density*4*pi/3 * ((R + w_t + t)^3 - (R + w_t)^3);
             obj.m_insulation = cylinder_mass + caps_mass;
         end
         
