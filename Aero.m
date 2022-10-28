@@ -26,7 +26,6 @@ classdef Aero
             else
                 m_maxTO = 30e3;
             end
-            m_maxTO = 1000;
             obj.LovD = 16;
             obj.AR = 14;
             obj.b = aircraft.dimension.fuselage_length*(((m_maxTO)^2)*4e-12 - 2e-6*m_maxTO + 1.0949); %TODO: fix this correlation

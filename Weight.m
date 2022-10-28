@@ -25,6 +25,10 @@ classdef Weight < handle
         m_floor(1,1) double {mustBeNonnegative, mustBeFinite}
     end
 
+    properties (Constant)
+        m_pax = 102; % kg per passenger
+    end
+
     methods
         function obj = Weight(aircraft)
             if aircraft.mission.range*0.02 - 19.79 > 30
@@ -33,8 +37,9 @@ classdef Weight < handle
                 obj.m_maxTO = 30e3;
             end
             
-            obj.m_payload = aircraft.mission.max_pax * aircraft.mission.load_factor * 105;  % Assume each passenger and their cargo weighs 105 kg
-            obj.m_max_payload = aircraft.mission.max_pax * 105;
+            obj.m_payload = aircraft.mission.pax * obj.m_pax + aircraft.mission.m_cargo;  % Assume each passenger and their cargo weighs 105 kg
+            obj.m_max_payload = aircraft.mission.max_pax * obj.m_pax + aircraft.mission.m_cargo;
+            obj.m_fuel = aircraft.fuelburn.m_fuel;
 
             obj = torenbeek(obj,aircraft);
 
@@ -54,8 +59,9 @@ classdef Weight < handle
         end
 
         function obj = Weight_Iteration(obj,aircraft)
-            obj.m_payload = aircraft.mission.max_pax * aircraft.mission.load_factor * 105;  % Assume each passenger and their cargo weighs 105 kg
-            obj.m_max_payload = aircraft.mission.max_pax * 105;
+            obj.m_payload = aircraft.mission.pax * obj.m_pax + aircraft.mission.m_cargo;  % Assume each passenger and their cargo weighs 105 kg
+            obj.m_max_payload = aircraft.mission.max_pax * obj.m_pax + aircraft.mission.m_cargo;
+            obj.m_fuel = aircraft.fuelburn.m_fuel;
 
             obj = torenbeek(obj,aircraft);
 
@@ -84,7 +90,7 @@ classdef Weight < handle
             obj.m_wing = 0.86/sqrt(g) * (aircraft.aero.AR^2/aircraft.aero.wing_loading^3*obj.m_maxTO)^(1/4) * obj.m_maxTO;
             
             % Propulsion mass
-            obj.m_engine = aircraft.engine.m_engine;
+            obj.m_engine = aircraft.engine.m_eng;
 
             % Landing Gear mass
             obj.m_LG = 0.039*(1+l/1100) * obj.m_maxTO;

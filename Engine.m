@@ -33,7 +33,7 @@ classdef Engine
             end
             obj.number_engines = 2*ceil(m_maxTO/120);
             obj.m_eng = (eng_mass + nacelle); % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
-            obj.m_eng = 4e3;
+            obj.m_eng = 6e3;
             obj.eng_eff = 0.4511;
             obj.prop_eff = 0.8158;
 %             obj.m_eng = 5;
@@ -58,8 +58,9 @@ classdef Engine
             end
             obj.m_eng = (eng_mass + nacelle); % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
             %NEED ACCURATE CALCS HERE
-            obj.m_eng = 4e3;
-            obj.eng_eff = 0.4511;
+            obj.m_eng = 6e3;
+            %obj.eng_eff = 0.4511;
+            obj.eng_eff = 0.4045;
             obj.prop_eff = 0.8158;
 %             obj.m_eng = 5;
 %             obj.eng_eff = 0.5153;
