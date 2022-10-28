@@ -38,7 +38,7 @@ classdef Weight < handle
             else
                 obj.m_fuel_sys = 0;
             end
-            obj.m_OEW = aircraft.engine.m_eng + aircraft.aero.m_wing + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_payload + obj.m_tail + obj.m_fuel_sys;
+            obj.m_OEW = aircraft.engine.m_eng + aircraft.aero.m_wing + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_tail + obj.m_fuel_sys;
             obj.m_maxTO = obj.m_OEW + obj.m_max_payload + aircraft.fuelburn.m_fuel;
         end
 
@@ -57,7 +57,7 @@ classdef Weight < handle
             else
                 obj.m_fuel_sys = 0;
             end
-            obj.m_OEW = aircraft.engine.m_eng + aircraft.aero.m_wing + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_payload + obj.m_tail + obj.m_fuel_sys;
+            obj.m_OEW = aircraft.engine.m_eng + aircraft.aero.m_wing + obj.m_shell + obj.m_floor + obj.m_systems + obj.m_furnishings + obj.m_LG + obj.m_seats + obj.m_tail + obj.m_fuel_sys;
             obj.m_maxTO = obj.m_OEW + obj.m_max_payload + aircraft.fuelburn.m_fuel;
         end
     end
