@@ -24,20 +24,20 @@ classdef Aero
             if aircraft.mission.range*0.02 - 19.79 > 30
                 m_maxTO = aircraft.mission.range*0.02 - 19.79;
             else
-                m_maxTO = 30;
+                m_maxTO = 30e3;
             end
             m_maxTO = 1000;
             obj.LovD = 16;
             obj.AR = 14;
-            obj.b = aircraft.dimension.fuselage_length*(((m_maxTO)^2)*4e-6 - 0.002*m_maxTO + 1.0949);
+            obj.b = aircraft.dimension.fuselage_length*(((m_maxTO)^2)*4e-12 - 2e-6*m_maxTO + 1.0949); %TODO: fix this correlation
             obj.toc = 0.15;
             obj.mac = obj.b/5;
             obj.root_c = obj.b/obj.AR;
             obj.Sweep = 25;
             obj.C_L = 0.467;
-            obj.S = m_maxTO*1000 * 9.81 / obj.C_L / dyn_pressure;
-            obj.wing_loading = m_maxTO*1000/obj.S;%kg/m2
-            obj.m_wing = 0.86 / 9.81^0.5 * (obj.AR^2 / obj.wing_loading^3 * m_maxTO*1000)^0.25 * m_maxTO;
+            obj.S = m_maxTO * 9.81 / obj.C_L / dyn_pressure;
+            obj.wing_loading = m_maxTO/obj.S;%kg/m2
+            obj.m_wing = 0.86 / 9.81^0.5 * (obj.AR^2 / obj.wing_loading^3 * m_maxTO)^0.25 * m_maxTO;
             obj.C_D = obj.C_L/obj.LovD;
         end
 
@@ -52,9 +52,9 @@ classdef Aero
             dyn_pressure = 0.5 * rho * aircraft.mission.cruise_speed^2;
             
             %Calculate Wing Performance
-            obj.S = m_avg*1000*9.81/obj.C_L/dyn_pressure;
-            b_ker = aircraft.dimension.fuselage_length*(((aircraft.weight.m_maxTO)^2)*4e-6 - 0.002*aircraft.weight.m_maxTO + 1.0949);%empirical relationship based on data for wingspan to length ratios for different MTOWs
-            obj.b = b_ker*(1-(3/400)*(11+0.064*aircraft.weight.m_maxTO));
+            obj.S = m_avg*9.81/obj.C_L/dyn_pressure;
+            b_ker = aircraft.dimension.fuselage_length*(((aircraft.weight.m_maxTO)^2)*4e-12 - 2e-6*aircraft.weight.m_maxTO + 1.0949);%empirical relationship based on data for wingspan to length ratios for different MTOWs
+            obj.b = b_ker*(1-(3/400)*(11+0.064*aircraft.weight.m_maxTO*1e-3));
             obj.b = b_ker;
             obj.AR = (obj.b^2)/obj.S;
             old_mac = obj.mac;
@@ -93,8 +93,8 @@ classdef Aero
             obj.C_D = c_d_incompressible + c_d_compressible;
 
             %Wing Mass Calcs
-            obj.wing_loading = aircraft.weight.m_maxTO*1000/obj.S;%kg/m2
-            obj.m_wing = 0.86 / 9.81^0.5 * (obj.AR^2 / obj.wing_loading^3 * aircraft.weight.m_maxTO*1000)^0.25 * aircraft.weight.m_maxTO;
+            obj.wing_loading = aircraft.weight.m_maxTO/obj.S;%kg/m2
+            obj.m_wing = 0.86 / 9.81^0.5 * (obj.AR^2 / obj.wing_loading^3 * aircraft.weight.m_maxTO)^0.25 * aircraft.weight.m_maxTO;
             obj.LovD = obj.C_L/obj.C_D;
             %%%%%% MANUAL OVERRIDE to set L/D = 17 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

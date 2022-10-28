@@ -22,15 +22,14 @@ classdef FuelBurnModel < handle
             lhv = fuel.lhv;
             LovD = aero.LovD;
             if mission.range*0.02 - 19.79 > 30
-                m_maxTO = mission.range*0.02 - 19.79;
+                m_maxTO = (mission.range*0.02 - 19.79)*1e3;
             else
-                m_maxTO = 30;
+                m_maxTO = 30e3;
             end
-            m_maxTO = 1000;
 
-            m_toc = m_maxTO*1000*(1 - (mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
+            m_toc = m_maxTO*(1 - (mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
 %             disp(m_toc)
-            climb_fuel = m_maxTO*1000 - m_toc;%kg
+            climb_fuel = m_maxTO - m_toc;%kg
             climb_range = h/tand(theta);
             descent_fuel = 0.1*climb_fuel;%kg
             descent_range = climb_range;
@@ -39,10 +38,10 @@ classdef FuelBurnModel < handle
             cruise_fuel = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));%kg
             
             fuel_mass1 = 1.05*(cruise_fuel+climb_fuel+descent_fuel);%kg including a 5% reserve
-            reserve_range = 45*60*mission.cruise_speed%m
+            reserve_range = 45*60*mission.cruise_speed; %m
             reserve_fuel_range = (m_toc-fuel_mass1)*(1-exp(-reserve_range*g/(lhv*eta_ov*LovD)));%kg
             
-            obj.m_fuel = (fuel_mass1 + reserve_fuel_range)/1000;%tonnes
+            obj.m_fuel = (fuel_mass1 + reserve_fuel_range);%kg
         end
 
         function obj = FuelBurn_Iteration(obj,aircraft)
@@ -59,9 +58,9 @@ classdef FuelBurnModel < handle
             lhv = aircraft.fuel.lhv;
             LovD = aircraft.aero.LovD;
 
-            m_toc = aircraft.weight.m_maxTO*1000*(1 - (aircraft.mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
+            m_toc = aircraft.weight.m_maxTO*(1 - (aircraft.mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
 %             disp(m_toc)
-            climb_fuel = aircraft.weight.m_maxTO*1000 - m_toc;%kg
+            climb_fuel = aircraft.weight.m_maxTO - m_toc;%kg
 %             disp(climb_fuel)
             climb_range = h/tand(theta);
             descent_fuel = 0.1*climb_fuel;%kg
@@ -71,10 +70,10 @@ classdef FuelBurnModel < handle
             cruise_fuel = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));%kg
 
             fuel_mass1 = 1.05*(cruise_fuel+climb_fuel+descent_fuel);%kg including a 5% reserve
-            reserve_range = 45*60*aircraft.mission.cruise_speed%m
+            reserve_range = 45*60*aircraft.mission.cruise_speed; %m
             reserve_fuel_range = (m_toc-fuel_mass1)*(1-exp(-reserve_range*g/(lhv*eta_ov*LovD)));%kg
             
-            obj.m_fuel = (fuel_mass1 + reserve_fuel_range)/1000;%tonnes
+            obj.m_fuel = (fuel_mass1 + reserve_fuel_range);%kg
         end
     end
 end

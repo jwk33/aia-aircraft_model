@@ -15,11 +15,10 @@ classdef Engine
         function obj = Engine(mission)
             % construct engine object
             if mission.range*0.02 - 19.79 > 30
-                m_maxTO = mission.range*0.02 - 19.79;
+                m_maxTO = (mission.range*0.02 - 19.79)*1e3;
             else
-                m_maxTO = 30;
+                m_maxTO = 30e3;
             end
-            m_maxTO = 1000;
             obj.eng_thrust = 1.28*m_maxTO;%kN
 %             obj.fuel = fuel;
 %             obj.mission = mission;
@@ -33,8 +32,8 @@ classdef Engine
                 nacelle = 2760 + 2.2*obj.eng_thrust; % kg Jenkinson et al. approximation of nacelle weight if take-off thrust > 600 kN
             end
             obj.number_engines = 2*ceil(m_maxTO/120);
-            obj.m_eng = (eng_mass + nacelle)/1000; % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
-            obj.m_eng = 4;
+            obj.m_eng = (eng_mass + nacelle); % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
+            obj.m_eng = 4e3;
             obj.eng_eff = 0.4511;
             obj.prop_eff = 0.8158;
 %             obj.m_eng = 5;
@@ -43,7 +42,7 @@ classdef Engine
         end
 
         function obj = Engine_Iteration(obj,aircraft)
-            obj.eng_thrust = 1.28*aircraft.weight.m_maxTO;%kN
+            obj.eng_thrust = 1.28*aircraft.weight.m_maxTO*1e-3;%kN
             obj.bpr = 15.1;
 %             obj.bpr = 15.66;
             eng_mass = obj.eng_thrust*(8.7+1.14*obj.bpr); % Jenkinson et al. method
@@ -52,14 +51,14 @@ classdef Engine
             elseif obj.eng_thrust > 600
                 nacelle = 2760 + 2.2*obj.eng_thrust; % Jenkinson et al. approximation of nacelle weight if take-off thrust > 600 kN
             end
-            if aircraft.weight.m_maxTO/120 < 1.1 && aircraft.weight.m_maxTO/120 > 0.9
+            if aircraft.weight.m_maxTO/120e-3 < 1.1 && aircraft.weight.m_maxTO/120e-3 > 0.9
                 obj.number_engines = obj.number_engines;
             else
-                obj.number_engines = 2*ceil(aircraft.weight.m_maxTO/120);
+                obj.number_engines = 2*ceil(aircraft.weight.m_maxTO/120e-3);
             end
-            obj.m_eng = (eng_mass + nacelle)/1000; % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
+            obj.m_eng = (eng_mass + nacelle); % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
             %NEED ACCURATE CALCS HERE
-            obj.m_eng = 4;
+            obj.m_eng = 4e3;
             obj.eng_eff = 0.4511;
             obj.prop_eff = 0.8158;
 %             obj.m_eng = 5;

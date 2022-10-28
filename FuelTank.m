@@ -60,7 +60,7 @@ classdef FuelTank < handle
             obj.find_t_total();
             obj.find_m_empty();
             obj.find_gravimetric_efficiency();
-            obj.m_tank = obj.m_empty/1000; %tonnes
+            obj.m_tank = obj.m_empty; %tonnes
         end
        
         function obj = find_gravimetric_efficiency(obj)
