@@ -12,10 +12,10 @@ classdef Dimension
         tank_external_diameter(1,1) double {mustBeNonnegative, mustBeFinite}
         tank_external_length(1,1) double {mustBeNonnegative, mustBeFinite}
         N_deck(1,1) double {mustBeNonnegative, mustBeFinite}
-    end
-
-    properties (SetAccess = immutable)
-        mission Mission %used to get parameters like number of seats etc.
+        number_aisles int8
+        max_seats int8
+        seats_per_row int8
+        cabin_width double
     end
 
     properties (Constant)
@@ -36,18 +36,37 @@ classdef Dimension
     end
 
     methods
-        function obj = Dimension(mission,fuselage_diameter,fuselage_length,seats_per_row,number_aisles,N_deck)
+        function obj = Dimension(mission,seats_per_row,number_aisles,N_deck)
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
-            obj.fuselage_diameter = fuselage_diameter;
-            obj.fuselage_length = fuselage_length;
+            obj.max_seats = mission.max_pax;
+            obj.seats_per_row = seats_per_row;
+            obj.number_aisles = number_aisles;
             obj.N_deck = N_deck;
+            disp(obj.fuselage_length)
+
+            
+        end
+
+        function obj = finalise(obj)
+            %For now stick with the rectangel geometry. But have scope here
+            %to look at alterantive designs
+            obj.cabin_width = obj.seat_width*obj.seats_per_row + obj.aisle_width*obj.number_aisles;
+            
+            if obj.fuselage_length ~= 0 
+                disp('using input fuselage dimensions')
+            else
+                disp('no input fuselage dimensions')
+                obj.fuselage_length = ceil(obj.max_seats/(obj.N_deck*obj.seats_per_row))*obj.seat_length + obj.cockpit_length + obj.toilet_length + obj.kitchen_length;
+                obj.fuselage_diameter = (obj.cabin_width^2 + obj.cabin_height^2)^0.5 + 2*obj.cabin_thickness;
+            end
+
             obj.fuselage_internal_diameter = obj.fuselage_diameter - 2*obj.cabin_thickness;
-            obj.cabin_length = ceil(mission.max_pax/(N_deck*seats_per_row))*obj.seat_length;
+            obj.cabin_length = ceil(obj.max_seats/(obj.N_deck*obj.seats_per_row))*obj.seat_length;
             obj.aisle_length = obj.cabin_length;
             obj.rear_length = obj.fuselage_length - obj.cabin_length - obj.cockpit_length - obj.toilet_length - obj.kitchen_length;
-            cabin_width = obj.seat_width*seats_per_row + obj.aisle_width*number_aisles;
-            obj.tank_external_diameter = obj.fuselage_internal_diameter/2 - obj.cabin_height - 2*obj.tank_tolerance + ((obj.fuselage_diameter^2)/4 - (cabin_width^2)/4)^0.5;
+            obj.cabin_width = obj.seat_width*obj.seats_per_row + obj.aisle_width*obj.number_aisles;
+            obj.tank_external_diameter = obj.fuselage_internal_diameter/2 - obj.cabin_height - 2*obj.tank_tolerance + ((obj.fuselage_diameter^2)/4 - (obj.cabin_width^2)/4)^0.5;
             obj.tank_external_length = obj.cabin_length + obj.rear_length;
         end
     end
