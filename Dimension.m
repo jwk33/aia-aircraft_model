@@ -43,20 +43,16 @@ classdef Dimension
             obj.seats_per_row = seats_per_row;
             obj.number_aisles = number_aisles;
             obj.N_deck = N_deck;
-            disp(obj.fuselage_length)
 
             
         end
 
         function obj = finalise(obj)
-            %For now stick with the rectangel geometry. But have scope here
+            %For now stick with the rectangle geometry. But have scope here
             %to look at alterantive designs
             obj.cabin_width = obj.seat_width*obj.seats_per_row + obj.aisle_width*obj.number_aisles;
             
-            if obj.fuselage_length ~= 0 
-                disp('using input fuselage dimensions')
-            else
-                disp('no input fuselage dimensions')
+            if obj.fuselage_length == 0 % no input fuselage dimensions so calculate min fuselage length
                 obj.fuselage_length = ceil(obj.max_seats/(obj.N_deck*obj.seats_per_row))*obj.seat_length + obj.cockpit_length + obj.toilet_length + obj.kitchen_length;
                 obj.fuselage_diameter = (obj.cabin_width^2 + obj.cabin_height^2)^0.5 + 2*obj.cabin_thickness;
             end
