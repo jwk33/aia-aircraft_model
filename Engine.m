@@ -9,43 +9,48 @@ classdef Engine
         eng_thrust(1,1) double {mustBeNonnegative, mustBeFinite}
         number_engines(1,1) double {mustBeNonnegative, mustBeFinite}
         bpr(1,1) double {mustBeNonnegative, mustBeFinite} %Bypasss ratio
+        m_input(1,1) double
+        eta_input(1,1) double
     end
 
     methods
         function obj = Engine(mission,aircraft)
             % construct engine object
             
-            if isempty(aircraft.m_eng)
-                disp('calculating engine mass')
+            if isempty(aircraft.m_eng_input)
+%                 disp('calculating engine mass')
                 obj = obj.calculate_mass(aircraft);
             else
-                disp('using input engine mass')
+%                 disp('using input engine mass')
+                obj.m_eng = aircraft.m_eng_input;
             end
             
-            if isempty(aircraft.eta_eng)
-                disp('using default engine efficiency')
+            if isempty(aircraft.eta_input)
+%                 disp('using default engine efficiency')
                 obj.eta_eng = 0.4511;
             else
-                disp('using input engine efficiency')
-                obj.eta_eng = aircraft.eta_eng;
+%                 disp('using input engine efficiency')
+                obj.eta_eng = aircraft.eta_input;
             end
             obj.eta_prop = 0.8158;
 
         end
 
         function obj = Engine_Iteration(obj,aircraft)
-            if isempty(aircraft.m_eng)
-                disp('calculating engine mass')
+            if isempty(aircraft.m_eng_input)
+%                 disp('calculating engine mass')
                 obj = obj.calculate_mass(aircraft);
             else
-                disp('using input engine mass')
+%                 disp('using input engine mass')
+                obj.m_eng = aircraft.m_eng_input;
             end
             
-            if isempty(aircraft.eta_eng)
-                disp('using default engine efficiency')
+            if isempty(aircraft.eta_input)
+%                 disp('using default engine efficiency')
                 obj.eta_eng = 0.4511;
             else
-                disp('using input engine efficiency')
+%                 disp('using input engine efficiency')
+                obj.eta_eng = aircraft.eta_input;
             end
             obj.eta_prop = 0.8158;
         end

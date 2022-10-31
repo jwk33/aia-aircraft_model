@@ -28,7 +28,11 @@ classdef Aero
             obj.toc = 0.15;
             obj.mac = obj.b/5;
             obj.root_c = obj.b/obj.AR;
-            obj.Sweep = 25;
+            if isempty(aircraft.sweep_input)    
+                obj.Sweep = 25;
+            else
+                obj.Sweep = aircraft.sweep_input;
+            end
             obj.C_L = 0.467;
             obj.S = m_maxTO * 9.81 / obj.C_L / dyn_pressure;
             obj.wing_loading = m_maxTO/obj.S;%kg/m2
@@ -83,8 +87,12 @@ classdef Aero
             %%%% CALCULATE COMPRESSBILE DRAG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
             %Modified Korn equation
-            c_d_compressible = 20 * (aircraft.mission.M - obj.M_crit())^4;
-        
+            if aircraft.mission.M < 0.8*obj.M_crit()
+                c_d_compressible = 0;
+            else
+                c_d_compressible = 20 * (aircraft.mission.M - obj.M_crit())^4
+            end
+
             obj.C_D = c_d_incompressible + c_d_compressible;
 
             %Wing Mass Calcs

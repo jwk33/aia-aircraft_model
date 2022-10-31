@@ -20,17 +20,17 @@ classdef Dimension
 
     properties (Constant)
         cabin_thickness = 0.15;%m
-        seat_height = 1.8;
+        seat_height = 1.6;
         seat_width = 0.4;
         seat_length = 0.81;
         bag_height = 0.25;
-        bag_length = 1.8;
+        bag_length = 0.81;
         bag_width = 0.4;
         aisle_width = 0.5;
-        aisle_height = 1.8+0.25;
+        aisle_height = 1.6+0.25;
         cockpit_length = 4;
         tank_tolerance = 0.2;
-        cabin_height = 1.8+0.25;%only used for initial tank sizing calculation
+        cabin_height = 1.6+0.25;%only used for initial tank sizing calculation
         toilet_length = 2;
         kitchen_length = 4;
     end
