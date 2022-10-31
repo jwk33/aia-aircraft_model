@@ -22,12 +22,15 @@ dimension.fuselage_diameter = 3.74;
 dimension = dimension.finalise();
 
 
-%% B737 SETUP AN INSTANCE OF AIRCRAFT CLASS
+% B737 SETUP AN INSTANCE OF AIRCRAFT CLASS
 
 fuel = Ker;
 B737 = Aircraft(fuel,mission,dimension);
 B737.m_eng_input = 4e3;
 B737.eta_input = 0.4;
+B737.AR_input = 9.45;
+B737.sweep_input = 25;
+B737.wing_area_input = 124.6;
 save('B737.mat','B737');
 
 % All inputs defined. Now for the aircraft sizing loop to begin to
@@ -57,12 +60,16 @@ dimension.fuselage_diameter = 6.26;
 dimension = dimension.finalise();
 
 
-%% B777 SETUP AN INSTANCE OF AIRCRAFT CLASS
+% B777 SETUP AN INSTANCE OF AIRCRAFT CLASS
 
 fuel = Ker;
 B777 = Aircraft(fuel,mission,dimension);
 save('B777.mat','B777');
-
+% B777.m_eng_input = 5714;
+% B777.eta_input = 0.48;
+B777.AR_input = 9.61;
+B777.sweep_input = 31.6;
+B777.wing_area_input = 436.8;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 B777 = B777.finalise();
@@ -89,14 +96,16 @@ dimension.fuselage_diameter = 2.9;
 dimension = dimension.finalise();
 
 
-%% ATR-72-600 SETUP AN INSTANCE OF AIRCRAFT CLASS
+% ATR-72-600 SETUP AN INSTANCE OF AIRCRAFT CLASS
 
 fuel = Ker;
 ATR_72_600 = Aircraft(fuel,mission,dimension);
 save('ATR_72_600.mat','ATR_72_600');
 ATR_72_600.m_eng_input = 960;
-ATR_72_600.eta_input = 0.4;
+ATR_72_600.eta_input = 0.45;
 ATR_72_600.sweep_input = 0;
+ATR_72_600.AR_input = 12;
+ATR_72_600.wing_area_input = 61;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 ATR_72_600 = ATR_72_600.finalise();
@@ -123,12 +132,16 @@ dimension.fuselage_diameter = 3.95;
 dimension = dimension.finalise();
 
 
-%% A320neo SETUP AN INSTANCE OF AIRCRAFT CLASS
+% A320neo SETUP AN INSTANCE OF AIRCRAFT CLASS
 
 fuel = Ker;
 A320neo = Aircraft(fuel,mission,dimension);
 save('A320neo.mat','A320neo');
 A320neo.m_eng_input = 5714;
+% A320neo.eta_input = 0.48;
+A320neo.AR_input = 10.3;
+A320neo.sweep_input = 25;
+A320neo.wing_area_input = 124;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 A320neo = A320neo.finalise();
@@ -155,12 +168,16 @@ dimension.fuselage_diameter = 5.86;
 dimension = dimension.finalise();
 
 
-%% A330neo - 900 SETUP AN INSTANCE OF AIRCRAFT CLASS
+% A330neo - 900 SETUP AN INSTANCE OF AIRCRAFT CLASS
 
 fuel = Ker;
 A330neo = Aircraft(fuel,mission,dimension);
 save('A330neo.mat','A330neo');
 A330neo.m_eng_input = 12890;
+A330neo.eta_input = 0.48;
+A330neo.AR_input = 8.8;
+A330neo.sweep_input = 31.9;
+A330neo.wing_area_input = 465;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 A330neo = A330neo.finalise();
@@ -187,12 +204,16 @@ dimension.fuselage_diameter = 5.96;
 dimension = dimension.finalise();
 
 
-%% A350 - 900 SETUP AN INSTANCE OF AIRCRAFT CLASS
+% A350 - 900 SETUP AN INSTANCE OF AIRCRAFT CLASS
 
 fuel = Ker;
 A350_900 = Aircraft(fuel,mission,dimension);
 save('A350_900.mat','A350_900');
 A350_900.m_eng_input = 14554;
+A350_900.eta_input = 0.48;
+A350_900.AR_input = 9.49;
+A350_900.sweep_input = 31.9;
+A350_900.wing_area_input = 442;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 A350_900 = A350_900.finalise();

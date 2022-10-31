@@ -74,6 +74,7 @@ classdef FuelBurnModel < handle
             obj.m_fuel_mission = (obj.m_fuel_cruise+obj.m_fuel_climb+obj.m_fuel_descent);%kg including a 5% reserve
             reserve_range = 45*60*aircraft.mission.cruise_speed; %m
             obj.m_fuel_reserve = (m_toc- obj.m_fuel_mission)*(1-exp(-reserve_range*g/(lhv*eta_ov*LovD))) + 0.05* obj.m_fuel_mission;%kg
+
             
             obj.m_fuel = (obj.m_fuel_mission + obj.m_fuel_reserve);%kg
         end
