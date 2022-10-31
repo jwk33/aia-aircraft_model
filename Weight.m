@@ -30,7 +30,10 @@ classdef Weight < handle
     end
 
     methods
-        function obj = Weight(aircraft)
+        function obj = Weight(obj)
+            %creates empty weight class
+        end
+        function obj = first_calc(obj,aircraft)
             if aircraft.mission.range*0.02 - 19.79 > 30
                 obj.m_maxTO = (aircraft.mission.range*0.02 - 19.79)*1e3;
             else

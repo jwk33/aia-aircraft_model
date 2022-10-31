@@ -14,7 +14,7 @@ classdef FuelBurnModel < handle
     end
 
     methods
-        function obj = FuelBurnModel(fuel,mission,aero,engine)
+        function obj = FuelBurnModel(aircraft,fuel,mission,aero,engine)
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
             g = 9.81;
@@ -24,14 +24,10 @@ classdef FuelBurnModel < handle
             else
                 h = mission.range*1000*1000*tand(theta)/2;
             end
-            eta_ov = engine.prop_eff*engine.eng_eff;
+            eta_ov = engine.eta_prop*engine.eta_eng;
             lhv = fuel.lhv;
             LovD = aero.LovD;
-            if mission.range*0.02 - 19.79 > 30
-                m_maxTO = (mission.range*0.02 - 19.79)*1e3;
-            else
-                m_maxTO = 30e3;
-            end
+            m_maxTO = aircraft.weight.m_maxTO;
 
             m_toc = m_maxTO*(1 - (mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
 %             disp(m_toc)
@@ -60,7 +56,7 @@ classdef FuelBurnModel < handle
             else
                 h = aircraft.mission.range*1000*tand(theta)/2;
             end
-            eta_ov = aircraft.engine.prop_eff*aircraft.engine.eng_eff;
+            eta_ov = aircraft.engine.eta_prop*aircraft.engine.eta_eng;
             lhv = aircraft.fuel.lhv;
             LovD = aircraft.aero.LovD;
 

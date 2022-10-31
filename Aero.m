@@ -21,11 +21,7 @@ classdef Aero
             %UNTITLED5 Construct an instance of this class
             [T,sos,P,rho] = atmosisa(aircraft.mission.cruise_alt);
             dyn_pressure = 0.5 * rho * aircraft.mission.cruise_speed^2;
-            if aircraft.mission.range*0.02 - 19.79 > 30
-                m_maxTO = aircraft.mission.range*0.02 - 19.79;
-            else
-                m_maxTO = 30e3;
-            end
+            m_maxTO = aircraft.weight.m_maxTO;
             obj.LovD = 16;
             obj.AR = 14;
             obj.b = aircraft.dimension.fuselage_length*(((m_maxTO)^2)*4e-12 - 2e-6*m_maxTO + 1.0949); %TODO: fix this correlation
