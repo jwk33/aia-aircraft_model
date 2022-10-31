@@ -139,6 +139,9 @@ classdef Weight < handle
             else
                 obj.m_fuel_sys = 0;
             end
+
+            obj.m_engine = aircraft.engine.m_eng;
+            obj.m_wing = aircraft.aero.m_wing;
         end
     end
 end
