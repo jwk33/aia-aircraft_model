@@ -45,6 +45,8 @@ classdef Aero
 %             m_avg = (aircraft.weight.m_maxTO + aircraft.weight.m_OEW+aircraft.weight.m_max_payload)/2;
             %Get Atmospheric Data
             [T,sos,P,rho] = atmosisa(aircraft.mission.cruise_alt);
+            kvisc = (0.1456e-5)*(T^0.5)/(1 + 110/T);
+            nu = kvisc/rho;
             dyn_pressure = 0.5 * rho * aircraft.mission.cruise_speed^2;
             
             %Calculate Wing Performance
@@ -67,8 +69,8 @@ classdef Aero
             %for the wing based on mean chord, and for the fuselage based on length
         
             %Slight error compared to DBs calculation, unsure why
-            c_d_0_w = cf(obj.mac,aircraft.mission.cruise_speed) * 1.4 * (1 + cosd(obj.Sweep)^2 * (3.3 * obj.toc - 0.008 * obj.toc^2 + 27 * obj.toc^3)) * (S_wet_w / S_ref);
-            c_d_0_f = cf(aircraft.dimension.cabin_length,aircraft.mission.cruise_speed) * (1 + 2.2 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-1.5) - 0.9 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-3)) * (S_wet_f / S_ref);
+            c_d_0_w = cf(obj.mac,aircraft.mission.cruise_speed,nu) * 1.4 * (1 + cosd(obj.Sweep)^2 * (3.3 * obj.toc - 0.008 * obj.toc^2 + 27 * obj.toc^3)) * (S_wet_w / S_ref);
+            c_d_0_f = cf(aircraft.dimension.cabin_length,aircraft.mission.cruise_speed,nu) * (1 + 2.2 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-1.5) - 0.9 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-3)) * (S_wet_f / S_ref);
         
             c_d_0 = c_d_0_w + c_d_0_f;
             

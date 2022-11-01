@@ -153,8 +153,8 @@ save('./saved-ac/A320neo.mat','A320neo');
 load("Ker_Fuel.mat","Ker")
 
 range = 8800;%km
-M = 0.84;
-cruise_alt = 12000; %m
+M = 0.82;
+cruise_alt = 11000; %m
 max_pax = 300; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 cargo = 15200; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 load_factor = 1.0;
@@ -188,9 +188,9 @@ save('./saved-ac/A330neo.mat','A330neo');
 %% A350 - 900 CONSTANT INPUTS
 load("Ker_Fuel.mat","Ker")
 
-range = 10750;%km
-M = 0.84;
-cruise_alt = 12000; %m
+range = 10700;%km
+M = 0.85;
+cruise_alt = 11600; %m
 max_pax = 315; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 cargo = 21670; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 load_factor = 1.0;
