@@ -32,6 +32,9 @@ classdef Aero
             obj.C_L = m_maxTO * 9.81 / (obj.S * dyn_pressure);
             obj.wing_loading = m_maxTO/obj.S;%kg/m2
             obj.C_D = obj.C_L/obj.LovD;
+
+            % update L/D for given technology levels
+            obj = aircraft.tech.improve_LoD(obj);
         end
 
         function obj = Aero_Iteration(obj,aircraft)
@@ -95,6 +98,10 @@ classdef Aero
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %a.c_d = a.c_l / 17; %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+            % update L/D for given technology levels
+            obj = aircraft.tech.improve_LoD(obj);
+
         end
         
         

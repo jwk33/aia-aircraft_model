@@ -23,6 +23,7 @@ classdef Weight < handle
         m_seats(1,1) double {mustBeNonnegative, mustBeFinite}
         m_shell(1,1) double {mustBeNonnegative, mustBeFinite}
         m_floor(1,1) double {mustBeNonnegative, mustBeFinite}
+        m_mzf_delta(1,1) double {mustBeFinite} = 0 % change in mzf due to technology improvements applied to oew
     end
 
     properties (Constant)
@@ -45,21 +46,13 @@ classdef Weight < handle
             obj.m_fuel = aircraft.fuelburn.m_fuel;
 
             obj = torenbeek(obj,aircraft);
-
-
-            % Operating Empty Weight
-            obj.m_OEW = obj.m_wing ...
-                + obj.m_fuselage ...
-                + obj.m_LG ...
-                + obj.m_tail ...
-                + obj.m_engine ...
-                + obj.m_systems ...
-                + obj.m_furnishings ...
-                + obj.m_op_items ...
-                + obj.m_fuel_sys;
             
-            % Max Takeoff Weight
-            obj.m_maxTO = obj.m_OEW + obj.m_max_payload + obj.m_fuel;
+            % calculate expected high level weights  
+            obj = obj.finalise();
+
+            % calculate high level weights with technology improvements
+            obj = aircraft.tech.improve_oew(obj);
+            obj = obj.finalise();
         end
 
         function obj = Weight_Iteration(obj,aircraft)
@@ -69,7 +62,15 @@ classdef Weight < handle
 
             obj = torenbeek(obj,aircraft);
 
+            % calculate expected high level weights  
+            obj = obj.finalise();
 
+            % calculate high level weights with technology improvements
+            obj = aircraft.tech.improve_oew(obj);
+            obj = obj.finalise();
+        end
+
+        function obj = finalise(obj)
             % Operating Empty Weight
             obj.m_OEW = obj.m_wing ...
                 + obj.m_fuselage ...
@@ -79,7 +80,8 @@ classdef Weight < handle
                 + obj.m_systems ...
                 + obj.m_furnishings ...
                 + obj.m_op_items ...
-                + obj.m_fuel_sys;
+                + obj.m_fuel_sys ...
+                + obj.m_mzf_delta;
             
             % Max Takeoff Weight
             obj.m_maxTO = obj.m_OEW + obj.m_max_payload + obj.m_fuel;

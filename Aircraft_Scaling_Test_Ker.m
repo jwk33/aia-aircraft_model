@@ -31,6 +31,8 @@ B737.eta_input = 0.4;
 B737.AR_input = 9.45;
 B737.sweep_input = 25;
 B737.wing_area_input = 124.6;
+
+B737.year = 2021;
 save('./saved-ac/B737.mat','B737');
 
 % All inputs defined. Now for the aircraft sizing loop to begin to

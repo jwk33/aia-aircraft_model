@@ -6,6 +6,7 @@ classdef Engine
         m_eng(1,1) double {mustBeNonnegative, mustBeFinite}
         eta_eng(1,1) double {mustBeNonnegative, mustBeFinite}
         eta_prop(1,1) double {mustBeNonnegative, mustBeFinite}
+        eta_ov(1,1) double {mustBeNonnegative, mustBeFinite}
         eng_thrust(1,1) double {mustBeNonnegative, mustBeFinite}
         number_engines(1,1) double {mustBeNonnegative, mustBeFinite}
         bpr(1,1) double {mustBeNonnegative, mustBeFinite} %Bypasss ratio
@@ -34,6 +35,8 @@ classdef Engine
             end
             obj.eta_prop = 0.8158;
 
+            obj.eta_ov = obj.eta_eng * obj.eta_prop;
+
         end
 
         function obj = Engine_Iteration(obj,aircraft)
@@ -52,7 +55,13 @@ classdef Engine
 %                 disp('using input engine efficiency')
                 obj.eta_eng = aircraft.eta_input;
             end
+
             obj.eta_prop = 0.8158;
+
+            obj.eta_ov = obj.eta_eng * obj.eta_prop;
+            
+            % update eta for given tech levels
+            obj = aircraft.tech.improve_eta(obj);
         end
 
 
@@ -72,6 +81,9 @@ classdef Engine
                 obj.number_engines = 2*ceil(aircraft.weight.m_maxTO/120e3);
             end
             obj.m_eng = (eng_mass + nacelle); % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
+            
+            % update eta for given tech levels
+            obj = aircraft.tech.improve_eta(obj);
         end
     end
 end

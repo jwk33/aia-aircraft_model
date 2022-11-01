@@ -24,7 +24,7 @@ classdef FuelBurnModel < handle
             else
                 h = mission.range*1000*1000*tand(theta)/2;
             end
-            eta_ov = engine.eta_prop*engine.eta_eng;
+            eta_ov = engine.eta_ov;
             lhv = fuel.lhv;
             LovD = aero.LovD;
             m_maxTO = aircraft.weight.m_maxTO;
@@ -56,7 +56,7 @@ classdef FuelBurnModel < handle
             else
                 h = aircraft.mission.range*1000*tand(theta)/2;
             end
-            eta_ov = aircraft.engine.eta_prop*aircraft.engine.eta_eng;
+            eta_ov = aircraft.engine.eta_ov;
             lhv = aircraft.fuel.lhv;
             LovD = aircraft.aero.LovD;
 
