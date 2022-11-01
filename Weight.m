@@ -90,8 +90,17 @@ classdef Weight < handle
         function obj = torenbeek(obj,aircraft)
             l = aircraft.dimension.fuselage_length;
             d = aircraft.dimension.fuselage_diameter;
-            l_tank = 0;
+            
             g = 9.81;
+            
+            % Fuel Systems
+            if ~isempty(aircraft.tank)
+                obj.m_fuel_sys = aircraft.tank.m_tank;  %hydrogen tank
+                l_tank = aircraft.tank.length_ext;
+            else
+                obj.m_fuel_sys = 0;
+                l_tank = 0;
+            end
 
             % Wing mass
             obj.m_wing = 0.86/sqrt(g) * (aircraft.aero.AR^2/aircraft.aero.wing_loading^3*obj.m_maxTO)^(1/4) * obj.m_maxTO;
@@ -99,30 +108,34 @@ classdef Weight < handle
             % Propulsion mass
             obj.m_engine = aircraft.engine.m_eng;
 
-            % Landing Gear mass
+            % Landing Gear mass % verified
             obj.m_LG = 0.039*(1+l/1100) * obj.m_maxTO;
 
-            % Fuselage mass
+            % Fuselage mass % verified
             obj.m_fuselage = (60 * d^2 * (l + 1.5) + 160 * sqrt(3.75) * d * l)/(g);
 
-            % Empennage mass
+            % Empennage mass % verified
             obj.m_tail = (0.1 * obj.m_wing) + (0.07 * obj.m_fuselage);
 
-            % Systems mass
+            % Systems mass % verified
             obj.m_systems = (270*d + 150) * l/g;
 
-            % Furnishings mass
+            % Furnishings mass % verified but minor adjustment so length is
+            % only cabin length
             obj.m_furnishings = (35000 + (12*d*(3*d + aircraft.dimension.N_deck/2 + 1))*(l-l_tank))/g;
 
-            % Operating items mass
-            obj.m_op_items = 350 * aircraft.dimension.max_seats/g;
+            % Operating items mass % verified but range boundary is
+            % arbitrary
+            if aircraft.mission.range > 6000
+                m_op_pax = 500/g;
 
-            % Fuel Systems
-            if ~isempty(aircraft.tank)
-                obj.m_fuel_sys = aircraft.tank.m_tank;  %hydrogen tank
             else
-                obj.m_fuel_sys = 0;
+                m_op_pax = 350/g;
             end
+
+            obj.m_op_items = m_op_pax * aircraft.dimension.max_seats;
+
+            
 
             
         end
