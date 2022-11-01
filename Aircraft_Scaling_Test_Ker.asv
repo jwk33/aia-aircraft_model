@@ -31,8 +31,6 @@ B737.eta_input = 0.4;
 B737.AR_input = 9.45;
 B737.sweep_input = 25;
 B737.wing_area_input = 124.6;
-
-B737.year = 2021;
 save('./saved-ac/B737.mat','B737');
 
 % All inputs defined. Now for the aircraft sizing loop to begin to
@@ -153,8 +151,8 @@ save('./saved-ac/A320neo.mat','A320neo');
 load("Ker_Fuel.mat","Ker")
 
 range = 8800;%km
-M = 0.84;
-cruise_alt = 12000; %m
+M = 0.78;
+cruise_alt = 10000; %m
 max_pax = 300; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 cargo = 15200; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 load_factor = 1.0;
@@ -188,9 +186,9 @@ save('./saved-ac/A330neo.mat','A330neo');
 %% A350 - 900 CONSTANT INPUTS
 load("Ker_Fuel.mat","Ker")
 
-range = 10750;%km
-M = 0.84;
-cruise_alt = 12000; %m
+range = ;%km
+M = 0.78;
+cruise_alt = 10000; %m
 max_pax = 315; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 cargo = 21670; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 load_factor = 1.0;

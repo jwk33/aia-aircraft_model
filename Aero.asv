@@ -42,7 +42,7 @@ classdef Aero
             %Any properties here not updated are assumed constant = 
             %toc, sweep, C_L
             %Initial Variables
-%             m_avg = (aircraft.weight.m_maxTO + aircraft.weight.m_OEW+aircraft.weight.m_max_payload)/2;
+            m_avg = (aircraft.weight.m_maxTO + aircraft.weight.m_OEW+aircraft.weight.m_max_payload)/2;
             %Get Atmospheric Data
             [T,sos,P,rho] = atmosisa(aircraft.mission.cruise_alt);
             dyn_pressure = 0.5 * rho * aircraft.mission.cruise_speed^2;
@@ -111,7 +111,7 @@ classdef Aero
             
             %%%% CALCULATE M_crit %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             M_dd = 0.95/cosd(obj.Sweep) - obj.toc/(cosd(obj.Sweep)^2) - obj.C_L/(10*cosd(obj.Sweep)^3);
-            critical_mach_no = M_dd; %- 0.1;
+            critical_mach_no = M_dd - 0.1;
         end
     end
 end
