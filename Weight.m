@@ -35,14 +35,14 @@ classdef Weight < handle
             %creates empty weight class
         end
         function obj = first_calc(obj,aircraft)
-            if aircraft.mission.range*0.02 - 19.79 > 30
-                obj.m_maxTO = (aircraft.mission.range*0.02 - 19.79)*1e3;
+            if aircraft.design_mission.range*0.02 - 19.79 > 30
+                obj.m_maxTO = (aircraft.design_mission.range*0.02 - 19.79)*1e3;
             else
                 obj.m_maxTO = 30e3;
             end
             
-            obj.m_payload = aircraft.mission.pax * obj.m_pax + aircraft.mission.m_cargo;  % Assume each passenger and their cargo weighs 105 kg
-            obj.m_max_payload = aircraft.mission.max_pax * obj.m_pax + aircraft.mission.m_cargo;
+            obj.m_payload = aircraft.design_mission.pax * obj.m_pax + aircraft.design_mission.m_cargo;  % Assume each passenger and their cargo weighs 105 kg
+            obj.m_max_payload = aircraft.design_mission.max_pax * obj.m_pax + aircraft.design_mission.m_cargo;
             obj.m_fuel = aircraft.fuelburn.m_fuel;
 
             obj = torenbeek(obj,aircraft);
@@ -56,8 +56,8 @@ classdef Weight < handle
         end
 
         function obj = Weight_Iteration(obj,aircraft)
-            obj.m_payload = aircraft.mission.pax * obj.m_pax + aircraft.mission.m_cargo;  % Assume each passenger and their cargo weighs 105 kg
-            obj.m_max_payload = aircraft.mission.max_pax * obj.m_pax + aircraft.mission.m_cargo;
+            obj.m_payload = aircraft.design_mission.pax * obj.m_pax + aircraft.design_mission.m_cargo;  % Assume each passenger and their cargo weighs 105 kg
+            obj.m_max_payload = aircraft.design_mission.max_pax * obj.m_pax + aircraft.design_mission.m_cargo;
             obj.m_fuel = aircraft.fuelburn.m_fuel;
 
             obj = torenbeek(obj,aircraft);
@@ -126,7 +126,7 @@ classdef Weight < handle
 
             % Operating items mass % verified but range boundary is
             % arbitrary
-            if aircraft.mission.range > 6000
+            if aircraft.design_mission.range > 6000
                 m_op_pax = 500/g;
 
             else
@@ -149,7 +149,7 @@ classdef Weight < handle
             obj.m_systems = (270 * aircraft.dimension.fuselage_diameter + 150) * aircraft.dimension.cabin_length /(9.81);
             obj.m_furnishings = (12 * aircraft.dimension.fuselage_diameter * (3 * aircraft.dimension.fuselage_diameter + aircraft.dimension.N_deck/2 + 1) * aircraft.dimension.cabin_length + 3500) /(9.81);
             obj.m_LG = 0.039 * (1 + aircraft.dimension.cabin_length / 1100) * obj.m_maxTO;
-            obj.m_op_items = 350 * aircraft.mission.max_pax /(9.81);
+            obj.m_op_items = 350 * aircraft.design_mission.max_pax /(9.81);
             obj.m_tail = 0.07 * (obj.m_shell + obj.m_floor) + 0.1 * aircraft.aero.m_wing;
 
             if ~isempty(aircraft.tank)

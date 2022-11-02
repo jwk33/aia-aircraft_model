@@ -15,7 +15,7 @@ classdef Engine
     end
 
     methods
-        function obj = Engine(mission,aircraft)
+        function obj = Engine(design_mission,aircraft)
             % construct engine object
             
             if isempty(aircraft.m_eng_input)

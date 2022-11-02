@@ -18,8 +18,8 @@ classdef Aero
     methods
         function obj = Aero(aircraft)
             %UNTITLED5 Construct an instance of this class
-            [T,sos,P,rho] = atmosisa(aircraft.mission.cruise_alt);
-            dyn_pressure = 0.5 * rho * aircraft.mission.cruise_speed^2;
+            [T,sos,P,rho] = atmosisa(aircraft.design_mission.cruise_alt);
+            dyn_pressure = 0.5 * rho * aircraft.design_mission.cruise_speed^2;
             m_maxTO = aircraft.weight.m_maxTO;
             obj.LovD = 16;
             obj.AR = aircraft.AR_input;
@@ -44,8 +44,8 @@ classdef Aero
             %Initial Variables
             m_avg = (aircraft.weight.m_maxTO + aircraft.weight.m_OEW+aircraft.weight.m_max_payload)/2;
             %Get Atmospheric Data
-            [T,sos,P,rho] = atmosisa(aircraft.mission.cruise_alt);
-            dyn_pressure = 0.5 * rho * aircraft.mission.cruise_speed^2;
+            [T,sos,P,rho] = atmosisa(aircraft.design_mission.cruise_alt);
+            dyn_pressure = 0.5 * rho * aircraft.design_mission.cruise_speed^2;
             
             %Calculate Wing Performance
             obj.C_L = m_avg*9.81/obj.S/dyn_pressure;
@@ -67,8 +67,8 @@ classdef Aero
             %for the wing based on mean chord, and for the fuselage based on length
         
             %Slight error compared to DBs calculation, unsure why
-            c_d_0_w = cf(obj.mac,aircraft.mission.cruise_speed) * 1.4 * (1 + cosd(obj.Sweep)^2 * (3.3 * obj.toc - 0.008 * obj.toc^2 + 27 * obj.toc^3)) * (S_wet_w / S_ref);
-            c_d_0_f = cf(aircraft.dimension.cabin_length,aircraft.mission.cruise_speed) * (1 + 2.2 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-1.5) - 0.9 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-3)) * (S_wet_f / S_ref);
+            c_d_0_w = cf(obj.mac,aircraft.design_mission.cruise_speed) * 1.4 * (1 + cosd(obj.Sweep)^2 * (3.3 * obj.toc - 0.008 * obj.toc^2 + 27 * obj.toc^3)) * (S_wet_w / S_ref);
+            c_d_0_f = cf(aircraft.dimension.cabin_length,aircraft.design_mission.cruise_speed) * (1 + 2.2 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-1.5) - 0.9 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-3)) * (S_wet_f / S_ref);
         
             c_d_0 = c_d_0_w + c_d_0_f;
             
@@ -82,10 +82,10 @@ classdef Aero
             %%%% CALCULATE COMPRESSBILE DRAG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
             %Modified Korn equation
-            if aircraft.mission.M < 0.8*obj.M_crit()
+            if aircraft.design_mission.M < 0.8*obj.M_crit()
                 c_d_compressible = 0;
             else
-                c_d_compressible = 20 * (aircraft.mission.M - obj.M_crit())^4;
+                c_d_compressible = 20 * (aircraft.design_mission.M - obj.M_crit())^4;
             end
 
             obj.C_D = c_d_incompressible + c_d_compressible;

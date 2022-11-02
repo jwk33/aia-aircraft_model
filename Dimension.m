@@ -36,10 +36,10 @@ classdef Dimension
     end
 
     methods
-        function obj = Dimension(mission,seats_per_row,number_aisles,N_deck)
+        function obj = Dimension(design_mission,seats_per_row,number_aisles,N_deck)
             %UNTITLED2 Construct an instance of this class
             %   Detailed explanation goes here
-            obj.max_seats = mission.max_pax;
+            obj.max_seats = design_mission.max_pax;
             obj.seats_per_row = seats_per_row;
             obj.number_aisles = number_aisles;
             obj.N_deck = N_deck;
