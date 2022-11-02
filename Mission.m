@@ -1,4 +1,4 @@
-classdef Mission
+classdef Mission < matlab.mixin.Copyable
     %Mission object
     
     % define flight properties for a given aircraft
@@ -14,8 +14,13 @@ classdef Mission
         pax(1,1) double {mustBeNonnegative, mustBeFinite}
         m_cargo (1,1) double {mustBeFinite} %allowing negative for design
         
-        % saving fuel burn results for mission
+        % saving operation results for given mission
         fuel_burn FuelBurnModel
+        weight Weight
+    end
+
+    properties (Access = public) % TODO: only allow aircraft class objects to set this
+        convergence Convergence % object with sizing properties: convergence margin, maximum number of iterations
     end
 
 

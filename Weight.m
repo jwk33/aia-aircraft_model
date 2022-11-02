@@ -1,14 +1,18 @@
-classdef Weight < handle
+classdef Weight < matlab.mixin.Copyable
     %Weight class. This class has definintions of the weight breakdown as
     %well as MTOW
 
     properties (SetAccess = public)
         % High level weights
-        m_maxTO(1,1) double {mustBeNonnegative, mustBeFinite} % take-off weight in kg
+        m_maxTO(1,1) double {mustBeNonnegative, mustBeFinite} % max take-off weight in kg
+        m_TO(1,1) double {mustBeNonnegative, mustBeFinite} % take-off weight at operation point
+        m_maxZFW(1,1) double {mustBeNonnegative, mustBeFinite} % zero-fuel weight
+        m_ZFW(1,1) double {mustBeNonnegative, mustBeFinite} % zero-fuel weight at operation point
         m_OEW (1,1) double {mustBeNonnegative, mustBeFinite} %OEW = ZFW - max payload
         m_max_payload(1,1) double {mustBeNonnegative, mustBeFinite}
         m_payload(1,1) double {mustBeNonnegative, mustBeFinite}
-        m_fuel (1,1) double {mustBeNonnegative, mustBeFinite}
+        m_Fuel (1,1) double {mustBeNonnegative, mustBeFinite}
+        m_maxFuel(1,1) double {mustBeNonnegative, mustBeFinite}
 
         % Weight breakdown
         m_wing (1,1) double {mustBeNonnegative, mustBeFinite}
@@ -31,46 +35,40 @@ classdef Weight < handle
     end
 
     methods
-        function obj = Weight(obj)
+        function obj = Weight()
             %creates empty weight class
         end
         function obj = first_calc(obj,aircraft)
-            if aircraft.design_mission.range*0.02 - 19.79 > 30
-                obj.m_maxTO = (aircraft.design_mission.range*0.02 - 19.79)*1e3;
-            else
-                obj.m_maxTO = 30e3;
-            end
-            
-            obj.m_payload = aircraft.design_mission.pax * obj.m_pax + aircraft.design_mission.m_cargo;  % Assume each passenger and their cargo weighs 105 kg
-            obj.m_max_payload = aircraft.design_mission.max_pax * obj.m_pax + aircraft.design_mission.m_cargo;
-            obj.m_fuel = aircraft.fuelburn.m_fuel;
 
             obj = torenbeek(obj,aircraft);
             
             % calculate expected high level weights  
-            obj = obj.finalise();
+            obj = obj.finalise(aircraft,aircraft.design_mission);
 
             % calculate high level weights with technology improvements
-            obj = aircraft.tech.improve_oew(obj);
-            obj = obj.finalise();
+            obj = aircraft.tech.improve_oew(obj,aircraft,aircraft.design_mission);
+            obj = obj.finalise(aircraft,aircraft.design_mission);
         end
 
         function obj = Weight_Iteration(obj,aircraft)
-            obj.m_payload = aircraft.design_mission.pax * obj.m_pax + aircraft.design_mission.m_cargo;  % Assume each passenger and their cargo weighs 105 kg
-            obj.m_max_payload = aircraft.design_mission.max_pax * obj.m_pax + aircraft.design_mission.m_cargo;
-            obj.m_fuel = aircraft.fuelburn.m_fuel;
+            
+            
 
             obj = torenbeek(obj,aircraft);
 
             % calculate expected high level weights  
-            obj = obj.finalise();
+            obj = obj.finalise(aircraft,aircraft.design_mission);
 
             % calculate high level weights with technology improvements
-            obj = aircraft.tech.improve_oew(obj);
-            obj = obj.finalise();
+            obj = aircraft.tech.improve_oew(obj,aircraft,aircraft.design_mission);
+            obj = obj.finalise(aircraft,aircraft.design_mission);
         end
 
-        function obj = finalise(obj)
+        function obj = finalise(obj, aircraft,mission)
+            
+            % Payload
+            obj.m_max_payload = mission.max_pax * obj.m_pax + mission.m_cargo;
+
             % Operating Empty Weight
             obj.m_OEW = obj.m_wing ...
                 + obj.m_fuselage ...
@@ -84,7 +82,32 @@ classdef Weight < handle
                 + obj.m_mzf_delta;
             
             % Max Takeoff Weight
-            obj.m_maxTO = obj.m_OEW + obj.m_max_payload + obj.m_fuel;
+            obj.m_maxTO = obj.m_OEW + obj.m_max_payload + obj.m_maxFuel;
+
+            % Max Zero Fuel
+            obj.m_maxZFW = obj.m_OEW + obj.m_max_payload;
+
+            % Max Fuel
+            obj.m_maxFuel = aircraft.fuelburn.m_fuel; % for design portion, max fuel is equal to fuel at design point
+            
+            % Variables that will change with operating point
+            obj = obj.operate(aircraft,mission);
+
+            
+        end
+
+        function obj = operate(obj, aircraft, mission)
+            % Payload
+            obj.m_payload = mission.pax * obj.m_pax + mission.m_cargo;  % Assume each passenger and their cargo weighs 105 kg
+            
+            % Fuel
+            obj.m_Fuel = aircraft.fuelburn.m_fuel;
+
+            % Takeoff Weight
+            obj.m_TO = obj.m_OEW + obj.m_payload + obj.m_Fuel;
+
+            % Zero Fuel
+            obj.m_ZFW = obj.m_OEW + obj.m_payload;
         end
 
         function obj = torenbeek(obj,aircraft)

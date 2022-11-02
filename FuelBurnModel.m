@@ -1,4 +1,4 @@
-classdef FuelBurnModel < handle
+classdef FuelBurnModel < matlab.mixin.Copyable
     %FuelBurnModel class handles the operation of the aircraft for the
     %input mission. It calculates fuel mass.
     %   Detailed explanation goes here
@@ -46,9 +46,9 @@ classdef FuelBurnModel < handle
             lhv = aircraft.fuel.lhv;
             LovD = aircraft.aero.LovD;
 
-            m_toc = aircraft.weight.m_maxTO*(1 - (mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
+            m_toc = aircraft.weight.m_TO*(1 - (mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
 %             disp(m_toc)l
-            obj.m_fuel_climb = aircraft.weight.m_maxTO - m_toc;%kg
+            obj.m_fuel_climb = aircraft.weight.m_TO - m_toc;%kg
 %             disp(obj.m_fuel_climb)
             climb_range = h/tand(theta);
             obj.m_fuel_descent = 0.1*obj.m_fuel_climb;%kg

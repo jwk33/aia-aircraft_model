@@ -329,12 +329,10 @@ B787_10 = B787_10.finalise();
 save('./saved-ac/B787_10.mat','B787_10');
 %%
 % running aircraft at operating point
-range = 7777;%km
-M = 0.85;
-cruise_alt = 11000; %m
-max_pax = 330; 
-cargo = 23616; %kg 
-load_factor = 1.0;
-range = range*0.7;
-oper_mission = Mission(range, M,cruise_alt, max_pax, load_factor, cargo);
+oper_mission = copy(design_mission);
+oper_mission.range = range*0.66;
+oper_mission.load_factor = 0.50;
+oper_mission.pax = oper_mission.max_pax * oper_mission.load_factor;
 B787_10 = B787_10.operate(oper_mission);
+
+err = B787_10.oper_mission.weight.m_TO;

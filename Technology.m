@@ -56,17 +56,19 @@ classdef Technology
             
         end
 
-        function weight = improve_oew(obj,weight)
+        function weight = improve_oew(obj,weight, aircraft,mission)
             arguments
                 obj
                 weight Weight
+                aircraft Aircraft
+                mission Mission
             end
             
             mzf_base = weight.m_OEW + weight.m_payload;
             mzf_delta = mzf_base*(obj.mzf_factor-1);
             weight.m_mzf_delta = mzf_delta;
             
-            weight = weight.finalise();
+            weight = weight.finalise(aircraft,mission);
         
         end
 
