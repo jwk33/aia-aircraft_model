@@ -5,10 +5,10 @@ clear all
 load("Ker_Fuel.mat","Ker")
 
 range = 3790;%km
-M = 0.78;
+M = 0.79;
 cruise_alt = 10000; %m
-max_pax = 180;
-cargo = 2959; %kg
+max_pax = 178;%737 Max - 8
+cargo = 2726; %kg
 load_factor = 1.0;
 design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
 
@@ -17,8 +17,8 @@ number_aisles = 1;
 N_deck = 1;
 
 dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck);
-dimension.fuselage_length = 39.47;
-dimension.fuselage_diameter = 3.74;
+dimension.fuselage_length = 39.12;
+dimension.fuselage_diameter = 4.01;
 dimension = dimension.finalise();
 
 
@@ -26,11 +26,11 @@ dimension = dimension.finalise();
 
 fuel = Ker;
 B737 = Aircraft(fuel,design_mission,dimension);
-B737.m_eng_input = 4e3;
-B737.eta_input = 0.4;
-B737.AR_input = 9.45;
+B737.m_eng_input = 5560;
+% B737.eta_input = 0.4;
+B737.AR_input = 10.16;
 B737.sweep_input = 25;
-B737.wing_area_input = 124.6;
+B737.wing_area_input = 127;
 
 B737.year = 2021;
 save('./saved-ac/B737.mat','B737');
@@ -41,24 +41,24 @@ B737 = B737.finalise();
 save('./saved-ac/B737.mat','B737');
 
 
-%% B777 CONSTANT INPUTS
+%% B777300ER CONSTANT INPUTS
 load("Ker_Fuel.mat","Ker")
 
-range = 10000;%km
-M = 0.78;
+range = 10550;%km
+M = 0.84;
 cruise_alt = 10000; %m
-max_pax = 370;
-cargo = 32113; %kg
+max_pax = 396;
+cargo = 29462; %kg
 load_factor = 1.0;
 design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
 
-seats_per_row = 10;
+seats_per_row = 9;
 number_aisles = 2;
 N_deck = 1;
 
 dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck);
-dimension.fuselage_length = 67.73;
-dimension.fuselage_diameter = 6.26;
+dimension.fuselage_length = 73.08;
+dimension.fuselage_diameter = 6.2;
 dimension = dimension.finalise();
 
 
@@ -68,7 +68,7 @@ fuel = Ker;
 B777 = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/B777.mat','B777');
 % B777.m_eng_input = 5714;
-% B777.eta_input = 0.48;
+% B777.eta_input = 0.5;
 B777.AR_input = 9.61;
 B777.sweep_input = 31.6;
 B777.wing_area_input = 436.8;
@@ -190,7 +190,7 @@ load("Ker_Fuel.mat","Ker")
 
 range = 10750;%km
 M = 0.85;
-cruise_alt = 11200; %m
+cruise_alt = 10000; %m
 max_pax = 325; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 cargo = 20650; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 load_factor = 1.0;
@@ -226,7 +226,7 @@ load("Ker_Fuel.mat","Ker")
 
 range = 10370;%km
 M = 0.85;
-cruise_alt = 11000; %m
+cruise_alt = 10000; %m
 max_pax = 366; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 cargo = 30668; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 load_factor = 1.0;
@@ -256,3 +256,39 @@ A350_1000.wing_area_input = 464.3;
 % calculate MTOW
 A350_1000 = A350_1000.finalise();
 save('./saved-ac/A350_1000.mat','A350_1000');
+
+%% B787 - 10 CONSTANT INPUTS
+load("Ker_Fuel.mat","Ker")
+
+range = 7777;%km
+M = 0.85;
+cruise_alt = 11000; %m
+max_pax = 330; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
+cargo = 23616; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
+load_factor = 1.0;
+design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
+
+seats_per_row = 9;
+number_aisles = 2;
+N_deck = 1;
+
+dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck);
+dimension.fuselage_length = 55.91;
+dimension.fuselage_diameter = 5.94;
+dimension = dimension.finalise();
+
+
+% A350 - 1000 SETUP AN INSTANCE OF AIRCRAFT CLASS
+
+fuel = Ker;
+B787_10 = Aircraft(fuel,design_mission,dimension);
+save('./saved-ac/B787_10.mat','B787_10');
+B787_10.m_eng_input = 12240;
+B787_10.eta_input = 0.5;
+B787_10.AR_input = 9.59;
+B787_10.sweep_input = 32.2;
+B787_10.wing_area_input = 377;
+% All inputs defined. Now for the aircraft sizing loop to begin to
+% calculate MTOW
+B787_10 = B787_10.finalise();
+save('./saved-ac/B787_10.mat','B787_10');
