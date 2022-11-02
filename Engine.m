@@ -28,12 +28,12 @@ classdef Engine
             
             if isempty(aircraft.eta_input)
 %                 disp('using default engine efficiency')
-                obj.eta_eng = 0.4511;
+                obj.eta_eng = 0.44;
             else
 %                 disp('using input engine efficiency')
                 obj.eta_eng = aircraft.eta_input;
             end
-            obj.eta_prop = 0.8158;
+            obj.eta_prop = 0.81;
 
             obj.eta_ov = obj.eta_eng * obj.eta_prop;
 

@@ -52,7 +52,7 @@ classdef Aero
             %Calculate Wing Performance
             obj.C_L = aircraft.weight.m_maxTO*9.81/obj.S/dyn_pressure;
            
-        
+%             S_tail = obj.S*aircraft.weight.m_tail/aircraft.weight.m_wing;
             %%%% DERIVED CONSTANTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             S_wet_w = obj.S*3; %wetted surface area of the wing %%%changed to 3 to include the tail and horiz stabiliser
             S_wet_f = pi*aircraft.dimension.fuselage_diameter*aircraft.dimension.fuselage_length; %fuselage wetted surface area
@@ -109,7 +109,7 @@ classdef Aero
             
             %%%% CALCULATE M_crit %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             M_dd = 0.95/cosd(obj.Sweep) - obj.toc/(cosd(obj.Sweep)^2) - obj.C_L/(10*cosd(obj.Sweep)^3);
-            critical_mach_no = M_dd; %- 0.1;
+            critical_mach_no = M_dd;% - 0.1;
         end
     end
 end
