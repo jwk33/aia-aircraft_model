@@ -1,8 +1,0 @@
-#autosave-files
-*.asv
-#local-aircraft-saves
-/saved-ac
-#test-scripts
-/test
-#MarkDown Files
-*.md
