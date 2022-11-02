@@ -292,3 +292,49 @@ B787_10.wing_area_input = 377;
 % calculate MTOW
 B787_10 = B787_10.finalise();
 save('./saved-ac/B787_10.mat','B787_10');
+
+%% B787 - 10 CONSTANT INPUTS
+load("Ker_Fuel.mat","Ker")
+
+range = 7777;%km
+M = 0.85;
+cruise_alt = 11000; %m
+max_pax = 330; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
+cargo = 23616; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
+load_factor = 1.0;
+design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
+
+seats_per_row = 9;
+number_aisles = 2;
+N_deck = 1;
+
+dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck);
+dimension.fuselage_length = 55.91;
+dimension.fuselage_diameter = 5.94;
+dimension = dimension.finalise();
+
+
+
+fuel = Ker;
+B787_10 = Aircraft(fuel,design_mission,dimension);
+save('./saved-ac/B787_10.mat','B787_10');
+B787_10.m_eng_input = 12240;
+B787_10.eta_input = 0.5;
+B787_10.AR_input = 9.59;
+B787_10.sweep_input = 32.2;
+B787_10.wing_area_input = 377;
+% All inputs defined. Now for the aircraft sizing loop to begin to
+% calculate MTOW
+B787_10 = B787_10.finalise();
+save('./saved-ac/B787_10.mat','B787_10');
+%%
+% running aircraft at operating point
+range = 7777;%km
+M = 0.85;
+cruise_alt = 11000; %m
+max_pax = 330; 
+cargo = 23616; %kg 
+load_factor = 1.0;
+range = range*0.7;
+oper_mission = Mission(range, M,cruise_alt, max_pax, load_factor, cargo);
+B787_10 = B787_10.operate(oper_mission);

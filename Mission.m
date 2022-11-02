@@ -13,7 +13,12 @@ classdef Mission
         load_factor(1,1) double {mustBeNonnegative, mustBeFinite} % TODO: check this is between 0 and 1
         pax(1,1) double {mustBeNonnegative, mustBeFinite}
         m_cargo (1,1) double {mustBeFinite} %allowing negative for design
+        
+        % saving fuel burn results for mission
+        fuel_burn FuelBurnModel
     end
+
+
     methods
         function obj = Mission(range, M, cruise_alt, max_pax,load_factor, m_cargo)
             obj.range = range;
