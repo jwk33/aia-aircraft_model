@@ -190,7 +190,7 @@ load("Ker_Fuel.mat","Ker")
 
 range = 10700;%km
 M = 0.85;
-cruise_alt = 11600; %m
+cruise_alt = 11200; %m
 max_pax = 315; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 cargo = 21670; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 load_factor = 1.0;
@@ -214,7 +214,7 @@ save('./saved-ac/A350_900.mat','A350_900');
 A350_900.m_eng_input = 14554;
 A350_900.eta_input = 0.48;
 A350_900.AR_input = 9.49;
-A350_900.sweep_input = 31.9;
+A350_900.sweep_input = 35;
 A350_900.wing_area_input = 442;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
