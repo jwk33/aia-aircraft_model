@@ -27,7 +27,7 @@ classdef Aero
             obj.root_c = obj.b/obj.AR;    
             obj.Sweep = aircraft.sweep_input;
             obj.S = aircraft.wing_area_input;
-            obj.b = sqrt(obj.AR*obj.S);
+            obj.b = sqrt(obj.S*obj.AR);
             obj.mac = obj.S/obj.b;
             obj.C_L = m_maxTO * 9.81 / (obj.S * dyn_pressure);
             obj.wing_loading = m_maxTO/obj.S;%kg/m2

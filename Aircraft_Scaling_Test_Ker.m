@@ -177,9 +177,9 @@ A330neo = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/A330neo.mat','A330neo');
 A330neo.m_eng_input = 12890;
 A330neo.eta_input = 0.48;
-A330neo.AR_input = 8.8;
+A330neo.AR_input = 10;
 A330neo.sweep_input = 31.9;
-A330neo.wing_area_input = 465;
+A330neo.wing_area_input = 410;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 A330neo = A330neo.finalise();
@@ -188,11 +188,11 @@ save('./saved-ac/A330neo.mat','A330neo');
 %% A350 - 900 CONSTANT INPUTS
 load("Ker_Fuel.mat","Ker")
 
-range = 10700;%km
+range = 10750;%km
 M = 0.85;
 cruise_alt = 11200; %m
-max_pax = 315; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
-cargo = 21670; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
+max_pax = 325; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
+cargo = 20650; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 load_factor = 1.0;
 design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
 
@@ -212,7 +212,7 @@ fuel = Ker;
 A350_900 = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/A350_900.mat','A350_900');
 A350_900.m_eng_input = 14554;
-A350_900.eta_input = 0.48;
+A350_900.eta_input = 0.5;
 A350_900.AR_input = 9.49;
 A350_900.sweep_input = 35;
 A350_900.wing_area_input = 442;
@@ -220,3 +220,39 @@ A350_900.wing_area_input = 442;
 % calculate MTOW
 A350_900 = A350_900.finalise();
 save('./saved-ac/A350_900.mat','A350_900');
+
+%% A350 - 1000 CONSTANT INPUTS
+load("Ker_Fuel.mat","Ker")
+
+range = 10700;%km
+M = 0.85;
+cruise_alt = 11200; %m
+max_pax = 366; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
+cargo = 21670; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
+load_factor = 1.0;
+design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
+
+seats_per_row = 9;
+number_aisles = 2;
+N_deck = 1;
+
+dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck);
+dimension.fuselage_length = 65.26;
+dimension.fuselage_diameter = 5.96;
+dimension = dimension.finalise();
+
+
+% A350 - 1000 SETUP AN INSTANCE OF AIRCRAFT CLASS
+
+fuel = Ker;
+A350_1000 = Aircraft(fuel,design_mission,dimension);
+save('./saved-ac/A350_1000.mat','A350_1000');
+A350_1000.m_eng_input = 14554;
+A350_1000.eta_input = 0.5;
+A350_1000.AR_input = 9.49;
+A350_1000.sweep_input = 31.9;
+A350_1000.wing_area_input = 442.9;
+% All inputs defined. Now for the aircraft sizing loop to begin to
+% calculate MTOW
+A350_1000 = A350_1000.finalise();
+save('./saved-ac/A350_1000.mat','A350_1000');
