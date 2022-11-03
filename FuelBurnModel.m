@@ -3,7 +3,7 @@ classdef FuelBurnModel < matlab.mixin.Copyable
     %input mission. It calculates fuel mass.
     %   Detailed explanation goes here
 
-    properties (SetAccess = private)
+    properties (SetAccess = {?Aircraft})
         m_fuel(1,1) double {mustBeNonnegative, mustBeFinite}
         m_fuel_mission(1,1) double {mustBeNonnegative, mustBeFinite}
         m_fuel_reserve(1,1) double {mustBeNonnegative, mustBeFinite}
