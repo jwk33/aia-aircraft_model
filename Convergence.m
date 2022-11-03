@@ -1,4 +1,4 @@
-classdef Convergence
+classdef Convergence < matlab.mixin.Copyable
     % This class will be used to store convergence settings and information
     % about how well the solution converged.
 
