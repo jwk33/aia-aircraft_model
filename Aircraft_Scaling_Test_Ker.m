@@ -339,6 +339,6 @@ B787_10 = B787_10.operate(oper_mission);
 %% running to max range
 
 oper_mission = copy(design_mission);
-oper_mission.load_factor = 0.2;
+oper_mission.load_factor = 1.0;
 oper_mission = oper_mission.update();
 max_range = B787_10.max_range(oper_mission);
