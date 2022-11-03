@@ -87,8 +87,6 @@ classdef Dimension
         function obj = finalise(obj)
             %For now stick with the rectangle geometry. But have scope here
             %to look at alterantive designs
-            obj.cabin_width = obj.seat_width*obj.seats_per_row + obj.aisle_width*obj.number_aisles;
-            
             obj.aisle_length = obj.cabin_length;
         end
     end

@@ -57,8 +57,8 @@ number_aisles = 2;
 N_deck = 1;
 
 dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck,0,0);
-dimension.fuselage_length = 73.08;
-dimension.fuselage_diameter = 6.2;
+% dimension.fuselage_length = 73.08;
+% dimension.fuselage_diameter = 6.2;
 dimension = dimension.finalise();
 
 
@@ -93,8 +93,8 @@ number_aisles = 1;
 N_deck = 1;
 
 dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck,0,0);
-dimension.fuselage_length = 27;
-dimension.fuselage_diameter = 2.9;
+% dimension.fuselage_length = 27;
+% dimension.fuselage_diameter = 2.9;
 dimension = dimension.finalise();
 
 
@@ -129,8 +129,8 @@ number_aisles = 1;
 N_deck = 1;
 
 dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck,0,0);
-dimension.fuselage_length = 37.57;
-dimension.fuselage_diameter = 3.95;
+% dimension.fuselage_length = 37.57;
+% dimension.fuselage_diameter = 3.95;
 dimension = dimension.finalise();
 
 
@@ -165,8 +165,8 @@ number_aisles = 2;
 N_deck = 1;
 
 dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck,0,0);
-dimension.fuselage_length = 63.66;
-dimension.fuselage_diameter = 5.86;
+% dimension.fuselage_length = 63.66;
+% dimension.fuselage_diameter = 5.86;
 dimension = dimension.finalise();
 
 
@@ -201,8 +201,8 @@ number_aisles = 2;
 N_deck = 1;
 
 dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck,0,0);
-dimension.fuselage_length = 65.26;
-dimension.fuselage_diameter = 5.96;
+% dimension.fuselage_length = 65.26;
+% dimension.fuselage_diameter = 5.96;
 dimension = dimension.finalise();
 
 
@@ -237,8 +237,8 @@ number_aisles = 2;
 N_deck = 1;
 
 dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck,0,0);
-dimension.fuselage_length = 66.80;
-dimension.fuselage_diameter = 5.96;
+% dimension.fuselage_length = 66.80;
+% dimension.fuselage_diameter = 5.96;
 dimension = dimension.finalise();
 
 
@@ -273,8 +273,8 @@ number_aisles = 2;
 N_deck = 1;
 
 dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck,0,0);
-dimension.fuselage_length = 55.91;
-dimension.fuselage_diameter = 5.94;
+% dimension.fuselage_length = 55.91;
+% dimension.fuselage_diameter = 5.94;
 dimension = dimension.finalise();
 
 
@@ -309,8 +309,8 @@ number_aisles = 2;
 N_deck = 1;
 
 dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck,0,0);
-dimension.fuselage_length = 55.91;
-dimension.fuselage_diameter = 5.94;
+% dimension.fuselage_length = 55.91;
+% dimension.fuselage_diameter = 5.94;
 dimension = dimension.finalise();
 
 
