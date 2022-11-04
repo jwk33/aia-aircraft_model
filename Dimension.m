@@ -19,23 +19,25 @@ classdef Dimension
         cockpit_length double
         rear_length double
         cargo_height double
+        rear_angle double
+        seat_length double
     end
 
     properties (Constant)
         fuselage_thickness = 0.15;%m
         seat_height = 1.8;
         seat_width = 0.4;
-        seat_length = 0.81;
+%         seat_length = 0.81;
         bag_height = 0.25;
         bag_length = 0.81;
         bag_width = 0.4;
-        aisle_width = 0.5;
+        aisle_width = 0.55;
         aisle_height = 1.6+0.25;
         tank_tolerance = 0.2;
-        toilet_length = 2;
-        kitchen_length = 4;
+        toilet_length = 0;
+        kitchen_length = 0;
         cockpit_angle = 30;%To be changed ASAP
-        rear_angle = 24.5;%To be changed ASAP
+%         rear_angle = 24.5;%To be changed ASAP
     end
 
     methods
@@ -51,9 +53,22 @@ classdef Dimension
             obj.number_aisles = number_aisles;
             obj.N_deck = N_deck; 
             obj.cabin_width = obj.seat_width*obj.seats_per_row + obj.aisle_width*obj.number_aisles;
-            obj.cabin_height = N_deck*(obj.seat_height + obj.bag_height);
-            obj.cargo_height = 0.33*obj.cabin_height;
-            obj.cabin_height = obj.cabin_height + obj.cargo_height;
+            if obj.max_seats > 200
+                obj.cargo_height = 1.8;
+                obj.rear_angle = 24;
+                obj.seat_length = 0.796 + 3.111e-4 * obj.max_seats;
+                if obj.max_seats > 300
+                    cabin_factor = 0.765 + obj.max_seats*1.866e-3;
+                else
+                    cabin_factor = 1.3;
+                end
+            else
+                obj.cargo_height = 0;
+                obj.rear_angle = 30;
+                obj.seat_length = 0.8;
+                cabin_factor = 1.3;
+            end
+            obj.cabin_height = N_deck*(obj.seat_height + obj.bag_height) + obj.cargo_height;
             obj.tank_external_diameter = tank_diameter;
             min_fuselage_internal_diameter = (obj.cabin_width^2 + obj.cabin_height^2)^0.5;
             d = obj.tank_external_diameter + 2*obj.tank_tolerance;
@@ -65,12 +80,12 @@ classdef Dimension
             obj.fuselage_diameter = obj.fuselage_internal_diameter + 2*obj.fuselage_thickness;
 
             if N_deck == 1
-                number_toilets = round(obj.max_seats/100);
+                number_toilets = ceil(obj.max_seats/100);
                 obj.cockpit_length = obj.fuselage_diameter/(2*tand(obj.cockpit_angle));
                 obj.rear_length = obj.fuselage_diameter/(tand(obj.rear_angle));
                 obj.cabin_length = ceil(obj.max_seats/(obj.seats_per_row))*obj.seat_length + number_toilets*obj.toilet_length + obj.kitchen_length;
             else
-                number_toilets = round(obj.max_seats/(N_deck*100));%avg toilets per deck % TODO: how many toilets per deck?
+                number_toilets = ceil(obj.max_seats/(N_deck*100));%avg toilets per deck % TODO: how many toilets per deck?
                 obj.cockpit_length = obj.fuselage_diameter/(2*tand(obj.cockpit_angle));
                 obj.rear_length = obj.fuselage_diameter/(tand(obj.rear_angle));
 %                 delta_cab_length = floor(obj.cabin_height/(obj.seat_length*tand(obj.rear_angle)))*obj.seat_length;%extra cabin space on each deck as you go up
@@ -86,6 +101,7 @@ classdef Dimension
             else
                 obj.tank_external_length = tank_length_percentage*obj.cabin_length/100;
             end
+            obj.cabin_length = obj.cabin_length*cabin_factor;
             obj.fuselage_length = obj.cabin_length + obj.cockpit_length + obj.tank_external_length + obj.rear_length; 
         end
 
@@ -112,13 +128,13 @@ classdef Dimension
             obj.fuselage_diameter = obj.fuselage_internal_diameter + 2*obj.fuselage_thickness;
 
             if N_deck == 1
-                number_toilets = round(obj.max_seats/100);
+                number_toilets = ceil(obj.max_seats/100);
                 obj.cockpit_length = obj.fuselage_diameter/(2*tand(obj.cockpit_angle));
                 obj.rear_length = obj.fuselage_diameter/(tand(obj.rear_angle));
                 obj.cabin_length = ceil(obj.max_seats/(obj.seats_per_row))*obj.seat_length + number_toilets*obj.toilet_length + obj.kitchen_length;
                 obj.fuselage_length = obj.cabin_length + obj.cockpit_length + obj.rear_length;
             else
-                number_toilets = round(obj.max_seats/(N_deck*100));%avg toilets per deck % TODO: how many toilets per deck?
+                number_toilets = ceil(obj.max_seats/(N_deck*100));%avg toilets per deck % TODO: how many toilets per deck?
                 obj.cockpit_length = obj.fuselage_diameter/(2*tand(obj.cockpit_angle));
                 obj.rear_length = obj.fuselage_diameter/(tand(obj.rear_angle));
 %                 delta_cab_length = floor(obj.cabin_height/(obj.seat_length*tand(obj.rear_angle)))*obj.seat_length;%extra cabin space on each deck as you go up

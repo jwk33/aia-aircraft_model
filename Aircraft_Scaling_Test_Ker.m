@@ -7,8 +7,8 @@ load("Ker_Fuel.mat","Ker")
 range = 12222;%km
 M = 0.83;
 cruise_alt = 10000; %m
-max_pax = 853;%737 Max - 8
-cargo = 0; %kg
+max_pax = 525;%737 Max - 8
+cargo = 31160; %kg
 load_factor = 1.0;
 design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
 
