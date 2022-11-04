@@ -2,10 +2,10 @@ close all
 clear all
 %% set fuel properties
 
-Ker = Fuel(43.2e6,807.5,0);
+Ker = Fuel("Fossil Jet Fuel",43.2e6,807.5,0);
 save("Ker_Fuel.mat","Ker")
 
-LH2 = Fuel(120e6,70.17,1);
+LH2 = Fuel("Liquid Hydrogen", 120e6,70.17,1);
 save("LH2_Fuel.mat","LH2")
 
 %% CONSTANT INPUTS

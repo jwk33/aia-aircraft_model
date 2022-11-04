@@ -90,6 +90,22 @@ range_array = 500:100:18500;
 
 n_entries = length(year) * length(optimism);
 
+
+Aircraft_cells = cell(n_entries,1);
+Fuel_cells = cell(n_entries,1);
+LoadFactor_cells = cell(n_entries,1);
+Range_cells = cell(n_entries,1);
+Passengers_cells = cell(n_entries,1);
+WingSpan_cells = cell(n_entries,1);
+Altitude_cells = cell(n_entries,1);
+ClimbAngle_cells = cell(n_entries,1);
+CruiseSpeed_cells = cell(n_entries,1);
+ClimbSpeed_cells = cell(n_entries,1);
+ApproachSpeed_cells = cell(n_entries,1);
+MaxRange_cells = cell(n_entries,1);
+PropEfficiency_cells = cell(n_entries,1);
+ThermalEfficiency_cells = cell(n_entries,1);
+LoD_cells = cell(n_entries,1);
 FuelkWhPass_cells = cell(n_entries,1);
 FuelBurnKgm_cells = cell(n_entries,1);
 TakeOffWeight_cells = cell(n_entries,1);
@@ -148,7 +164,20 @@ for i=1:length(year)
 
                     end
 
-
+                    Aircraft_cells{count} = aircraft(k);
+                    Fuel_cells{count} = current.ac.fuel.name;
+                    LoadFactor_cells{count} = current.ac.oper_mission.load_factor;
+                    Passengers_cells{count} = current.ac.oper_mission.pax;
+                    MaxRange_cells{count} = current.max_range;
+                    PropEfficiency_cells{count} = current.ac.engine.eta_prop;
+                    ThermalEfficiency_cells{count} = current.ac.engine.eta_eng;
+                    LoD_cells{count} = current.ac.aero.LovD;
+                    Altitude_cells{count} = current.ac.design_mission.cruise_alt;
+                    ClimbAngle_cells{count} = current.ac.design_mission.angle_TO;
+                    CruiseSpeed_cells{count} = current.ac.design_mission.cruise_speed;
+                    ClimbSpeed_cells{count} = current.ac.design_mission.cruise_speed; %TODO climb speed necessary?
+                    ApproachSpeed_cells{count} = current.ac.design_mission.cruise_speed; % TODO approach speed
+                    Range_cells{count} = range_array;
                     FuelBurnKgm_cells{count} = FuelBurnKgm_array;
                     FuelkWhPass_cells{count} = FuelkWhPass_array;
                     TakeOffWeight_cells{count} = TakeOffWeight_array;
@@ -159,6 +188,27 @@ for i=1:length(year)
         end
     end
 end
+
+aircraftTableData = [Aircraft_cells,...
+                    Fuel_cells,...
+                    LoadFactor_cells,...
+                    Passengers_cells,...
+                    MaxRange_cells,...
+                    PropEfficiency_cells,...
+                    ThermalEfficiency_cells,...
+                    LoD_cells,...
+                    Altitude_cells,...
+                    ClimbAngle_cells,...
+                    CruiseSpeed_cells,...
+                    ClimbSpeed_cells,...
+                    ApproachSpeed_cells,...
+                    Range_cells,...
+                    FuelBurnKgm_cells,...
+                    FuelkWhPass_cells,...
+                    TakeOffWeight_cells...
+                    ];
+
+% aircraftTable = cell2table(aircraftTableData,'VariableNames',);
 
 
 

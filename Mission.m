@@ -40,7 +40,7 @@ classdef Mission < matlab.mixin.Copyable
         end
 
         function obj = update(obj)
-            obj.pax = obj.load_factor * obj.max_pax;
+            obj.pax = ceil(obj.load_factor * obj.max_pax);
         end
     end
 end
