@@ -1,6 +1,45 @@
 %%
 clear all
 
+%% DD CONSTANT INPUTS
+load("Ker_Fuel.mat","Ker")
+
+range = 12222;%km
+M = 0.83;
+cruise_alt = 10000; %m
+max_pax = 853;%737 Max - 8
+cargo = 0; %kg
+load_factor = 1.0;
+design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
+
+seats_per_row = 10;
+number_aisles = 2;
+N_deck = 2;
+
+dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck,0,0);
+% dimension.fuselage_length = 39.12;
+% dimension.fuselage_diameter = 4.01;
+dimension = dimension.finalise();
+
+
+% B737 SETUP AN INSTANCE OF AIRCRAFT CLASS
+
+fuel = Ker;
+A380 = Aircraft(fuel,design_mission,dimension);
+A380.m_eng_input = 24984;
+A380.eta_input = 0.5;
+A380.AR_input = 7.53;
+A380.sweep_input = 30;
+A380.wing_area_input = 845;
+
+A380.year = 2021;
+save('./saved-ac/A380.mat','A380');
+
+% All inputs defined. Now for the aircraft sizing loop to begin to
+% calculate MTOW
+A380 = A380.finalise();
+save('./saved-ac/A380.mat','A380');
+
 %% B737 CONSTANT INPUTS
 load("Ker_Fuel.mat","Ker")
 
