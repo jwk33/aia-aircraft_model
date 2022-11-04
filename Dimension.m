@@ -65,7 +65,7 @@ classdef Dimension
                 obj.cabin_length = ceil(obj.max_seats/(obj.seats_per_row))*obj.seat_length + number_toilets*obj.toilet_length + obj.kitchen_length;
                 obj.fuselage_length = obj.cabin_length + obj.cockpit_length + obj.rear_length;
             else
-                number_toilets = ceil(obj.max_seats/N_deck*100);%avg toilets per deck
+                number_toilets = ceil(obj.max_seats/(N_deck*100));%avg toilets per deck % TODO: how many toilets per deck?
                 obj.cockpit_length = obj.fuselage_diameter/(2*tand(obj.cockpit_angle));
                 obj.rear_length = obj.fuselage_diameter/(tand(obj.rear_angle));
 %                 cab_length = ceil(obj.max_seats/(obj.seats_per_row))*obj.seat_length + number_toilets*obj.toilet_length + 2*obj.kitchen_length;
