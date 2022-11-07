@@ -80,18 +80,21 @@ classdef Weight < matlab.mixin.Copyable
                 + obj.m_op_items ...
                 + obj.m_fuel_sys ...
                 + obj.m_mzf_delta;
-            
+
+
+            % Max Fuel
+            obj.m_maxFuel = aircraft.fuelburn.m_fuel; % for design portion, max fuel is equal to fuel at design point
+
             % Max Takeoff Weight
             obj.m_maxTO = obj.m_OEW + obj.m_max_payload + obj.m_maxFuel;
 
             % Max Zero Fuel
             obj.m_maxZFW = obj.m_OEW + obj.m_max_payload;
-
-            % Max Fuel
-            obj.m_maxFuel = aircraft.fuelburn.m_fuel; % for design portion, max fuel is equal to fuel at design point
             
             % Variables that will change with operating point
             obj = obj.operate(aircraft,mission);
+
+            assert(obj.m_maxTO < 1e6, "Max Takeoff Weight too high - Solution diverged")
 
             
         end
@@ -108,6 +111,9 @@ classdef Weight < matlab.mixin.Copyable
 
             % Zero Fuel
             obj.m_ZFW = obj.m_OEW + obj.m_payload;
+
+            assert (obj.m_TO <= obj.m_maxTO, 'Takeoff Weight greater than Max Takeoff Weight')
+            
         end
 
         function obj = torenbeek(obj,aircraft)

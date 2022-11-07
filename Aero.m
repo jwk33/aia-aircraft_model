@@ -100,6 +100,8 @@ classdef Aero
             % update L/D for given technology levels
             obj = aircraft.tech.improve_LoD(obj);
 
+            assert(obj.LovD > 5 && obj.LovD < 30, "LoD unreasonable")
+
         end
         
         
