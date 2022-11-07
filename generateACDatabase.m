@@ -3,80 +3,81 @@ clear all
 
 %% load constants
 load("Ker_Fuel.mat","Ker")
-M = 0.79;
 cruise_alt = 10000; %m
 
 %% Aircraft Size Dependent Inputs
 
 % Short haul
 SH = {};
-SH.range = 3000;
-SH.max_pax = 85;
+SH.range = 4000;
+SH.M = 0.79;
+SH.m_cargo = 2500;
+SH.max_pax = 175;
 SH.seats_per_row = 6;
 SH.number_aisles = 1;
 SH.N_deck = 1;
 
 
 % Medium haul
-MH.range = 6500;
-MH.max_pax = 197;
+MH.range = 9000;
+MH.M = 0.81;
+MH.m_cargo = 20000;
+MH.max_pax = 300;
 MH.seats_per_row = 8;
 MH.number_aisles = 2;
 MH.N_deck = 1;
 
 % Long haul
 LH.range = 14000;
-LH.max_pax = 436;
-LH.seats_per_row = 15;
+LH.M = 0.83;
+LH.m_cargo = 30000;
+LH.max_pax = 500;
+LH.seats_per_row = 10;
 LH.number_aisles = 2;
 LH.N_deck = 2;
 
 %% Generate Aircraft
-m_cargo = 0;
-AR = 10;
-sweep = 30;
-
-SH.design_mission = Mission(SH.range,M,cruise_alt, SH.max_pax, 1.0, m_cargo); % design mission is always at 100% load factor
+SH.design_mission = Mission(SH.range,SH.M,cruise_alt, SH.max_pax, 1.0, SH.m_cargo); % design mission is always at 100% load factor
 
 SH.dimension = Dimension(SH.design_mission, SH.seats_per_row, SH.number_aisles, SH.N_deck,0,0);
 SH.dimension = SH.dimension.finalise();
 
 SH.ac = Aircraft(Ker, SH.design_mission, SH.dimension);
 
-SH.ac.m_eng_input = 960;
+SH.ac.m_eng_input = 6000;
 SH.ac.eta_input = 0.45;
-SH.ac.AR_input = AR;
-SH.ac.sweep_input = sweep;
-SH.ac.wing_area_input = 100;
+SH.ac.AR_input = 10;
+SH.ac.sweep_input = 25;
+SH.ac.wing_area_input = 130;
 
 % Medium haul
 
-MH.design_mission = Mission(MH.range,M,cruise_alt, MH.max_pax, 1.0, m_cargo); % design mission is always at 100% load factor
+MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_cargo); % design mission is always at 100% load factor
 
 MH.dimension = Dimension(MH.design_mission, MH.seats_per_row, MH.number_aisles, MH.N_deck,0,0);
 MH.dimension = MH.dimension.finalise();
 
 MH.ac = Aircraft(Ker, MH.design_mission, MH.dimension);
 
-MH.ac.m_eng_input = 960;
-MH.ac.eta_input = 0.45;
-MH.ac.AR_input = AR;
-MH.ac.sweep_input = sweep;
-MH.ac.wing_area_input = 145;
+MH.ac.m_eng_input = 13000;
+MH.ac.eta_input = 0.475;
+MH.ac.AR_input = 9;
+MH.ac.sweep_input = 30;
+MH.ac.wing_area_input = 470;
 
 % Long haul
-LH.design_mission = Mission(LH.range,M,cruise_alt, LH.max_pax, 1.0, m_cargo); % design mission is always at 100% load factor
+LH.design_mission = Mission(LH.range,LH.M,cruise_alt, LH.max_pax, 1.0, LH.m_cargo); % design mission is always at 100% load factor
 
 LH.dimension = Dimension(LH.design_mission, LH.seats_per_row, LH.number_aisles, LH.N_deck,0,0);
 LH.dimension = LH.dimension.finalise();
 
 LH.ac = Aircraft(Ker, LH.design_mission, LH.dimension);
 
-LH.ac.m_eng_input = 960;
-LH.ac.eta_input = 0.45;
-LH.ac.AR_input = AR;
-LH.ac.sweep_input = sweep;
-LH.ac.wing_area_input = 850;
+LH.ac.m_eng_input = 25000;
+LH.ac.eta_input = 0.5;
+LH.ac.AR_input = 8;
+LH.ac.sweep_input = 32;
+LH.ac.wing_area_input = 800;
 
 
 %% Run all cases
@@ -88,9 +89,10 @@ aircraft = ["Short Haul", "Medium Haul", "Long Haul"];
 fuel = ["Fossil Jet Fuel"];
 range_array = 500:100:18500;
 
-n_entries = length(year) * length(optimism);
+n_entries = length(year) * length(optimism) * length(aircraft) * length(load_factor);
 
-
+Year_cells = cell(n_entries,1);
+Optimism_cells = cell(n_entries,1);
 Aircraft_cells = cell(n_entries,1);
 Fuel_cells = cell(n_entries,1);
 LoadFactor_cells = cell(n_entries,1);
@@ -118,7 +120,7 @@ for i=1:length(year)
         for k=1:length(aircraft)
             if aircraft(k) == "Short Haul"
                 current = SH;
-            elseif aircraft(k) == "Medim Haul"
+            elseif aircraft(k) == "Medium Haul"
                 current = MH;
             elseif aircraft(k) == "Long Haul"
                 current = LH;
@@ -130,9 +132,6 @@ for i=1:length(year)
                     % update year
                     current.ac.year = year(i);
                     current.ac.optimism = optimism(j);
-                    if count == 7
-                        disp("error here")
-                    end
                     current.ac = current.ac.finalise();
 
                     %calculate max range at load factor
@@ -163,7 +162,9 @@ for i=1:length(year)
 
 
                     end
-
+                    
+                    Year_cells{count} = current.ac.year;
+                    Optimism_cells{count} = current.ac.optimism;
                     Aircraft_cells{count} = aircraft(k);
                     Fuel_cells{count} = current.ac.fuel.name;
                     LoadFactor_cells{count} = current.ac.oper_mission.load_factor;
@@ -171,6 +172,7 @@ for i=1:length(year)
                     MaxRange_cells{count} = current.max_range;
                     PropEfficiency_cells{count} = current.ac.engine.eta_prop;
                     ThermalEfficiency_cells{count} = current.ac.engine.eta_eng;
+                    WingSpan_cells{count} = current.ac.aero.b;
                     LoD_cells{count} = current.ac.aero.LovD;
                     Altitude_cells{count} = current.ac.design_mission.cruise_alt;
                     ClimbAngle_cells{count} = current.ac.design_mission.angle_TO;
@@ -189,13 +191,17 @@ for i=1:length(year)
     end
 end
 
-aircraftTableData = [Aircraft_cells,...
+aircraftTableData = [
+                    Year_cells,...
+                    Optimism_cells,...
+                    Aircraft_cells,...
                     Fuel_cells,...
                     LoadFactor_cells,...
                     Passengers_cells,...
                     MaxRange_cells,...
                     PropEfficiency_cells,...
                     ThermalEfficiency_cells,...
+                    WingSpan_cells,...
                     LoD_cells,...
                     Altitude_cells,...
                     ClimbAngle_cells,...
@@ -208,11 +214,12 @@ aircraftTableData = [Aircraft_cells,...
                     TakeOffWeight_cells...
                     ];
 
-aircraftTable = cell2table(aircraftTableData,'VariableNames',{'Aircraft','Fuel',...
-    'LoadFactor','Passengers','MaxRange','PropEff','ThermalEff','L/D','Altitude',...
+aircraftTable = cell2table(aircraftTableData,'VariableNames',{'Year', 'AircraftOptimism','Aircraft','Fuel',...
+    'LoadFactor','Passengers','MaxRange','PropEfficiency','ThermalEfficciency','WingSpan','LoD','Altitude',...
     'ClimbAngle','CruiseSpeed','ClimbSpeed','ApproachSpeed','Range','FuelBurnkgm',...
-    'FuelkWhPass','TaleOffWeight'});
+    'FuelkWhPass','TakeOffWeight'});
 
+disp("Table generated")
 
 
 %% Generate Table
