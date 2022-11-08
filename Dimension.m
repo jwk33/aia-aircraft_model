@@ -63,7 +63,6 @@ classdef Dimension
 
             obj.max_seats = design_mission.max_pax;
             obj.seats_per_row = seats_per_row;
-            obj.number_aisles = number_aisles;
             obj.N_deck = N_deck; 
             
             % set number of aisles

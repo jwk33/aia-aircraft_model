@@ -14,7 +14,6 @@ SH.M = 0.79;
 SH.m_cargo = 0; %2500;
 SH.max_pax = 175;
 SH.seats_per_row = 6;
-SH.number_aisles = 1;
 SH.N_deck = 1;
 
 
@@ -24,7 +23,6 @@ MH.M = 0.81;
 MH.m_cargo = 0; %20000;
 MH.max_pax = 300;
 MH.seats_per_row = 8;
-MH.number_aisles = 2;
 MH.N_deck = 1;
 
 % Long haul
@@ -33,13 +31,12 @@ LH.M = 0.83;
 LH.m_cargo = 0; % 30000;
 LH.max_pax = 500;
 LH.seats_per_row = 10;
-LH.number_aisles = 2;
 LH.N_deck = 2;
 
 %% Generate Aircraft
 SH.design_mission = Mission(SH.range,SH.M,cruise_alt, SH.max_pax, 1.0, SH.m_cargo); % design mission is always at 100% load factor
 
-SH.dimension = Dimension(SH.design_mission, SH.seats_per_row, SH.number_aisles, SH.N_deck,0,0,0,0);
+SH.dimension = Dimension(SH.design_mission, SH.seats_per_row, SH.N_deck,0,0,0,0);
 SH.dimension = SH.dimension.finalise();
 
 SH.ac = Aircraft(Ker, SH.design_mission, SH.dimension);
@@ -54,7 +51,7 @@ SH.ac.wing_area_input = 130;
 
 MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_cargo); % design mission is always at 100% load factor
 
-MH.dimension = Dimension(MH.design_mission, MH.seats_per_row, MH.number_aisles, MH.N_deck,0,0,0,0);
+MH.dimension = Dimension(MH.design_mission, MH.seats_per_row, MH.N_deck,0,0,0,0);
 MH.dimension = MH.dimension.finalise();
 
 MH.ac = Aircraft(Ker, MH.design_mission, MH.dimension);
@@ -68,7 +65,7 @@ MH.ac.wing_area_input = 470;
 % Long haul
 LH.design_mission = Mission(LH.range,LH.M,cruise_alt, LH.max_pax, 1.0, LH.m_cargo); % design mission is always at 100% load factor
 
-LH.dimension = Dimension(LH.design_mission, LH.seats_per_row, LH.number_aisles, LH.N_deck,0,0,0,0);
+LH.dimension = Dimension(LH.design_mission, LH.seats_per_row, LH.N_deck,0,0,0,0);
 LH.dimension = LH.dimension.finalise();
 
 LH.ac = Aircraft(Ker, LH.design_mission, LH.dimension);
