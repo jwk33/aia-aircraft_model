@@ -39,7 +39,7 @@ LH.N_deck = 2;
 %% Generate Aircraft
 SH.design_mission = Mission(SH.range,SH.M,cruise_alt, SH.max_pax, 1.0, SH.m_cargo); % design mission is always at 100% load factor
 
-SH.dimension = Dimension(SH.design_mission, SH.seats_per_row, SH.number_aisles, SH.N_deck,0,0);
+SH.dimension = Dimension(SH.design_mission, SH.seats_per_row, SH.number_aisles, SH.N_deck,0,0,0,0);
 SH.dimension = SH.dimension.finalise();
 
 SH.ac = Aircraft(Ker, SH.design_mission, SH.dimension);
@@ -54,7 +54,7 @@ SH.ac.wing_area_input = 130;
 
 MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_cargo); % design mission is always at 100% load factor
 
-MH.dimension = Dimension(MH.design_mission, MH.seats_per_row, MH.number_aisles, MH.N_deck,0,0);
+MH.dimension = Dimension(MH.design_mission, MH.seats_per_row, MH.number_aisles, MH.N_deck,0,0,0,0);
 MH.dimension = MH.dimension.finalise();
 
 MH.ac = Aircraft(Ker, MH.design_mission, MH.dimension);
@@ -68,7 +68,7 @@ MH.ac.wing_area_input = 470;
 % Long haul
 LH.design_mission = Mission(LH.range,LH.M,cruise_alt, LH.max_pax, 1.0, LH.m_cargo); % design mission is always at 100% load factor
 
-LH.dimension = Dimension(LH.design_mission, LH.seats_per_row, LH.number_aisles, LH.N_deck,0,0);
+LH.dimension = Dimension(LH.design_mission, LH.seats_per_row, LH.number_aisles, LH.N_deck,0,0,0,0);
 LH.dimension = LH.dimension.finalise();
 
 LH.ac = Aircraft(Ker, LH.design_mission, LH.dimension);
@@ -112,6 +112,7 @@ ApproachSpeed = cell(n_entries,1);
 TakeOffWeight = cell(n_entries,1);
 FuelkWhPass = cell(n_entries,1);
 FuelBurnKgm = cell(n_entries,1);
+DesignRange = cell (n_entries,1);
 
 
 
@@ -186,6 +187,7 @@ for i=1:length(year_array)
                     TakeOffWeight{count} = TakeOffWeight_array;
                     FuelBurnKgm{count} = FuelBurnKgm_array;
                     FuelkWhPass{count} = FuelkWhPass_array;
+                    DesignRange{count} = current.ac.design_mission.range;
                     
 
                     count = count + 1;
@@ -216,7 +218,8 @@ aircraftDataTable = table(...
                     Range,...
                     TakeOffWeight,...
                     FuelBurnKgm,...
-                    FuelkWhPass...
+                    FuelkWhPass,...
+                    DesignRange...
                     );
 
 % aircraftTable = cell2table(aircraftTableData,'VariableNames',{...
