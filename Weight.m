@@ -113,6 +113,7 @@ classdef Weight < matlab.mixin.Copyable
             obj.m_ZFW = obj.m_OEW + obj.m_payload;
 
             assert (obj.m_TO <= obj.m_maxTO, 'Takeoff Weight greater than Max Takeoff Weight')
+            assert (obj.m_TO > obj.m_OEW, "Takeoff weight less than empty weight")
             
         end
 

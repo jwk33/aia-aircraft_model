@@ -1,6 +1,6 @@
 close all
 clear all
-
+clc
 %% load constants
 load("Ker_Fuel.mat","Ker")
 cruise_alt = 10000; %m
@@ -11,7 +11,7 @@ cruise_alt = 10000; %m
 SH = {};
 SH.range = 4000;
 SH.M = 0.79;
-SH.m_cargo = 2500;
+SH.m_cargo = 0; %2500;
 SH.max_pax = 175;
 SH.seats_per_row = 6;
 SH.number_aisles = 1;
@@ -21,7 +21,7 @@ SH.N_deck = 1;
 % Medium haul
 MH.range = 9000;
 MH.M = 0.81;
-MH.m_cargo = 20000;
+MH.m_cargo = 0; %20000;
 MH.max_pax = 300;
 MH.seats_per_row = 8;
 MH.number_aisles = 2;
@@ -30,7 +30,7 @@ MH.N_deck = 1;
 % Long haul
 LH.range = 14000;
 LH.M = 0.83;
-LH.m_cargo = 30000;
+LH.m_cargo = 0; % 30000;
 LH.max_pax = 500;
 LH.seats_per_row = 10;
 LH.number_aisles = 2;
@@ -82,61 +82,63 @@ LH.ac.wing_area_input = 800;
 
 %% Run all cases
 
-year = [2021, 2035, 2050];
-optimism = ["less", "basic", "more"];
-load_factor = [0.7, 0.75, 0.8];
-aircraft = ["Short Haul", "Medium Haul", "Long Haul"];
-fuel = ["Fossil Jet Fuel"];
+year_array = [2021, 2035, 2050];
+optimism_array = ["less", "basic", "more"];
+load_factor_array = [0.7, 0.75, 0.8];
+aircraft_array = ["Short Haul", "Medium Haul", "Long Haul"];
+fuel_array = ["Fossil Jet Fuel"];
 range_array = 500:100:18500;
 
-n_entries = length(year) * length(optimism) * length(aircraft) * length(load_factor);
+n_entries = length(year_array) * length(optimism_array) * length(aircraft_array) * length(load_factor_array);
 
-Year_cells = cell(n_entries,1);
-Optimism_cells = cell(n_entries,1);
-Aircraft_cells = cell(n_entries,1);
-Fuel_cells = cell(n_entries,1);
-LoadFactor_cells = cell(n_entries,1);
-Range_cells = cell(n_entries,1);
-Passengers_cells = cell(n_entries,1);
-WingSpan_cells = cell(n_entries,1);
-Altitude_cells = cell(n_entries,1);
-ClimbAngle_cells = cell(n_entries,1);
-CruiseSpeed_cells = cell(n_entries,1);
-ClimbSpeed_cells = cell(n_entries,1);
-ApproachSpeed_cells = cell(n_entries,1);
-MaxRange_cells = cell(n_entries,1);
-PropEfficiency_cells = cell(n_entries,1);
-ThermalEfficiency_cells = cell(n_entries,1);
-LoD_cells = cell(n_entries,1);
-FuelkWhPass_cells = cell(n_entries,1);
-FuelBurnKgm_cells = cell(n_entries,1);
-TakeOffWeight_cells = cell(n_entries,1);
+Year = cell(n_entries,1);
+Optimism = cell(n_entries,1);
+Aircraft = cell(n_entries,1);
+Fuel = cell(n_entries,1);
+LoadFactor = cell(n_entries,1);
+Range = cell(n_entries,1);
+Passengers = cell(n_entries,1);
+WingSpan = cell(n_entries,1);
+Altitude = cell(n_entries,1);
+MaxRange = cell(n_entries,1);
+PropEfficiency = cell(n_entries,1);
+ThermalEfficiency = cell(n_entries,1);
+LoD = cell(n_entries,1);
+OEW = cell(n_entries,1);
+ClimbAngle = cell(n_entries,1);
+CruiseSpeed = cell(n_entries,1);
+ClimbSpeed = cell(n_entries,1);
+ApproachSpeed = cell(n_entries,1);
+TakeOffWeight = cell(n_entries,1);
+FuelkWhPass = cell(n_entries,1);
+FuelBurnKgm = cell(n_entries,1);
+
 
 
 count = 1;
 
-for i=1:length(year)
-    for j=1:length(optimism)
-        for k=1:length(aircraft)
-            if aircraft(k) == "Short Haul"
+for i=1:length(year_array)
+    for j=1:length(optimism_array)
+        for k=1:length(aircraft_array)
+            if aircraft_array(k) == "Short Haul"
                 current = SH;
-            elseif aircraft(k) == "Medium Haul"
+            elseif aircraft_array(k) == "Medium Haul"
                 current = MH;
-            elseif aircraft(k) == "Long Haul"
+            elseif aircraft_array(k) == "Long Haul"
                 current = LH;
             end
             
-            for l=1:length(fuel)
+            for l=1:length(fuel_array)
 
-                for m =1:length(load_factor)
+                for m =1:length(load_factor_array)
                     % update year
-                    current.ac.year = year(i);
-                    current.ac.optimism = optimism(j);
+                    current.ac.year = year_array(i);
+                    current.ac.optimism = optimism_array(j);
                     current.ac = current.ac.finalise();
 
                     %calculate max range at load factor
                     current.oper_mission = copy(current.design_mission);
-                    current.oper_mission.load_factor = load_factor(m);
+                    current.oper_mission.load_factor = load_factor_array(m);
                     current.oper_mission = current.oper_mission.update();
                     current.max_range = current.ac.max_range(current.oper_mission);
 
@@ -163,26 +165,28 @@ for i=1:length(year)
 
                     end
                     
-                    Year_cells{count} = current.ac.year;
-                    Optimism_cells{count} = current.ac.optimism;
-                    Aircraft_cells{count} = aircraft(k);
-                    Fuel_cells{count} = current.ac.fuel.name;
-                    LoadFactor_cells{count} = current.ac.oper_mission.load_factor;
-                    Passengers_cells{count} = current.ac.oper_mission.pax;
-                    MaxRange_cells{count} = current.max_range;
-                    PropEfficiency_cells{count} = current.ac.engine.eta_prop;
-                    ThermalEfficiency_cells{count} = current.ac.engine.eta_eng;
-                    WingSpan_cells{count} = current.ac.aero.b;
-                    LoD_cells{count} = current.ac.aero.LovD;
-                    Altitude_cells{count} = current.ac.design_mission.cruise_alt;
-                    ClimbAngle_cells{count} = current.ac.design_mission.angle_TO;
-                    CruiseSpeed_cells{count} = current.ac.design_mission.cruise_speed;
-                    ClimbSpeed_cells{count} = current.ac.design_mission.cruise_speed; %TODO climb speed necessary?
-                    ApproachSpeed_cells{count} = current.ac.design_mission.cruise_speed; % TODO approach speed
-                    Range_cells{count} = range_array;
-                    FuelBurnKgm_cells{count} = FuelBurnKgm_array;
-                    FuelkWhPass_cells{count} = FuelkWhPass_array;
-                    TakeOffWeight_cells{count} = TakeOffWeight_array;
+                    Year{count} = current.ac.year;
+                    Optimism{count} = current.ac.optimism;
+                    Aircraft{count} = aircraft_array(k);
+                    Fuel{count} = current.ac.fuel.name;
+                    LoadFactor{count} = current.ac.oper_mission.load_factor;
+                    Passengers{count} = current.ac.oper_mission.pax;
+                    MaxRange{count} = current.max_range;
+                    PropEfficiency{count} = current.ac.engine.eta_prop;
+                    ThermalEfficiency{count} = current.ac.engine.eta_eng;
+                    WingSpan{count} = current.ac.aero.b;
+                    LoD{count} = current.ac.aero.LovD;
+                    OEW{count} = current.ac.weight.m_OEW;
+                    Altitude{count} = current.ac.design_mission.cruise_alt;
+                    ClimbAngle{count} = current.ac.design_mission.angle_TO;
+                    CruiseSpeed{count} = current.ac.design_mission.cruise_speed;
+                    ClimbSpeed{count} = current.ac.design_mission.cruise_speed; %TODO climb speed necessary?
+                    ApproachSpeed{count} = current.ac.design_mission.cruise_speed; % TODO approach speed
+                    Range{count} = range_array;
+                    TakeOffWeight{count} = TakeOffWeight_array;
+                    FuelBurnKgm{count} = FuelBurnKgm_array;
+                    FuelkWhPass{count} = FuelkWhPass_array;
+                    
 
                     count = count + 1;
                 end
@@ -191,41 +195,60 @@ for i=1:length(year)
     end
 end
 
-aircraftTableData = [
-                    Year_cells,...
-                    Optimism_cells,...
-                    Aircraft_cells,...
-                    Fuel_cells,...
-                    LoadFactor_cells,...
-                    Passengers_cells,...
-                    MaxRange_cells,...
-                    PropEfficiency_cells,...
-                    ThermalEfficiency_cells,...
-                    WingSpan_cells,...
-                    LoD_cells,...
-                    Altitude_cells,...
-                    ClimbAngle_cells,...
-                    CruiseSpeed_cells,...
-                    ClimbSpeed_cells,...
-                    ApproachSpeed_cells,...
-                    Range_cells,...
-                    FuelBurnKgm_cells,...
-                    FuelkWhPass_cells,...
-                    TakeOffWeight_cells...
-                    ];
+aircraftDataTable = table(...
+                    Year,...
+                    Optimism,...
+                    Aircraft,...
+                    Fuel,...
+                    LoadFactor,...
+                    Passengers,...
+                    MaxRange,...
+                    PropEfficiency,...
+                    ThermalEfficiency,...
+                    WingSpan,...
+                    LoD,...
+                    OEW,...
+                    Altitude,...
+                    ClimbAngle,...
+                    CruiseSpeed,...
+                    ClimbSpeed,...
+                    ApproachSpeed,...
+                    Range,...
+                    TakeOffWeight,...
+                    FuelBurnKgm,...
+                    FuelkWhPass...
+                    );
 
-aircraftTable = cell2table(aircraftTableData,'VariableNames',{'Year', 'AircraftOptimism','Aircraft','Fuel',...
-    'LoadFactor','Passengers','MaxRange','PropEfficiency','ThermalEfficciency','WingSpan','LoD','Altitude',...
-    'ClimbAngle','CruiseSpeed','ClimbSpeed','ApproachSpeed','Range','FuelBurnkgm',...
-    'FuelkWhPass','TakeOffWeight'});
+% aircraftTable = cell2table(aircraftTableData,'VariableNames',{...
+%     'Year',...
+%     'AircraftOptimism',...
+%     'Aircraft',...
+%     'Fuel',...
+%     'LoadFactor',...
+%     'Passengers',...
+%     'MaxRange',...
+%     'PropEfficiency',...
+%     'ThermalEfficciency',...
+%     'WingSpan',...
+%     'LoD',...
+%     'OEW',...
+%     'Altitude',...
+%     'ClimbAngle',...
+%     'CruiseSpeed',...
+%     'ClimbSpeed',...
+%     'ApproachSpeed',...
+%     'Range',...
+%     'TakeOffWeight',...
+%     'FuelBurnkgm',...
+%     'FuelkWhPass'});
 
 disp("Table generated")
 
 
-%% Generate Table
-
-% AircraftDataTable_new = table('VariableNames',());
-
+%% Save table
+save("aircraftDataTable.mat","aircraftDataTable")
+%%
+% tableTest = table(Year, FuelBurnKgm);
 
 
 
