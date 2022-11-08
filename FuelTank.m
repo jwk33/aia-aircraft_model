@@ -1,4 +1,4 @@
-classdef FuelTank < handle
+classdef FuelTank < matlab.mixin.Copyable
     %FuelTank object
     
     % set up fuel tank properties
@@ -52,8 +52,8 @@ classdef FuelTank < handle
         
         function obj = finalise(obj, dimension)
             disp('calculating tank parameters')
-            obj.length_ext = dimension.tank_external_length;
-            obj.diam_ext = dimension.tank_external_diameter;
+            obj.length_ext = dimension.tank_external_length_i;
+            obj.diam_ext = dimension.tank_external_diameter_i;
             % put it all together: calculate tank empty mass and
             % gravimetric efficiency
             obj.find_fuel_mass();
