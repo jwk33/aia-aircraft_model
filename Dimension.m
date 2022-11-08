@@ -14,9 +14,9 @@ classdef Dimension
         tank_external_diameter_i(1,1) double {mustBeNonnegative, mustBeFinite}
         tank_external_length_i(1,1) double {mustBeNonnegative, mustBeFinite}
         N_deck(1,1) double {mustBeNonnegative, mustBeFinite}
-        number_aisles double
+        number_aisles double % number of aisles per deck
         max_seats double
-        seats_per_row double
+        seats_per_row double % number of seats abreast per deck
         cabin_width double
         cockpit_length double
         rear_length double
@@ -43,7 +43,7 @@ classdef Dimension
     end
 
     methods
-        function obj = Dimension(design_mission,seats_per_row,number_aisles,N_deck,tank_diameter_i,tank_length_i,tank_diameter_u,tank_length_u)
+        function obj = Dimension(design_mission,seats_per_row,N_deck,tank_diameter_i,tank_length_i,tank_diameter_u,tank_length_u) % TODO: refactor dimension istance call
             %UNTITLED2 Construct an instance of this class
             %   The tank inputs are all as percentages. 
             %   For under(over)floor tanks they are as a percentage of 
@@ -53,20 +53,32 @@ classdef Dimension
             
             arguments
                 design_mission Mission
-                seats_per_row double
-                number_aisles double
+                seats_per_row double % number of seats per row per deck
                 N_deck double
-                tank_diameter_i double {mustBeGreaterThanOrEqual(tank_diameter_i,0)} % fraction of cabin width
-                tank_length_i double {mustBeGreaterThanOrEqual(tank_length_i,0)} % fraction of cabin length
-                tank_diameter_u double {mustBeGreaterThanOrEqual(tank_diameter_u,0)} % fraction of fuselage diameter
-                tank_length_u double {mustBeGreaterThanOrEqual(tank_length_u,0)} % fraction of cabin length
+                tank_diameter_i double {mustBeGreaterThanOrEqual(tank_diameter_i,0)} = 0% fraction of cabin width
+                tank_length_i double {mustBeGreaterThanOrEqual(tank_length_i,0)} = 0 % fraction of cabin length
+                tank_diameter_u double {mustBeGreaterThanOrEqual(tank_diameter_u,0)} = 0 % fraction of fuselage diameter
+                tank_length_u double {mustBeGreaterThanOrEqual(tank_length_u,0)} = 0 % fraction of cabin length
             end
 
             obj.max_seats = design_mission.max_pax;
             obj.seats_per_row = seats_per_row;
             obj.number_aisles = number_aisles;
             obj.N_deck = N_deck; 
+            
+            % set number of aisles
+            if seats_per_row <= 6
+                obj.number_aisles = 1;
+            elseif seats_per_row <= 12
+                obj.number_aisles = 2;
+            else 
+                obj.number_aisles = ceil(seats_per_row/6);
+            end
+
             obj.cabin_width = obj.seat_width*obj.seats_per_row + obj.aisle_width*obj.number_aisles;
+
+            % calculate non-seat fuselage dimensions (cockpit, tail,
+            % galleys, cargo etc) (not including tanks)
             if obj.max_seats > 200
                 obj.cargo_height = 1.8;
                 obj.rear_angle = 24;

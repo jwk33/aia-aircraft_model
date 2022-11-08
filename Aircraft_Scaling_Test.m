@@ -22,10 +22,9 @@ load_factor = 1.0;
 design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
 
 seats_per_row = 6;
-number_aisles = 1;
 N_deck = 1;
 
-dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck);
+dimension = Dimension(design_mission,seats_per_row,N_deck);
 dimension.fuselage_length = 39.47;
 dimension.fuselage_diameter = 3.74;
 dimension = dimension.finalise();

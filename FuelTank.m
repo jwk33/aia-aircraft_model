@@ -20,8 +20,8 @@ classdef FuelTank < matlab.mixin.Copyable
     end
     
     properties (SetAccess = private)
-        fuel_mass(1,1) double {mustBeNonnegative, mustBeFinite} % fuel mass (kg)
-        fuel_volume(1,1) double {mustBeNonnegative, mustBeFinite} % fuel volume (m3)
+        m_fuelMax(1,1) double {mustBeNonnegative, mustBeFinite} % fuel mass (kg)
+        v_fuelMax(1,1) double {mustBeNonnegative, mustBeFinite} % fuel volume (m3)
         t_total(1,1) double {mustBeNonnegative, mustBeFinite}
         t_structure(1,1) double {mustBeNonnegative, mustBeFinite}
         t_insulation(1,1) double {mustBeNonnegative, mustBeFinite}
@@ -51,7 +51,6 @@ classdef FuelTank < matlab.mixin.Copyable
         end
         
         function obj = finalise(obj, dimension)
-            disp('calculating tank parameters')
             obj.length_ext = dimension.tank_external_length_i;
             obj.diam_ext = dimension.tank_external_diameter_i;
             % put it all together: calculate tank empty mass and
@@ -65,7 +64,7 @@ classdef FuelTank < matlab.mixin.Copyable
        
         function obj = find_gravimetric_efficiency(obj)
             % percentage of fuel weight out of total weight of tank 
-            obj.gravimetric_efficiency = 100 * obj.fuel_mass / (obj.fuel_mass + obj.m_empty);
+            obj.gravimetric_efficiency = 100 * obj.m_fuelMax / (obj.m_fuelMax + obj.m_empty);
         end
         
         
@@ -78,7 +77,7 @@ classdef FuelTank < matlab.mixin.Copyable
             caps_volume = 4*pi/3 * radius^3; % 2 hemispheres
             cylinder_length = obj.length_ext - obj.diam_ext;
             cylinder_volume = cylinder_length * pi * radius^2;
-            obj.fuel_volume = caps_volume + cylinder_volume;
+            obj.v_fuelMax = caps_volume + cylinder_volume;
             
 %             fprintf(formatSpec,obj.fuel_volume);
         end
@@ -89,7 +88,7 @@ classdef FuelTank < matlab.mixin.Copyable
         function obj = find_fuel_mass(obj)
             % calculate fuel mass from tank volume
             obj.volume();
-            obj.fuel_mass = obj.fuel.density * obj.fuel_volume;
+            obj.m_fuelMax = obj.fuel.density * obj.v_fuelMax;
         end
         
         function obj = find_t_total(obj)
@@ -152,7 +151,7 @@ classdef FuelTank < matlab.mixin.Copyable
 
             % calculate allowable heat transfer through insulation
             boil_off_rate = 0.05;   % percentage of contents per hour
-            M_boil = boil_off_rate*obj.fuel_mass() / 100;     % kg / hour
+            M_boil = boil_off_rate*obj.m_fuelMax() / 100;     % kg / hour
             m_boil = M_boil / 3600; % kg / sec
             H_vap = 222700;         % J / kg
             Q_boil = m_boil * H_vap;% W

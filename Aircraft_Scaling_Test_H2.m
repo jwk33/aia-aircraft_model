@@ -13,10 +13,9 @@ load_factor = 1.0;
 design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
 
 seats_per_row = 6;
-number_aisles = 1;
 N_deck = 1;
 
-dimension = Dimension(design_mission,seats_per_row,number_aisles,N_deck,1,0.5,0,0);
+dimension = Dimension(design_mission,seats_per_row,N_deck,1,0.5,0,0);
 dimension = dimension.finalise();
 
 %% Setup a fuel tank
