@@ -27,14 +27,14 @@ classdef Aero
                 obj.AR = aircraft.manual_input.AR;
             else
                 % use default
-                disp(obj.AR);
+                %disp(obj.AR);
             end
             
             if any(ismember(fields(aircraft.manual_input),'sweep'))
                 obj.sweep = aircraft.manual_input.sweep;
             else
                 % use default
-                disp(obj.sweep);
+                %disp(obj.sweep);
             end
 
             if any(ismember(fields(aircraft.manual_input),'wing_area'))

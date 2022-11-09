@@ -57,10 +57,7 @@ for i=1:length(seats_abreast_array)
 
         ac.tank = h2_tank;
         
-%         ac.m_eng_input = 4e3;
-        ac.eta_input = 0.5;
-        ac.manual_input.AR = 10;
-        ac.manual_input.sweep = 30;
+        ac.manual_input.eta = 0.41;
         
         
         % All inputs defined. Now for the aircraft sizing loop to begin to
@@ -119,5 +116,6 @@ if length(row) > 1
     disp("check minimum")
 end
 bestAC = acMat(row,col);
+bestAC.text_gen();
 
 
