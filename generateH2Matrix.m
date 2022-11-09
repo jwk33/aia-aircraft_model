@@ -57,11 +57,10 @@ for i=1:length(seats_abreast_array)
 
         ac.tank = h2_tank;
         
-        ac.m_eng_input = 4e3;
+%         ac.m_eng_input = 4e3;
         ac.eta_input = 0.5;
-        ac.AR_input = 10;
-        ac.sweep_input = 30;
-        ac.wing_area_input = 150;
+        ac.manual_input.AR = 10;
+        ac.manual_input.sweep = 30;
         
         
         % All inputs defined. Now for the aircraft sizing loop to begin to
@@ -91,6 +90,8 @@ end
 %%
 [row,col] = find(fuelErr > 0);
 
+
+assert(length(row) >=1, "No Solution Found")
 
 
 acMat_new = cell(size(acMat));

@@ -4,8 +4,8 @@ classdef Engine
     % define engine properties
     properties (SetAccess = public)
         m_eng(1,1) double {mustBeNonnegative, mustBeFinite}
-        eta_eng(1,1) double {mustBeNonnegative, mustBeFinite}
-        eta_prop(1,1) double {mustBeNonnegative, mustBeFinite}
+        eta_eng(1,1) double {mustBeNonnegative, mustBeFinite} = 0.44
+        eta_prop(1,1) double {mustBeNonnegative, mustBeFinite} = 0.81
         eta_ov(1,1) double {mustBeNonnegative, mustBeFinite}
         eng_thrust(1,1) double {mustBeNonnegative, mustBeFinite}
         number_engines(1,1) double {mustBeNonnegative, mustBeFinite}
@@ -15,50 +15,50 @@ classdef Engine
     end
 
     methods
-        function obj = Engine(design_mission,aircraft)
+        function obj = Engine(aircraft)
             % construct engine object
             
-            if isempty(aircraft.m_eng_input)
-%                 disp('calculating engine mass')
-                obj = obj.calculate_mass(aircraft);
+
+            %handle inputs
+
+            if any(ismember(fields(aircraft.manual_input),'m_eng'))
+                obj.m_eng = aircraft.manual_input.m_eng;
             else
-%                 disp('using input engine mass')
-                obj.m_eng = aircraft.m_eng_input;
+                % use default
+                obj = obj.calculate_mass(aircraft);
             end
             
-            if isempty(aircraft.eta_input)
-%                 disp('using default engine efficiency')
-                obj.eta_eng = 0.44;
+            if any(ismember(fields(aircraft.manual_input),'eta'))
+                obj.eta_eng = aircraft.manual_input.eta;
             else
-%                 disp('using input engine efficiency')
-                obj.eta_eng = aircraft.eta_input;
+                % use default
             end
-            obj.eta_prop = 0.81;
+
 
             obj.eta_ov = obj.eta_eng * obj.eta_prop;
 
         end
 
         function obj = Engine_Iteration(obj,aircraft)
-            if isempty(aircraft.m_eng_input)
-%                 disp('calculating engine mass')
-                obj = obj.calculate_mass(aircraft);
+            
+            %handle inputs
+
+            if any(ismember(fields(aircraft.manual_input),'m_eng'))
+                obj.m_eng = aircraft.manual_input.m_eng;
             else
-%                 disp('using input engine mass')
-                obj.m_eng = aircraft.m_eng_input;
+                % use default
+                obj = obj.calculate_mass(aircraft);
             end
             
-            if isempty(aircraft.eta_input)
-%                 disp('using default engine efficiency')
-                obj.eta_eng = 0.4511;
+            if any(ismember(fields(aircraft.manual_input),'eta'))
+                obj.eta_eng = aircraft.manual_input.eta;
             else
-%                 disp('using input engine efficiency')
-                obj.eta_eng = aircraft.eta_input;
+                % use default
             end
 
-            obj.eta_prop = 0.8158;
 
             obj.eta_ov = obj.eta_eng * obj.eta_prop;
+
             
             % update eta for given tech levels
             obj = aircraft.tech.improve_eta(obj);
@@ -66,7 +66,7 @@ classdef Engine
 
 
         function obj = calculate_mass(obj, aircraft)
-            obj.eng_thrust = 1.28*aircraft.weight.m_maxTO*1e-3;%kN
+            obj.eng_thrust = 0.3*(9.81* aircraft.weight.m_maxTO*1e-3);%kN % TODO: Assumming constant T/W of 0.3 
             obj.bpr = 15.1;
 %             obj.bpr = 15.66;
             eng_mass = obj.eng_thrust*(8.7+1.14*obj.bpr); % Jenkinson et al. method

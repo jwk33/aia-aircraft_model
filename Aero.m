@@ -2,14 +2,14 @@ classdef Aero
     %Holds information about the wing weight, structure and aircraft aerodynamics 
 
     properties (SetAccess = public)
-        LovD(1,1) double {mustBeNonnegative, mustBeFinite} % Aircraft Lift to Drag
-        AR(1,1) double {mustBeNonnegative, mustBeFinite} %Wing Aspect Ratio
+        LovD(1,1) double {mustBeNonnegative, mustBeFinite} = 16 % Aircraft Lift to Drag
+        AR(1,1) double {mustBeNonnegative, mustBeFinite} = 10 %Wing Aspect Ratio
         b(1,1) double {mustBeNonnegative, mustBeFinite} %Wingspan
-        toc(1,1) double {mustBeNonnegative, mustBeFinite} %Thickness over Chord
+        toc(1,1) double {mustBeNonnegative, mustBeFinite}  = 0.15 %Thickness over Chord
         S(1,1) double {mustBeNonnegative, mustBeFinite} %Wing area (excluding fuselage)
         mac(1,1) double {mustBeNonnegative, mustBeFinite} %Mean Absolute Chord
         root_c(1,1) double {mustBeNonnegative, mustBeFinite} %Root Chord
-        Sweep(1,1) double {mustBeNonnegative, mustBeFinite} %wing sweep angle degrees
+        sweep(1,1) double {mustBeNonnegative, mustBeFinite} = 30 %wing sweep angle degrees
         C_L(1,1) double {mustBeNonnegative, mustBeFinite} %Wing Coefficient of Lift
         wing_loading(1,1) double {mustBeNonnegative, mustBeFinite} %Wing loading
         C_D(1,1) double {mustBeNonnegative, mustBeFinite} % Coefficient of drag for aircraft normalised to wing area
@@ -17,20 +17,40 @@ classdef Aero
 
     methods
         function obj = Aero(aircraft)
-            %UNTITLED5 Construct an instance of this class
-            [T,sos,P,rho] = atmosisa(aircraft.design_mission.cruise_alt);
-            dyn_pressure = 0.5 * rho * aircraft.design_mission.cruise_speed^2;
-            m_maxTO = aircraft.weight.m_maxTO;
-            obj.LovD = 16;
-            obj.AR = aircraft.AR_input;
-            obj.toc = 0.15;   
-            obj.Sweep = aircraft.sweep_input;
-            obj.S = aircraft.wing_area_input;
+            %Construct an instance of an AERO class
+            [dyn_pressure, nu] = atmos_calc(obj, aircraft.design_mission.cruise_alt, aircraft.design_mission.cruise_speed);
+            
+            % Handle inputs
+            m_TO = aircraft.weight.m_TO;
+
+            if any(ismember(fields(aircraft.manual_input),'AR'))
+                obj.AR = aircraft.manual_input.AR;
+            else
+                % use default
+                disp(obj.AR);
+            end
+            
+            if any(ismember(fields(aircraft.manual_input),'sweep'))
+                obj.sweep = aircraft.manual_input.sweep;
+            else
+                % use default
+                disp(obj.sweep);
+            end
+
+            if any(ismember(fields(aircraft.manual_input),'wing_area'))
+                obj.S = aircraft.manual_input.wing_area;
+                obj.wing_loading = m_TO/obj.S;
+            else
+                % use default
+                obj.wing_loading = 650; %kg/m2
+                obj.S = m_TO/obj.wing_loading;
+            end
+
+            
             obj.b = sqrt(obj.S*obj.AR);
             obj.root_c = obj.b/obj.AR; 
             obj.mac = obj.S/obj.b;
-            obj.C_L = m_maxTO * 9.81 / (obj.S * dyn_pressure);
-            obj.wing_loading = m_maxTO/obj.S;%kg/m2
+            obj.C_L = m_TO * 9.81 / (obj.S * dyn_pressure);
             obj.C_D = obj.C_L/obj.LovD;
 
             % update L/D for given technology levels
@@ -43,14 +63,13 @@ classdef Aero
             %toc, sweep, C_L
             %Initial Variables
 %             m_avg = (aircraft.weight.m_maxTO + aircraft.weight.m_OEW+aircraft.weight.m_max_payload)/2;
+            m_TO = aircraft.weight.m_TO;
+            
             %Get Atmospheric Data
-            [T,sos,P,rho] = atmosisa(aircraft.design_mission.cruise_alt);
-            kvisc = (0.1456e-5)*(T^0.5)/(1 + 110/T);
-            nu = kvisc/rho;
-            dyn_pressure = 0.5 * rho * aircraft.design_mission.cruise_speed^2;
+            [dyn_pressure, nu] = atmos_calc(obj, aircraft.design_mission.cruise_alt, aircraft.design_mission.cruise_speed);
             
             %Calculate Wing Performance
-            obj.C_L = aircraft.weight.m_maxTO*9.81/obj.S/dyn_pressure;
+            obj.C_L = m_TO*9.81/obj.S/dyn_pressure;
            
 %             S_tail = obj.S*aircraft.weight.m_tail/aircraft.weight.m_wing;
             %%%% DERIVED CONSTANTS %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -65,7 +84,7 @@ classdef Aero
             %for the wing based on mean chord, and for the fuselage based on length
         
             %Slight error compared to DBs calculation, unsure why
-            c_d_0_w = cf(obj.mac,aircraft.design_mission.cruise_speed,nu) * 1.4 * (1 + cosd(obj.Sweep)^2 * (3.3 * obj.toc - 0.008 * obj.toc^2 + 27 * obj.toc^3)) * (S_wet_w / S_ref);
+            c_d_0_w = cf(obj.mac,aircraft.design_mission.cruise_speed,nu) * 1.4 * (1 + cosd(obj.sweep)^2 * (3.3 * obj.toc - 0.008 * obj.toc^2 + 27 * obj.toc^3)) * (S_wet_w / S_ref);
             c_d_0_f = cf(aircraft.dimension.cabin_length,aircraft.design_mission.cruise_speed,nu) * (1 + 2.2 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-1.5) - 0.9 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-3)) * (S_wet_f / S_ref);
         
             c_d_0 = c_d_0_w + c_d_0_f;
@@ -89,8 +108,17 @@ classdef Aero
             obj.C_D = c_d_incompressible + c_d_compressible;
 
             %Wing Mass Calcs
-            obj.wing_loading = aircraft.weight.m_maxTO/obj.S;%kg/m2
-%             obj.m_wing = 0.86 / 9.81^0.5 * (obj.AR^2 / obj.wing_loading^3 * aircraft.weight.m_maxTO)^0.25 * aircraft.weight.m_maxTO;
+            if any(ismember(fields(aircraft.manual_input),'wing_area'))
+                % assuming wing area is constant across iterations
+                obj.wing_loading = m_TO/obj.S;
+            else
+                % assuming wing area varies with m_maxTO with iterations
+                obj.wing_loading = 650; %kg/m2
+                obj.S = m_TO/obj.wing_loading;
+            end
+
+
+
             obj.LovD = obj.C_L/obj.C_D;
             %%%%%% MANUAL OVERRIDE to set L/D = 17 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -104,14 +132,29 @@ classdef Aero
 
         end
         
+
+        function obj = calculate(obj)
+
+        end
         
         function critical_mach_no = M_crit(obj)
         %function to calculate drag coefficient based on diameter, length, lift
             %coefficient and Mach number
             
             %%%% CALCULATE M_crit %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-            M_dd = 0.95/cosd(obj.Sweep) - obj.toc/(cosd(obj.Sweep)^2) - obj.C_L/(10*cosd(obj.Sweep)^3);
+            M_dd = 0.95/cosd(obj.sweep) - obj.toc/(cosd(obj.sweep)^2) - obj.C_L/(10*cosd(obj.sweep)^3);
             critical_mach_no = M_dd;% - 0.1;
         end
+    end
+
+    methods (Access = private)
+        function [dyn_pressure, nu] = atmos_calc(obj, cruise_alt, cruise_speed)
+            % calculate dynamic pressure
+            [T,sos,P,rho] = atmosisa(cruise_alt);
+            kvisc = (0.1456e-5)*(T^0.5)/(1 + 110/T);
+            nu = kvisc/rho;
+            dyn_pressure = 0.5 * rho * cruise_speed^2;
+        end 
+
     end
 end

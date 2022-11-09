@@ -41,11 +41,12 @@ SH.dimension = SH.dimension.finalise();
 
 SH.ac = Aircraft(Ker, SH.design_mission, SH.dimension);
 
-SH.ac.m_eng_input = 6000;
-SH.ac.eta_input = 0.45;
-SH.ac.AR_input = 10;
-SH.ac.sweep_input = 25;
-SH.ac.wing_area_input = 130;
+SH.ac.manual_input.m_eng = 6000;
+SH.ac.manual_input.eta = 0.45;
+SH.ac.manual_input.AR = 10;
+SH.ac.manual_input.sweep = 25;
+SH.ac.manual_input.wing_area = 130;
+
 
 % Medium haul
 
@@ -56,11 +57,12 @@ MH.dimension = MH.dimension.finalise();
 
 MH.ac = Aircraft(Ker, MH.design_mission, MH.dimension);
 
-MH.ac.m_eng_input = 13000;
-MH.ac.eta_input = 0.475;
-MH.ac.AR_input = 9;
-MH.ac.sweep_input = 30;
-MH.ac.wing_area_input = 470;
+MH.ac.manual_input.m_eng = 13000;
+MH.ac.manual_input.eta = 0.475;
+MH.ac.manual_input.AR = 9;
+MH.ac.manual_input.sweep = 30;
+MH.ac.manual_input.wing_area = 470;
+
 
 % Long haul
 LH.design_mission = Mission(LH.range,LH.M,cruise_alt, LH.max_pax, 1.0, LH.m_cargo); % design mission is always at 100% load factor
@@ -70,11 +72,11 @@ LH.dimension = LH.dimension.finalise();
 
 LH.ac = Aircraft(Ker, LH.design_mission, LH.dimension);
 
-LH.ac.m_eng_input = 25000;
-LH.ac.eta_input = 0.5;
-LH.ac.AR_input = 8;
-LH.ac.sweep_input = 32;
-LH.ac.wing_area_input = 800;
+LH.ac.manual_input.m_eng = 25000;
+LH.ac.manual_input.eta = 0.5;
+LH.ac.manual_input.AR = 8;
+LH.ac.manual_input.sweep = 32;
+LH.ac.manual_input.wing_area = 800;
 
 
 %% Run all cases
