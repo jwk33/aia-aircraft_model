@@ -80,7 +80,7 @@ classdef Dimension
             % galleys, cargo etc) (not including tanks)
             if obj.max_seats > 200
                 obj.cargo_height = 1.8;
-                obj.rear_angle = 24;
+                obj.rear_angle = 30;
                 obj.seat_length = 0.796 + 3.111e-4 * obj.max_seats;
                 if obj.max_seats > 300
                     cabin_factor = 0.765 + obj.max_seats*1.866e-3;

@@ -13,6 +13,7 @@ classdef Aero
         C_L(1,1) double {mustBeNonnegative, mustBeFinite} %Wing Coefficient of Lift
         wing_loading(1,1) double {mustBeNonnegative, mustBeFinite} %Wing loading
         C_D(1,1) double {mustBeNonnegative, mustBeFinite} % Coefficient of drag for aircraft normalised to wing area
+        M_c(1,1) double
     end
 
     methods
@@ -99,6 +100,7 @@ classdef Aero
             %%%% CALCULATE COMPRESSBILE DRAG %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         
             %Modified Korn equation
+            obj.M_c = obj.M_crit();
             if aircraft.design_mission.M < 0.8*obj.M_crit()
                 c_d_compressible = 0;
             else
@@ -143,7 +145,7 @@ classdef Aero
             
             %%%% CALCULATE M_crit %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             M_dd = 0.95/cosd(obj.sweep) - obj.toc/(cosd(obj.sweep)^2) - obj.C_L/(10*cosd(obj.sweep)^3);
-            critical_mach_no = M_dd;% - 0.1;
+            critical_mach_no = M_dd - (0.02/80)^(1/3);
         end
     end
 
