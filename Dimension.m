@@ -1,4 +1,4 @@
-classdef Dimension
+classdef Dimension < matlab.mixin.Copyable
     %Dimension, this class will contain all the dimensions of the aircraft
     %and be used to determine the cross section inside the cabin
 
@@ -8,6 +8,7 @@ classdef Dimension
         fuselage_internal_diameter(1,1) double {mustBeNonnegative, mustBeFinite}
         cabin_length(1,1) double {mustBeNonnegative, mustBeFinite}
         cabin_height (1,1) double 
+        cabin_width double
         aisle_length(1,1) double {mustBeNonnegative, mustBeFinite}
         tank_external_diameter_u(1,1) double {mustBeNonnegative, mustBeFinite}
         tank_external_length_u(1,1) double {mustBeNonnegative, mustBeFinite}
@@ -17,7 +18,6 @@ classdef Dimension
         number_aisles double % number of aisles per deck
         max_seats double
         seats_per_row double % number of seats abreast per deck
-        cabin_width double
         cockpit_length double
         rear_length double
         cargo_height double
