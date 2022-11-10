@@ -14,6 +14,7 @@ classdef Aero
         wing_loading(1,1) double {mustBeNonnegative, mustBeFinite} %Wing loading
         C_D(1,1) double {mustBeNonnegative, mustBeFinite} % Coefficient of drag for aircraft normalised to wing area
         M_c(1,1) double
+        m_wing (1,1) double
     end
 
     methods
@@ -56,6 +57,9 @@ classdef Aero
 
             % update L/D for given technology levels
             obj = aircraft.tech.improve_LoD(obj);
+
+            % update wing mass
+            obj = obj.calculate_mass(aircraft);
         end
 
         function obj = Aero_Iteration(obj,aircraft)
@@ -132,12 +136,10 @@ classdef Aero
 
             assert(obj.LovD > 5 && obj.LovD < 30, "LoD unreasonable")
 
+            % update wing mass
+            obj = obj.calculate_mass(aircraft);
         end
         
-
-        function obj = calculate(obj)
-
-        end
         
         function critical_mach_no = M_crit(obj)
         %function to calculate drag coefficient based on diameter, length, lift
@@ -157,6 +159,20 @@ classdef Aero
             nu = kvisc/rho;
             dyn_pressure = 0.5 * rho * cruise_speed^2;
         end 
+        
+        function obj = calculate_mass(obj, aircraft)
+            taper = 0.35;
+            n_ult = 3.75;
+            eta_cp = 0.36*((1+taper)^0.5);
+            if ~aircraft.fuel.UseTankModel
+                m_gross = (aircraft.weight.m_maxTO * aircraft.weight.m_maxZFW)^0.5;
+            else
+                m_gross = (aircraft.weight.m_maxTO);
+            end
+            disp((0.0013*n_ult) *(eta_cp*obj.b/100) * (obj.AR/(obj.toc*(cosd(obj.sweep)^2))));
+            obj.m_wing = (0.0013*n_ult) * m_gross * (eta_cp*obj.b/100) * (obj.AR/(obj.toc*(cosd(obj.sweep)^2))) + 210*obj.S/9.81;
+        end
+
 
     end
 end
