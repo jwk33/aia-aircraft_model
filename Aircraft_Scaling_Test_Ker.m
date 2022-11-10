@@ -1,5 +1,6 @@
 %%
 clear all
+close all
 
 %% DD CONSTANT INPUTS
 load("Ker_Fuel.mat","Ker")
@@ -25,11 +26,11 @@ dimension = dimension.finalise();
 
 fuel = Ker;
 A380 = Aircraft(fuel,design_mission,dimension);
-A380.m_eng_input = 24984;
-A380.eta_input = 0.5;
-A380.AR_input = 7.53;
-A380.sweep_input = 30;
-A380.wing_area_input = 845;
+A380.manual_input.m_eng = 24984;
+A380.manual_input.eta = 0.5;
+A380.manual_input.AR = 7.53;
+A380.manual_input.sweep = 30;
+A380.manual_input.wing_area = 845;
 
 A380.year = 2021;
 save('./saved-ac/A380.mat','A380');
@@ -63,11 +64,11 @@ dimension = dimension.finalise();
 
 fuel = Ker;
 B737 = Aircraft(fuel,design_mission,dimension);
-B737.m_eng_input = 5560;
+B737.manual_input.m_eng = 5560;
 % B737.eta_input = 0.4;
-B737.AR_input = 10.16;
-B737.sweep_input = 25;
-B737.wing_area_input = 127;
+B737.manual_input.AR = 10.16;
+B737.manual_input.sweep = 25;
+B737.manual_input.wing_area = 127;
 
 B737.year = 2021;
 save('./saved-ac/B737.mat','B737');
@@ -103,11 +104,11 @@ dimension = dimension.finalise();
 fuel = Ker;
 B777 = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/B777.mat','B777');
-% B777.m_eng_input = 5714;
-% B777.eta_input = 0.5;
-B777.AR_input = 9.61;
-B777.sweep_input = 31.6;
-B777.wing_area_input = 436.8;
+B777.manual_input.m_eng = 17524;
+B777.manual_input.eta = 0.5;
+B777.manual_input.AR = 9.61;
+B777.manual_input.sweep = 31.6;
+B777.manual_input.wing_area = 436.8;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 B777 = B777.finalise();
@@ -138,11 +139,11 @@ dimension = dimension.finalise();
 fuel = Ker;
 ATR_72_600 = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/ATR_72_600.mat','ATR_72_600');
-ATR_72_600.m_eng_input = 960;
-ATR_72_600.eta_input = 0.45;
-ATR_72_600.sweep_input = 0;
-ATR_72_600.AR_input = 12;
-ATR_72_600.wing_area_input = 61;
+ATR_72_600.manual_input.m_eng = 960;
+ATR_72_600.manual_input.eta = 0.45;
+ATR_72_600.manual_input.sweep = 0;
+ATR_72_600.manual_input.AR = 12;
+ATR_72_600.manual_input.wing_area = 61;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 ATR_72_600 = ATR_72_600.finalise();
@@ -173,11 +174,11 @@ dimension = dimension.finalise();
 fuel = Ker;
 A320neo = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/A320neo.mat','A320neo');
-A320neo.m_eng_input = 5714;
+A320neo.manual_input.m_eng = 5714;
 % A320neo.eta_input = 0.48;
-A320neo.AR_input = 10.3;
-A320neo.sweep_input = 25;
-A320neo.wing_area_input = 122.6;
+A320neo.manual_input.AR = 10.3;
+A320neo.manual_input.sweep = 25;
+A320neo.manual_input.wing_area = 122.6;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 A320neo = A320neo.finalise();
@@ -187,7 +188,7 @@ save('./saved-ac/A320neo.mat','A320neo');
 load("Ker_Fuel.mat","Ker")
 
 range = 8800;%km
-M = 0.82;
+M = 0.84;
 cruise_alt = 11000; %m
 max_pax = 300; %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
 cargo = 15200; %kg %input to match the data on payload range from brochure. 72PAX @ 95kg no cargo
@@ -208,11 +209,11 @@ dimension = dimension.finalise();
 fuel = Ker;
 A330neo = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/A330neo.mat','A330neo');
-A330neo.m_eng_input = 12890;
-A330neo.eta_input = 0.48;
-A330neo.AR_input = 10;
-A330neo.sweep_input = 31.9;
-A330neo.wing_area_input = 410;
+A330neo.manual_input.m_eng = 12890;
+A330neo.manual_input.eta = 0.48;
+A330neo.manual_input.AR = 10;
+A330neo.manual_input.sweep = 31.9;
+A330neo.manual_input.wing_area = 410;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 A330neo = A330neo.finalise();
@@ -243,11 +244,11 @@ dimension = dimension.finalise();
 fuel = Ker;
 A350_900 = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/A350_900.mat','A350_900');
-A350_900.m_eng_input = 14554;
-A350_900.eta_input = 0.5;
-A350_900.AR_input = 9.49;
-A350_900.sweep_input = 35;
-A350_900.wing_area_input = 442;
+A350_900.manual_input.m_eng = 14554;
+A350_900.manual_input.eta = 0.5;
+A350_900.manual_input.AR = 9.49;
+A350_900.manual_input.sweep = 35;
+A350_900.manual_input.wing_area = 442;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 A350_900 = A350_900.finalise();
@@ -278,11 +279,11 @@ dimension = dimension.finalise();
 fuel = Ker;
 A350_1000 = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/A350_1000.mat','A350_1000');
-A350_1000.m_eng_input = 15100;
-A350_1000.eta_input = 0.5;
-A350_1000.AR_input = 9.03;
-A350_1000.sweep_input = 31.9;
-A350_1000.wing_area_input = 464.3;
+A350_1000.manual_input.m_eng = 15100;
+A350_1000.manual_input.eta = 0.5;
+A350_1000.manual_input.AR = 9.03;
+A350_1000.manual_input.sweep = 31.9;
+A350_1000.manual_input.wing_area = 464.3;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 A350_1000 = A350_1000.finalise();
@@ -313,11 +314,11 @@ dimension = dimension.finalise();
 fuel = Ker;
 B787_10 = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/B787_10.mat','B787_10');
-B787_10.m_eng_input = 12240;
-B787_10.eta_input = 0.5;
-B787_10.AR_input = 9.59;
-B787_10.sweep_input = 32.2;
-B787_10.wing_area_input = 377;
+B787_10.manual_input.m_eng = 12240;
+B787_10.manual_input.eta = 0.5;
+B787_10.manual_input.AR = 9.59;
+B787_10.manual_input.sweep = 32.2;
+B787_10.manual_input.wing_area = 377;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 B787_10 = B787_10.finalise();
@@ -347,11 +348,11 @@ dimension = dimension.finalise();
 fuel = Ker;
 B787_10 = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/B787_10.mat','B787_10');
-B787_10.m_eng_input = 12240;
-B787_10.eta_input = 0.5;
-B787_10.AR_input = 9.59;
-B787_10.sweep_input = 32.2;
-B787_10.wing_area_input = 377;
+B787_10.manual_input.m_eng = 12240;
+B787_10.manual_input.eta = 0.5;
+B787_10.manual_input.AR = 9.59;
+B787_10.manual_input.sweep = 32.2;
+B787_10.manual_input.wing_area = 377;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 B787_10 = B787_10.finalise();
