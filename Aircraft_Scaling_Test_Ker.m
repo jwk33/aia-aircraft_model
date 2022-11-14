@@ -43,10 +43,10 @@ save('./saved-ac/A380.mat','A380');
 %% B737 CONSTANT INPUTS
 load("Ker_Fuel.mat","Ker")
 
-range = 3790;%km
+range = 4815;%km
 M = 0.79;
 cruise_alt = 10000; %m
-max_pax = 178;%737 Max - 8
+max_pax = 178;%737-800
 cargo = 2726; %kg
 load_factor = 1.0;
 design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
@@ -65,10 +65,10 @@ dimension = dimension.finalise();
 fuel = Ker;
 B737 = Aircraft(fuel,design_mission,dimension);
 % B737.manual_input.m_eng = 5560;
-B737.manual_input.eta = 0.45;
+B737.manual_input.eta = 0.39;
 % B737.manual_input.AR = 10.16;
 % B737.manual_input.sweep = 25;
-B737.manual_input.wing_area = 127;
+%B737.manual_input.wing_area = 127;
 
 B737.year = 2021;
 save('./saved-ac/B737.mat','B737');
@@ -77,6 +77,7 @@ save('./saved-ac/B737.mat','B737');
 % calculate MTOW
 B737 = B737.finalise();
 save('./saved-ac/B737.mat','B737');
+B737.text_gen("B737")
 
 
 %% B777300ER CONSTANT INPUTS
@@ -175,14 +176,17 @@ fuel = Ker;
 A320neo = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/A320neo.mat','A320neo');
 % A320neo.manual_input.m_eng = 5714;
-A320neo.manual_input.eta = 0.45;
+A320neo.manual_input.eta = 0.42;
+A320neo.manual_input.bpr = 11;
 A320neo.manual_input.AR = 10.3;
 A320neo.manual_input.sweep = 25;
 A320neo.manual_input.wing_area = 122.6;
+
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 A320neo = A320neo.finalise();
 save('./saved-ac/A320neo.mat','A320neo');
+A320neo.text_gen("A320neo")
 
 %% A330neo - 900 CONSTANT INPUTS
 load("Ker_Fuel.mat","Ker")
@@ -218,7 +222,7 @@ A330neo.manual_input.wing_area = 410;
 % calculate MTOW
 A330neo = A330neo.finalise();
 save('./saved-ac/A330neo.mat','A330neo');
-
+A330neo.text_gen("A330neo")
 %% A350 - 900 CONSTANT INPUTS
 load("Ker_Fuel.mat","Ker")
 
@@ -245,14 +249,18 @@ fuel = Ker;
 A350_900 = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/A350_900.mat','A350_900');
 % A350_900.manual_input.m_eng = 14554;
-A350_900.manual_input.eta = 0.5;
-% A350_900.manual_input.AR = 9.49;
-% A350_900.manual_input.sweep = 35;
+A350_900.manual_input.eta = 0.45;
+A350_900.manual_input.bpr = 9.6;
+A350_900.manual_input.AR = 9.49;
+A350_900.manual_input.sweep = 35;
 % A350_900.manual_input.wing_area = 442;
+
+A350_900.year = 2035;
 % All inputs defined. Now for the aircraft sizing loop to begin to
 % calculate MTOW
 A350_900 = A350_900.finalise();
 save('./saved-ac/A350_900.mat','A350_900');
+A350_900.text_gen("A350")
 
 %% A350 - 1000 CONSTANT INPUTS
 load("Ker_Fuel.mat","Ker")
