@@ -3,6 +3,17 @@ clear all
 clc
 %% load constants
 load("Ker_Fuel.mat","Ker")
+load("LH2_fuel.mat","LH2")
+
+% define tank structural material
+load("Aluminium.mat", "aluminium")
+struct_material = aluminium;
+
+
+% define tank insulation material
+load("MLI.mat", "MLI")
+ins_material = MLI;
+
 cruise_alt = 10000; %m
 
 %% Aircraft Size Dependent Inputs
@@ -15,6 +26,11 @@ SH.m_cargo = 0; %2500;
 SH.max_pax = 175;
 SH.seats_per_row = 6;
 SH.N_deck = 1;
+SH.eta = 0.45;
+SH.number_engines = 2;
+SH.seats_abreast_array = [4,5,6,7,8,9];
+
+SH.design_mission = Mission(SH.range,SH.M,cruise_alt, SH.max_pax, 1.0, SH.m_cargo);
 
 
 % Medium haul
@@ -24,6 +40,10 @@ MH.m_cargo = 0; %20000;
 MH.max_pax = 300;
 MH.seats_per_row = 8;
 MH.N_deck = 1;
+MH.eta = 0.475;
+MH.number_engines = 2;
+MH.seats_abreast_array = [7,8,9,10,11,12,13,14];
+MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_cargo);
 
 % Long haul
 LH.range = 14000;
@@ -32,67 +52,82 @@ LH.m_cargo = 0; % 30000;
 LH.max_pax = 500;
 LH.seats_per_row = 10;
 LH.N_deck = 2;
+LH.eta = 0.5;
+LH.number_engines = 4;
+LH.seats_abreast_array = [7,8,9,10,11,12,13,14];
+LH.design_mission = Mission(LH.range,LH.M,cruise_alt, LH.max_pax, 1.0, LH.m_cargo); % design mission is always at 100% load factor
 
-%% Generate Aircraft
-SH.design_mission = Mission(SH.range,SH.M,cruise_alt, SH.max_pax, 1.0, SH.m_cargo); % design mission is always at 100% load factor
+size_inputs.SH = SH;
+size_inputs.MH = MH;
+size_inputs.LH = LH;
+size_initials = fieldnames(size_inputs);
+%% Generate Kerosene Aircraft 
+%NOTE: Fuel is immutable so aircraft instance cannot be shared across fuels
+Ker_group = {};
 
-SH.dimension = Dimension(SH.design_mission, SH.seats_per_row, SH.N_deck,0,0,0,0);
-SH.dimension = SH.dimension.finalise();
+for el=1:length(size_initials)
+    size = char(size_initials(el));
+    Ker_group.(size) = size_inputs.(size);
+end
 
-SH.ac = Aircraft(Ker, SH.design_mission, SH.dimension);
 
-SH.ac.manual_input.m_eng = 6000;
-SH.ac.manual_input.eta = 0.45;
-SH.ac.manual_input.AR = 10;
-SH.ac.manual_input.sweep = 25;
-SH.ac.manual_input.wing_area = 130;
+% Ker.SH.ac.manual_input.m_eng = 6000;
+% Ker.SH.ac.manual_input.AR = 10;
+% Ker.SH.ac.manual_input.sweep = 25;
+% Ker.SH.ac.manual_input.wing_area = 130;
 
 
 % Medium haul
 
-MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_cargo); % design mission is always at 100% load factor
 
-MH.dimension = Dimension(MH.design_mission, MH.seats_per_row, MH.N_deck,0,0,0,0);
-MH.dimension = MH.dimension.finalise();
 
-MH.ac = Aircraft(Ker, MH.design_mission, MH.dimension);
-
-MH.ac.manual_input.m_eng = 13000;
-MH.ac.manual_input.eta = 0.475;
-MH.ac.manual_input.AR = 9;
-MH.ac.manual_input.sweep = 30;
-MH.ac.manual_input.wing_area = 470;
+% Ker.MH.ac.manual_input.m_eng = 13000;
+% Ker.MH.ac.manual_input.AR = 9;
+% Ker.MH.ac.manual_input.sweep = 30;
+% Ker.MH.ac.manual_input.wing_area = 470;
 
 
 % Long haul
-LH.design_mission = Mission(LH.range,LH.M,cruise_alt, LH.max_pax, 1.0, LH.m_cargo); % design mission is always at 100% load factor
-
-LH.dimension = Dimension(LH.design_mission, LH.seats_per_row, LH.N_deck,0,0,0,0);
-LH.dimension = LH.dimension.finalise();
-
-LH.ac = Aircraft(Ker, LH.design_mission, LH.dimension);
-
-LH.ac.manual_input.m_eng = 25000;
-LH.ac.manual_input.eta = 0.5;
-LH.ac.manual_input.AR = 8;
-LH.ac.manual_input.sweep = 32;
-LH.ac.manual_input.wing_area = 800;
 
 
+
+%LH.ac.manual_input.AR = 8;
+%LH.ac.manual_input.sweep = 32;
+%LH.ac.manual_input.wing_area = 800;
+
+%% Generate Hydrogen Aircraft
+LH2_group = {};
+
+for el=1:length(size_initials)
+    size = char(size_initials(el));
+    LH2_group.(size) = size_inputs.(size);
+end
+
+%% Clear Unused Variables
+clear size
+clear size_initials
+clear size_inputs
+clear cruise_alt
+clear aluminium
+clear MLI
+clear el
+clear SH
+clear MH
+clear LH
 %% Run all cases
 
 year_array = [2021, 2035, 2050];
 optimism_array = ["less", "basic", "more"];
 load_factor_array = [0.7, 0.75, 0.8];
 aircraft_array = ["Short Haul", "Medium Haul", "Long Haul"];
-fuel_array = ["Fossil Jet Fuel"];
+fuel_array = ["Fossil Jet Fuel", "Liquid Hydrogen"];
 range_array = 500:100:18500;
 
-n_entries = length(year_array) * length(optimism_array) * length(aircraft_array) * length(load_factor_array);
+n_entries = length(year_array) * length(optimism_array) * length(fuel_array) * length(aircraft_array) * length(load_factor_array);
 
 Year = cell(n_entries,1);
 Optimism = cell(n_entries,1);
-Aircraft = cell(n_entries,1);
+AC = cell(n_entries,1);
 Fuel = cell(n_entries,1);
 LoadFactor = cell(n_entries,1);
 Range = cell(n_entries,1);
@@ -119,23 +154,60 @@ count = 1;
 
 for i=1:length(year_array)
     for j=1:length(optimism_array)
-        for k=1:length(aircraft_array)
-            if aircraft_array(k) == "Short Haul"
-                current = SH;
-            elseif aircraft_array(k) == "Medium Haul"
-                current = MH;
-            elseif aircraft_array(k) == "Long Haul"
-                current = LH;
+        for l=1:length(fuel_array)
+            if fuel_array(l) == "Fossil Jet Fuel"
+                fuel = Ker;
+                group = Ker_group;
+            elseif fuel_array(l) == "Liquid Hydrogen"
+                fuel = LH2;
+                group = LH2_group;
+            else
+                disp("Fuel Entry Invalid")
+                continue
             end
-            
-            for l=1:length(fuel_array)
 
-                for m =1:length(load_factor_array)
+            for k=1:length(aircraft_array)
+                if aircraft_array(k) == "Short Haul"
+                    current = group.SH;
+                elseif aircraft_array(k) == "Medium Haul"
+                    current = group.MH;
+                elseif aircraft_array(k) == "Long Haul"
+                    current = group.LH;
+                end
+                
+                if fuel_array(l) == "Fossil Jet Fuel"
+                    % setup aircraft dimensions
+                    current.dimensions = Dimension(current.design_mission, current.seats_per_row, current.N_deck);
+                    
+                    % setup aircraft
+                    current.ac = Aircraft(fuel,current.design_mission,current.dimensions);
+                    current.ac.manual_input.eta = current.eta;
+                    current.ac.manual_input.number_engines = current.number_engines;
+
                     % update year
                     current.ac.year = year_array(i);
                     current.ac.optimism = optimism_array(j);
+    
+                    % iterate to design aircraft
                     current.ac = current.ac.finalise();
+                elseif fuel_array(l) == "Liquid Hydrogen"
+                    year = year_array(i);
+                    optimism = optimism_array(j);
+                    
+                    current.struct_material = struct_material;
+                    current.ins_material = ins_material;
+                    current.fuel = LH2;
 
+                    % design h2 aircraft
+                    current.ac = designH2AC(current, year, optimism);
+                    current.ac.text_gen("H2_current")
+                    if aircraft_array(k) == "Long Haul"
+                        disp("stop here")
+                    end
+                
+                end
+                for m =1:length(load_factor_array)
+                    
                     %calculate max range at load factor
                     current.oper_mission = copy(current.design_mission);
                     current.oper_mission.load_factor = load_factor_array(m);
@@ -167,7 +239,7 @@ for i=1:length(year_array)
                     
                     Year{count} = current.ac.year;
                     Optimism{count} = current.ac.optimism;
-                    Aircraft{count} = aircraft_array(k);
+                    AC{count} = aircraft_array(k);
                     Fuel{count} = current.ac.fuel.name;
                     LoadFactor{count} = current.ac.oper_mission.load_factor;
                     Passengers{count} = current.ac.oper_mission.pax;
@@ -196,6 +268,7 @@ for i=1:length(year_array)
     end
 end
 
+Aircraft = AC; % needed because Aircraft is also a class name
 aircraftDataTable = table(...
                     Year,...
                     Optimism,...
@@ -221,29 +294,30 @@ aircraftDataTable = table(...
                     DesignRange...
                     );
 
-% aircraftTable = cell2table(aircraftTableData,'VariableNames',{...
-%     'Year',...
-%     'AircraftOptimism',...
-%     'Aircraft',...
-%     'Fuel',...
-%     'LoadFactor',...
-%     'Passengers',...
-%     'MaxRange',...
-%     'PropEfficiency',...
-%     'ThermalEfficciency',...
-%     'WingSpan',...
-%     'LoD',...
-%     'OEW',...
-%     'Altitude',...
-%     'ClimbAngle',...
-%     'CruiseSpeed',...
-%     'ClimbSpeed',...
-%     'ApproachSpeed',...
-%     'Range',...
-%     'TakeOffWeight',...
-%     'FuelBurnkgm',...
-%     'FuelkWhPass'});
+%% clear variables
 
+clear Year
+clear Optimism
+clear Aircraft
+clear Fuel
+clear LoadFactor
+clear Passengers
+clear MaxRange
+clear PropEfficiency
+clear ThermalEfficiency
+clear WingSpan
+clear LoD
+clear OEW
+clear Altitude
+clear ClimbAngle
+clear CruiseSpeed
+clear ClimbSpeed
+clear ApproachSpeed
+clear Range
+clear TakeOffWeight
+clear FuelBurnKgm
+clear FuelkWhPass_array
+clear DesignRange
 disp("Table generated")
 
 

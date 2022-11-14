@@ -72,7 +72,7 @@ classdef FuelTank < matlab.mixin.Copyable
         function obj = volume(obj)
             %calculate internal volume (assume the same as external as thin
             %walls
-            formatSpec = char("Tank Internal Volume:\t %.2f (m^2) \n");
+            %formatSpec = char("Tank Internal Volume:\t %.2f (m^2) \n");
             radius = obj.diam_ext / 2;
             caps_volume = 4*pi/3 * radius^3; % 2 hemispheres
             cylinder_length = obj.length_ext - obj.diam_ext;
@@ -145,7 +145,7 @@ classdef FuelTank < matlab.mixin.Copyable
             % define properties
             Tliq = 23.9;            % K
             Tins = 280;             % K
-            k_air = 0.026;          % W / m K
+            
             k_wall = obj.structural_material.thermal_conductivity;           % W / m K
             k_ins = obj.insulation_material.thermal_conductivity;           % W / m K
 

@@ -134,7 +134,7 @@ classdef Weight < matlab.mixin.Copyable
 
             % Wing mass
             obj.m_wing = aircraft.aero.m_wing;
-            %obj.m_wing = 0.86/sqrt(g) * (aircraft.aero.AR^2/aircraft.aero.wing_loading^3*obj.m_maxTO)^(1/4) * obj.m_maxTO;
+            
             
             % Propulsion mass
             obj.m_engine = aircraft.engine.m_eng;

@@ -129,6 +129,8 @@ classdef Dimension < matlab.mixin.Copyable
                 cab_length = ceil((overall_cab_length - 0.5*delta_cab_length*N_deck*(N_deck-1))/(obj.seat_length*N_deck))*obj.seat_length;% top cabin
                 obj.cabin_length = cab_length + (N_deck-1)*delta_cab_length;
             end
+
+            obj.aisle_length = obj.cabin_length;
             
             obj.cabin_length = obj.cabin_length*cabin_factor;    
 
@@ -148,9 +150,7 @@ classdef Dimension < matlab.mixin.Copyable
         
 
         function obj = finalise(obj)
-            %For now stick with the rectangle geometry. But have scope here
-            %to look at alterantive designs
-            obj.aisle_length = obj.cabin_length;
+
         end
     end
 end

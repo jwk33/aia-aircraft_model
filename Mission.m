@@ -31,7 +31,7 @@ classdef Mission < matlab.mixin.Copyable
             obj.cruise_alt = cruise_alt;
             [T,sos,P,rho] = atmosisa(cruise_alt);
             obj.cruise_speed = sos*M;%m/s
-            obj.angle_TO = 5; %degrees
+            obj.angle_TO = 4; %degrees
             obj.reserve_fuel = 0; %To Be Added Later
             obj.max_pax = max_pax;
             obj.load_factor = load_factor;
