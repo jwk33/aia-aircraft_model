@@ -45,22 +45,23 @@ classdef FuelBurnModel < matlab.mixin.Copyable
             eta_ov = aircraft.engine.eta_ov;
             lhv = aircraft.fuel.lhv;
             LovD = aircraft.aero.LovD;
-
-            m_toc = aircraft.weight.m_TO*(1 - (mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
+            m_TO = aircraft.weight.m_TO;
+            m_toc = m_TO*(1 - (mission.cruise_speed)/(2*eta_ov*lhv))*exp((-g*h)*(1+(cosd(theta)^2)/(LovD*sind(theta)))/(eta_ov*lhv));%kg
 %             disp(m_toc)l
-            obj.m_fuel_climb = aircraft.weight.m_TO - m_toc;%kg
+            obj.m_fuel_climb = m_TO - m_toc;%kg
 %             disp(obj.m_fuel_climb)
             climb_range = h/tand(theta);
             obj.m_fuel_descent = 0.1*obj.m_fuel_climb;%kg
-            descent_range = climb_range;
+            descent_range = climb_range; %TODO: define actualy descent calcualtions
 
             cruise_range = mission.range*1000-climb_range-descent_range;
             obj.m_fuel_cruise = m_toc*(1-exp(-cruise_range*g/(lhv*eta_ov*LovD)));%kg
 
             obj.m_fuel_mission = (obj.m_fuel_cruise+obj.m_fuel_climb+obj.m_fuel_descent);%kg including a 5% reserve
-            reserve_range = 45*60*mission.cruise_speed; %m
-            obj.m_fuel_reserve = (m_toc- obj.m_fuel_mission)*(1-exp(-reserve_range*g/(lhv*eta_ov*LovD))) + 0.05* obj.m_fuel_mission;%kg
 
+            reserve_range = 45*60*mission.cruise_speed; %m
+            % reserves calculated at the end of cruise
+            obj.m_fuel_reserve = (m_toc - obj.m_fuel_cruise)*(1-exp(-reserve_range*g/(lhv*eta_ov*LovD))) + 0.05* obj.m_fuel_mission;%kg
             
             obj.m_fuel = (obj.m_fuel_mission + obj.m_fuel_reserve);%kg
         end

@@ -52,7 +52,7 @@ LH.m_cargo = 0; % 30000;
 LH.max_pax = 500;
 LH.seats_per_row = 10;
 LH.N_deck = 2;
-LH.eta = 0.5;
+LH.eta_eng = 0.5;
 LH.number_engines = 4;
 LH.seats_abreast_array = [7,8,9,10,11,12,13,14];
 LH.design_mission = Mission(LH.range,LH.M,cruise_alt, LH.max_pax, 1.0, LH.m_cargo); % design mission is always at 100% load factor
@@ -118,7 +118,7 @@ clear LH
 
 year_array = [2021, 2035, 2050];
 optimism_array = ["less","basic", "more"];
-load_factor_array = [0.7, 0.75, 0.8];
+load_factor_array = [0.7, 0.75, 0.8, 1.0];
 aircraft_array = ["Short Haul", "Medium Haul","Long Haul",];
 fuel_array = ["Fossil Jet Fuel", "Liquid Hydrogen"];
 range_array = 500:100:18500;
@@ -201,17 +201,17 @@ for i=1:length(year_array)
                     % design h2 aircraft
                     current.ac = designH2AC(current, year, optimism);
                     current.ac.text_gen("H2_current")
-                    if aircraft_array(k) == "Long Haul"
-                        disp("stop here")
-                    end
+
                 
                 end
                 for m =1:length(load_factor_array)
                     
                     %calculate max range at load factor
                     current.oper_mission = copy(current.design_mission);
+
                     current.oper_mission.load_factor = load_factor_array(m);
                     current.oper_mission = current.oper_mission.update();
+                    
                     current.max_range = current.ac.max_range(current.oper_mission);
 
                     n_range = length(range_array);

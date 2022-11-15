@@ -111,8 +111,12 @@ classdef Weight < matlab.mixin.Copyable
 
             % Zero Fuel
             obj.m_ZFW = obj.m_OEW + obj.m_payload;
-
-            assert (obj.m_TO <= obj.m_maxTO, 'Takeoff Weight greater than Max Takeoff Weight')
+            assert ((obj.m_maxTO - obj.m_TO) > -1 , ...
+                ['Takeoff Weight greater than Max Takeoff Weight\n' ...
+                'MTOW: %7.4f t\n TOW: %7.4f t'],obj.m_maxTO*1e-3, obj.m_TO*1e-3)
+            if (obj.m_maxTO - obj.m_TO) < 0
+                warning("TOW higher than MTOW by %10.9f kg",obj.m_TO - obj.m_maxTO)
+            end
             assert (obj.m_TO > obj.m_OEW, "Takeoff weight less than empty weight")
             
         end

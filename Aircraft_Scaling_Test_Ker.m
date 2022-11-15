@@ -365,14 +365,6 @@ B787_10.manual_input.eta_eng = 0.5;
 % calculate MTOW
 B787_10 = B787_10.finalise();
 save('./saved-ac/B787_10.mat','B787_10');
-%%
-% running aircraft at operating point
-oper_mission = copy(design_mission);
-oper_mission.range = range*0.66;
-oper_mission.load_factor = 0.50;
-oper_mission.pax = oper_mission.max_pax * oper_mission.load_factor;
-B787_10 = B787_10.operate(oper_mission);
-
 
 %% running to max range
 
@@ -380,3 +372,13 @@ oper_mission = copy(design_mission);
 oper_mission.load_factor = 1.0;
 oper_mission = oper_mission.update();
 max_range = B787_10.max_range(oper_mission);
+%%
+% running aircraft at operating point
+oper_mission = copy(design_mission);
+oper_mission.range = max_range;
+oper_mission.load_factor = 1.0;
+oper_mission.pax = oper_mission.max_pax * oper_mission.load_factor;
+B787_10 = B787_10.operate(oper_mission);
+
+
+
