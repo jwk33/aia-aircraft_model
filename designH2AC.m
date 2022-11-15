@@ -44,7 +44,7 @@ function ac = designH2AC(ac_inputs, year, optimism)
         
             ac_inputs.ac.tank = h2_tank;
                 
-            ac_inputs.ac.manual_input.eta = ac_inputs.eta;
+            ac_inputs.ac.manual_input.eta_eng = ac_inputs.eta_eng;
             ac_inputs.ac.manual_input.number_engines = ac_inputs.number_engines;
             
             % update year

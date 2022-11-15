@@ -20,13 +20,13 @@ cruise_alt = 10000; %m
 
 % Short haul
 SH = {};
-SH.range = 4000;
+SH.range = 3900;
 SH.M = 0.79;
-SH.m_cargo = 0; %2500;
-SH.max_pax = 175;
+SH.m_cargo = 2959; %2500;
+SH.max_pax = 180;
 SH.seats_per_row = 6;
 SH.N_deck = 1;
-SH.eta = 0.45;
+SH.eta_eng = 0.45;
 SH.number_engines = 2;
 SH.seats_abreast_array = [4,5,6,7,8,9];
 
@@ -40,7 +40,7 @@ MH.m_cargo = 0; %20000;
 MH.max_pax = 300;
 MH.seats_per_row = 8;
 MH.N_deck = 1;
-MH.eta = 0.475;
+MH.eta_eng = 0.475;
 MH.number_engines = 2;
 MH.seats_abreast_array = [7,8,9,10,11,12,13,14];
 MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_cargo);
@@ -117,9 +117,9 @@ clear LH
 %% Run all cases
 
 year_array = [2021, 2035, 2050];
-optimism_array = ["less", "basic", "more"];
+optimism_array = ["less","basic", "more"];
 load_factor_array = [0.7, 0.75, 0.8];
-aircraft_array = ["Short Haul", "Medium Haul", "Long Haul"];
+aircraft_array = ["Short Haul", "Medium Haul","Long Haul",];
 fuel_array = ["Fossil Jet Fuel", "Liquid Hydrogen"];
 range_array = 500:100:18500;
 
@@ -181,7 +181,7 @@ for i=1:length(year_array)
                     
                     % setup aircraft
                     current.ac = Aircraft(fuel,current.design_mission,current.dimensions);
-                    current.ac.manual_input.eta = current.eta;
+                    current.ac.manual_input.eta_eng = current.eta_eng;
                     current.ac.manual_input.number_engines = current.number_engines;
 
                     % update year

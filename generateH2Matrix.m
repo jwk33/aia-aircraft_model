@@ -64,7 +64,7 @@ for i=1:length(seats_abreast_array)
 
         ac.tank = h2_tank;
         
-        ac.manual_input.eta = 0.41;
+        ac.manual_input.eta_eng = 0.41;
         
         
         % All inputs defined. Now for the aircraft sizing loop to begin to

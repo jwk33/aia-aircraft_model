@@ -71,7 +71,7 @@ for i = 1:length(seats_abreast_array)
     
         ac.tank = h2_tank;
         
-        ac.manual_input.eta = 0.48;
+        ac.manual_input.eta_eng = 0.48;
         ac.year = year;
         ac.optimism = optimism;
         
@@ -175,7 +175,7 @@ for j=1:length(seats_abreast_array)
     
         ac.tank = h2_tank;
             
-        ac.manual_input.eta = 0.48;
+        ac.manual_input.eta_eng = 0.48;
         
         ac.year = year;
         ac.optimism = optimism;
