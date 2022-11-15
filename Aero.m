@@ -164,14 +164,14 @@ classdef Aero
             taper = 0.35;
             n_ult = 3.75;
             eta_cp = 0.36*((1+taper)^0.5);
-%             if ~aircraft.fuel.UseTankModel
-%                 %disp("Bending reduction")
-%                 m_gross = (aircraft.weight.m_maxTO * aircraft.weight.m_maxZFW)^0.5;
-%             else
-%                 %disp("Max bending")
-%                 m_gross = (aircraft.weight.m_maxTO);
-%             end
-            m_gross = aircraft.weight.m_maxTO;
+            if ~aircraft.fuel.UseTankModel
+                %disp("Bending reduction")
+                m_gross = (aircraft.weight.m_maxTO * aircraft.weight.m_maxZFW)^0.5;
+            else
+                %disp("Max bending")
+                m_gross = (aircraft.weight.m_maxTO);
+            end
+            %m_gross = aircraft.weight.m_maxTO;
             
             %obj.m_wing = (0.0013*n_ult) * m_gross * (eta_cp*obj.b/100) * (obj.AR/(obj.toc*(cosd(obj.sweep)^2))) + 210*obj.S/9.81;
             obj.m_wing = 0.86/sqrt(9.81) * (obj.AR^2/obj.wing_loading^3*m_gross)^(1/4) * aircraft.weight.m_maxTO;
