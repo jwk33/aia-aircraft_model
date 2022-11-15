@@ -196,7 +196,7 @@ for i=1:length(year_array)
                     
                     current.struct_material = struct_material;
                     current.ins_material = ins_material;
-                    current.fuel = LH2;
+                    current.fuel = fuel;
 
                     % design h2 aircraft
                     current.ac = designH2AC(current, year, optimism);
@@ -230,7 +230,7 @@ for i=1:length(year_array)
                     
                             % load data into array
                             FuelBurnKgm_array(n) = m_fuel/(range*1e3); % this includes reserves
-                            FuelkWhPass_array(n) = m_fuel * Ker.lhv * 2.77778e-7/current.oper_mission.pax; % includes reserves
+                            FuelkWhPass_array(n) = m_fuel * fuel.lhv * 2.77778e-7/current.oper_mission.pax; % includes reserves
                             TakeOffWeight_array(n) = m_TO;
                         end
 
