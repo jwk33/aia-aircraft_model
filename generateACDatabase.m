@@ -22,7 +22,7 @@ cruise_alt = 10000; %m
 SH = {};
 SH.range = 3900;
 SH.M = 0.79;
-SH.m_cargo = 2959; %2500;
+SH.m_cargo = 2726; %2500;
 SH.max_pax = 180;
 SH.seats_per_row = 6;
 SH.N_deck = 1;
@@ -36,7 +36,7 @@ SH.design_mission = Mission(SH.range,SH.M,cruise_alt, SH.max_pax, 1.0, SH.m_carg
 % Medium haul
 MH.range = 9000;
 MH.M = 0.81;
-MH.m_cargo = 0; %20000;
+MH.m_cargo = 20000; %20000;
 MH.max_pax = 300;
 MH.seats_per_row = 8;
 MH.N_deck = 1;
@@ -48,7 +48,7 @@ MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_carg
 % Long haul
 LH.range = 14000;
 LH.M = 0.83;
-LH.m_cargo = 0; % 30000;
+LH.m_cargo = 30000; % 30000;
 LH.max_pax = 500;
 LH.seats_per_row = 10;
 LH.N_deck = 2;

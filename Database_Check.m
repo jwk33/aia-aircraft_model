@@ -1,10 +1,15 @@
 clear all
 close all
+clc
 load("aircraftDataTable.mat")
-
+Dodgy_Rows = [];
 for r = 1:height(aircraftDataTable)
     %% Import all working variables
+    year = aircraftDataTable{r,1}{1};
+    optimism = aircraftDataTable{r,2}{1};
     AC = aircraftDataTable{r,3}{1};
+    Fuel = aircraftDataTable{r,4}{1};
+    LF = aircraftDataTable{r,5}{1};
     PAX = aircraftDataTable{r,6}{1};
     MR = aircraftDataTable{r,7}{1};
     PE = aircraftDataTable{r,8}{1};
@@ -23,16 +28,18 @@ for r = 1:height(aircraftDataTable)
     F = aircraftDataTable{r,21}{1};
     DR = aircraftDataTable{r,22}{1};
     
+    Error = 0;
+
     %% Define the limits for each type
     if AC == "Short Haul"
-        Passengers_Upper = 140;%LF = 0.8
+        Passengers_Upper = 180;%LF = 0.8
         Passengers_Lower = 123;%LF = 0.7
 
         Max_Range_Upper = 6e3;
         Max_Range_Lower = DR;%this is the design point
 
         PE_Upper = 0.85;
-        PE_Lower = 0.75;
+        PE_Lower = 0.7;
 
         TE_Upper = 0.6;
         TE_Lower = 0.4;
@@ -45,6 +52,12 @@ for r = 1:height(aircraftDataTable)
 
         OEW_Upper = 55e3;
         OEW_Lower = 35e3;
+
+        MTOW_Upper = 88e3;
+        MTOW_Lower = 72e3;
+
+        F_Upper = 12*16.5e3;%kWh
+        F_Lower = 12*13.5e3;
 
         Alt_Upper = 12000;
         ALt_Lower = 9000;
@@ -62,14 +75,14 @@ for r = 1:height(aircraftDataTable)
         Vapp_Lower = 150;
 
     elseif AC == "Medium Haul"
-        Passengers_Upper = 240;%LF = 0.8
+        Passengers_Upper = 300;%LF = 0.8
         Passengers_Lower = 210;%LF = 0.7
 
         Max_Range_Upper = 13e3;
         Max_Range_Lower = DR;%this is the design point
 
         PE_Upper = 0.85;
-        PE_Lower = 0.75;
+        PE_Lower = 0.7;
 
         TE_Upper = 0.6;
         TE_Lower = 0.4;
@@ -82,6 +95,12 @@ for r = 1:height(aircraftDataTable)
 
         OEW_Upper = 200e3;
         OEW_Lower = 100e3;
+
+        MTOW_Upper = 275e3;
+        MTOW_Lower = 225e3;
+
+        F_Upper = 12*77e3;%kWh
+        F_Lower = 12*54e3;
 
         Alt_Upper = 12000;
         ALt_Lower = 9000;
@@ -98,14 +117,14 @@ for r = 1:height(aircraftDataTable)
         Vapp_Upper = 300;
         Vapp_Lower = 150;
     elseif AC == "Long Haul"
-        Passengers_Upper = 400;%LF = 0.8
+        Passengers_Upper = 500;%LF = 0.8
         Passengers_Lower = 350;%LF = 0.7
 
         Max_Range_Upper = 20e3;
         Max_Range_Lower = DR;%this is the design point
 
         PE_Upper = 0.85;
-        PE_Lower = 0.75;
+        PE_Lower = 0.7;
 
         TE_Upper = 0.6;
         TE_Lower = 0.4;
@@ -118,6 +137,12 @@ for r = 1:height(aircraftDataTable)
 
         OEW_Upper = 350e3;
         OEW_Lower = 200e3;
+
+        MTOW_Upper = 633e3;
+        MTOW_Lower = 517e3;
+
+        F_Upper = 12*228e3;%kWh
+        F_Lower = 12*186e3;
 
         Alt_Upper = 12000;
         ALt_Lower = 9000;
@@ -135,55 +160,68 @@ for r = 1:height(aircraftDataTable)
         Vapp_Lower = 150;
     else
         disp(['Aircraft not one of the three for row ',num2str(r)])
+        Error = Error + 1;
     end
 
     %% Check that variables within limits
     if PAX < Passengers_Lower || PAX > Passengers_Upper
-        disp(['PAX Error for row ',num2str(r)])
+        disp(['PAX Error: ',num2str(PAX)])
+        Error = Error + 1;
     end
 
     if MR < Max_Range_Lower || MR > Max_Range_Upper
-        disp(['Max Range Error for row ',num2str(r)])
+        disp(['Max Range Error: ',num2str(MR)])
+        Error = Error + 1;
     end
 
     if PE < PE_Lower || PE > PE_Upper
-        disp(['Prop Eff Error for row ',num2str(r)])
+        disp(['Prop Eff Error: ',num2str(PE)])
+        Error = Error + 1;
     end
 
     if TE < TE_Lower || TE > TE_Upper
-        disp(['THerm Eff Error for row ',num2str(r)])
+        disp(['Therm Eff Error: ',num2str(TE)])
+        Error = Error + 1;
     end
 
     if WS < WS_Lower || WS > WS_Upper
-        disp(['Wingspan Error for row ',num2str(r)])
+        disp(['Wingspan Error: ',num2str(WS)])
+        Error = Error + 1;
     end
 
     if L_D < L_D_Lower || L_D > L_D_Upper
-        disp(['L/D Error for row ',num2str(r)])
+        disp(['L/D Error: ',num2str(L_D)])
+        Error = Error + 1;
     end
 
     if OEW < OEW_Lower || OEW > OEW_Upper
-        disp(['OEW Error for row ',num2str(r)])
+        disp(['OEW Error: ',num2str(round(OEW/1000,0)),'t'])
+        Error = Error + 1;
     end
 
     if Alt < ALt_Lower || Alt > Alt_Upper
-        disp(['Altitude Error for row ',num2str(r)])
+        disp(['Altitude Error: ',num2str(Alt)])
+        Error = Error + 1;
     end
 
     if theta < theta_Lower || theta > theta_Upper
-        disp(['Theta Error for row ',num2str(r)])
+        disp(['Theta Error: ',num2str(theta)])
+        Error = Error + 1;
     end
 
     if Vcr < Vcr_Lower || Vcr > Vcr_Upper
-        disp(['Cruise Speed Error for row ',num2str(r)])
+        disp(['Cruise Speed Error: ',num2str(Vcr)])
+        Error = Error + 1;
     end
 
     if Vcl < Vcl_Lower || Vcl > Vcl_Upper
-        disp(['Climb Speed Error for row ',num2str(r)])
+        disp(['Climb Speed Error: ',num2str(Vcl)])
+        Error = Error + 1;
     end
 
     if Vapp < Vapp_Lower || Vapp > Vapp_Upper
-        disp(['Approach Speed Error for row ',num2str(r)])
+        disp(['Approach Speed Error: ',num2str(Vapp)])
+        Error = Error + 1;
     end
 
 
@@ -193,17 +231,25 @@ for r = 1:height(aircraftDataTable)
     K = find(isnan(F), 1, 'first');
     if I~=J || I~=K || J~=K
         disp(['NaN index Error for row ',num2str(r)])
+        Error = Error + 1;
     end
     
-    %% Check that MTOW is appropriate
-    if TOW(I) < OEW_Lower/0.5 || TOW(I) > OEW_Upper/0.5
-        disp(['TOW Error for row ',num2str(r)])
-    end
+    %% Check that MTOW is appropriate and design point spec is correct
+    if LF == 1
+        if TOW(I-1) < MTOW_Lower || TOW(I-1) > MTOW_Upper
+            disp(['MTOW Error: ',num2str(round(TOW(I-1)/1000,0)),'t'])
+            Error = Error + 1;
+        end
     %% Check that Fuel Burns are appropriate
-%     if mean(FB) > 0.1 || mean(FB) < 0.001
-%         disp(['Fuel Burn Error for row ',num2str(r)])
-%     end
-%     if mean(FB) > 0.1 || mean(FB) < 0.001
-%         disp(['Fuel Burn Error for row ',num2str(r)])
-%     end
+        Fuel_kWh = F(I-1)*PAX;
+        if Fuel_kWh < F_Lower || Fuel_kWh > F_Upper
+            disp(['Fuel Burn Error - Kerosene equivalent Mass: = ',num2str(round(Fuel_kWh/12000,1)),'t'])
+            Error = Error + 1;
+        end
+    end
+    if Error > 0
+        disp([num2str(year),optimism,AC,Fuel])
+        disp('---------------------------------------------------')
+    end
+
 end
