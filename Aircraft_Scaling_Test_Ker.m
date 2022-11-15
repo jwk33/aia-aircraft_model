@@ -357,7 +357,7 @@ fuel = Ker;
 B787_10 = Aircraft(fuel,design_mission,dimension);
 save('./saved-ac/B787_10.mat','B787_10');
 % B787_10.manual_input.m_eng = 12240;
-B787_10.manual_input.eta_eng = 0.5;
+B787_10.manual_input.eta_eng = 0.2;
 % B787_10.manual_input.AR = 9.59;
 % B787_10.manual_input.sweep = 32.2;
 % B787_10.manual_input.wing_area = 377;
@@ -379,6 +379,4 @@ oper_mission.range = max_range;
 oper_mission.load_factor = 1.0;
 oper_mission.pax = oper_mission.max_pax * oper_mission.load_factor;
 B787_10 = B787_10.operate(oper_mission);
-
-
 

@@ -200,7 +200,7 @@ for i=1:length(year_array)
 
                     % design h2 aircraft
                     current.ac = designH2AC(current, year, optimism);
-                    current.ac.text_gen("H2_current")
+                    %current.ac.text_gen("H2_current")
 
                 
                 end

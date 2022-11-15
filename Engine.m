@@ -29,8 +29,8 @@ classdef Engine
                 obj = obj.calculate_mass(aircraft);
             end
             
-            if any(ismember(fields(aircraft.manual_input),'eta'))
-                obj.eta_eng = aircraft.manual_input.eta;
+            if any(ismember(fields(aircraft.manual_input),'eta_eng'))
+                obj.eta_eng = aircraft.manual_input.eta_eng;
             else
                 % use default
             end

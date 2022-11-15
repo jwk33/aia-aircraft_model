@@ -73,5 +73,5 @@ function ac = designH2AC(ac_inputs, year, optimism)
         end
 
     end
-    sprintf("H2 Solution Converged: %.0f seats abreast | %.2fm Fuse Length ",ac.dimension.seats_per_row, ac.dimension.fuselage_length)
+    %sprintf("H2 Solution Converged: %.0f seats abreast | %.2fm Fuse Length ",ac.dimension.seats_per_row, ac.dimension.fuselage_length)
 end
