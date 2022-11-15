@@ -10,7 +10,7 @@ design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
 
 N_deck = 1;
 seats_per_row = 10;
-year = 2021;
+year = 2050;
 optimism = "basic";
 
 %% kerosene aircraft
@@ -22,8 +22,11 @@ dimension = dimension.finalise();
 
 ac_Ker = Aircraft(Ker, design_mission, dimension);
 
-ac_Ker.manual_input.eta = 0.48;
+% ac_Ker.manual_input.eta_eng = 0.55;
+% ac_Ker.manual_input.eta_prop = 0.7;
 ac_Ker.manual_input.bpr = 9;
+ac_Ker.year = year;
+ac_Ker.optimism = optimism;
 ac_Ker = ac_Ker.finalise();
 
 ac_Ker.text_gen("Ker")

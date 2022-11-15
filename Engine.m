@@ -4,15 +4,15 @@ classdef Engine
     % define engine properties
     properties (SetAccess = public)
         m_eng(1,1) double {mustBeNonnegative, mustBeFinite}
-        eta_eng(1,1) double {mustBeNonnegative, mustBeFinite} = 0.44
-        eta_prop(1,1) double {mustBeNonnegative, mustBeFinite} = 0.81
+        eta_eng(1,1) double {mustBeNonnegative, mustBeFinite} = 0.55
+        eta_eng_base(1,1) double % base overall efficiency. needed to prevent tech improvements from exponentiall increasing efficiency
+        eta_prop(1,1) double {mustBeNonnegative, mustBeFinite} = 0.7
+        eta_prop_base (1,1) double
         eta_ov(1,1) double {mustBeNonnegative, mustBeFinite}
         thrust_total(1,1) double {mustBeNonnegative, mustBeFinite} % total thrust
         thrust_eng(1,1) double {mustBeNonnegative, mustBeFinite} % thrust per engine
         number_engines(1,1) double {mustBeNonnegative, mustBeFinite}
         bpr(1,1) double {mustBeNonnegative, mustBeFinite} %Bypasss ratio
-        m_input(1,1) double
-        eta_input(1,1) double
     end
 
     methods
@@ -35,32 +35,30 @@ classdef Engine
                 % use default
             end
 
+            if any(ismember(fields(aircraft.manual_input),'eta_prop'))
+                obj.eta_prop = aircraft.manual_input.eta_prop;
+            else
+                % use default
+            end
+            
+            % apply efficiencies to base
+            obj.eta_eng_base = obj.eta_eng;
+            obj.eta_prop_base = obj.eta_prop;
 
             obj.eta_ov = obj.eta_eng * obj.eta_prop;
-
+            
+            % update eta for given tech levels
+            obj = aircraft.tech.improve_eta(obj);
         end
 
         function obj = Engine_Iteration(obj,aircraft)
-            
             %handle inputs
-
             if any(ismember(fields(aircraft.manual_input),'m_eng'))
                 obj.m_eng = aircraft.manual_input.m_eng;
             else
                 % use default
                 obj = obj.calculate_mass(aircraft);
             end
-            
-            if any(ismember(fields(aircraft.manual_input),'eta'))
-                obj.eta_eng = aircraft.manual_input.eta;
-            else
-                % use default
-            end
-
-
-            obj.eta_ov = obj.eta_eng * obj.eta_prop;
-
-            
             % update eta for given tech levels
             obj = aircraft.tech.improve_eta(obj);
         end
@@ -103,8 +101,6 @@ classdef Engine
 %             end
             obj.m_eng = obj.number_engines*(eng_mass + nacelle); % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
             
-            % update eta for given tech levels
-            obj = aircraft.tech.improve_eta(obj);
         end
     end
 end
