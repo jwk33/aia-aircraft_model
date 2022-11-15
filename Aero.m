@@ -172,8 +172,8 @@ classdef Aero
 %                 m_gross = (aircraft.weight.m_maxTO);
 %             end
             m_gross = aircraft.weight.m_maxTO;
-            %disp((0.0013*n_ult) *(eta_cp*obj.b/100) * (obj.AR/(obj.toc*(cosd(obj.sweep)^2))));
-            obj.m_wing = (0.0013*n_ult) * m_gross * (eta_cp*obj.b/100) * (obj.AR/(obj.toc*(cosd(obj.sweep)^2))) + 210*obj.S/9.81;
+            
+            %obj.m_wing = (0.0013*n_ult) * m_gross * (eta_cp*obj.b/100) * (obj.AR/(obj.toc*(cosd(obj.sweep)^2))) + 210*obj.S/9.81;
             obj.m_wing = 0.86/sqrt(9.81) * (obj.AR^2/obj.wing_loading^3*m_gross)^(1/4) * aircraft.weight.m_maxTO;
         end
 
