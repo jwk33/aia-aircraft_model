@@ -38,8 +38,8 @@ classdef Dimension < matlab.mixin.Copyable
         tank_tolerance = 0.2;
         toilet_length = 0;
         kitchen_length = 0;
-        cockpit_angle = 30;%To be changed ASAP
-%         rear_angle = 24.5;%To be changed ASAP
+        cockpit_angle = 30;%TODO: To be changed ASAP
+%         rear_angle = 24.5;%TODO: To be changed ASAP
     end
 
     methods
