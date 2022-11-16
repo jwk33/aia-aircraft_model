@@ -7,7 +7,7 @@ classdef FuelTank < matlab.mixin.Copyable
         length_ext(1,1) double {mustBeNonnegative, mustBeFinite}
         diam_ext(1,1) double {mustBeNonnegative, mustBeFinite}
         diam_int(1,1) double {mustBeNonnegative, mustBeFinite}
-        fuelTankType (1,:) char {mustBeMember(fuelTankType,{'Cylinder', 'Sphere'})} = 'Cylinder';
+        fuelTankType (1,:) char {mustBeMember(fuelTankType,{'Cylindrical', 'Spherical'})} = 'Cylindrical';
         gravimetric_efficiency(1,1) double {mustBeNonnegative, mustBeFinite}
         m_tank(1,1) double {mustBeNonnegative, mustBeFinite}
     end
@@ -31,12 +31,12 @@ classdef FuelTank < matlab.mixin.Copyable
     end
     
     properties (Constant)
-        fusThickness = 120.0;
-        excThickness = 450.0;
-        intExtFactor = 0.98;
+        fusThickness = 120.0; % TODO: Not needed
+        excThickness = 450.0; % TODO: Not needed
+        intExtFactor = 0.98; % TODO: Not needed
         safety_margin = 2.25;
-        storage_pressure = 0.25;%MPa
-        design_pressure = 0.34;%MPa
+        storage_pressure = 0.25e6;%Pa
+        design_pressure = 0.34e6;%Pa
     end
     
     methods
@@ -53,10 +53,19 @@ classdef FuelTank < matlab.mixin.Copyable
         function obj = finalise(obj, dimension)
             obj.length_ext = dimension.tank_external_length_i;
             obj.diam_ext = dimension.tank_external_diameter_i;
+            
+            % for first iteration, assume internal equal to external
+            % dimensions
+
+            obj.length_int = obj.length_ext;
+            obj.diam_int = obj.diam_ext;
+
             % put it all together: calculate tank empty mass and
             % gravimetric efficiency
-            obj.find_fuel_mass();
-            obj.find_t_total();
+            for i=1:2 % TODO: while loop to ensure thickness has converged
+                obj.find_fuel_mass();
+                obj.find_t_total();
+            end
             obj.find_m_empty();
             obj.find_gravimetric_efficiency();
             obj.m_tank = obj.m_empty; %tonnes
@@ -73,10 +82,16 @@ classdef FuelTank < matlab.mixin.Copyable
             %calculate internal volume (assume the same as external as thin
             %walls
             %formatSpec = char("Tank Internal Volume:\t %.2f (m^2) \n");
-            radius = obj.diam_ext / 2;
+            radius = obj.diam_int / 2;
             caps_volume = 4*pi/3 * radius^3; % 2 hemispheres
-            cylinder_length = obj.length_ext - obj.diam_ext;
-            cylinder_volume = cylinder_length * pi * radius^2;
+            if obj.fuelTankType == "Cylindrical"
+                cylinder_length = obj.length_int - obj.diam_int;
+                cylinder_volume = cylinder_length * pi * radius^2;
+            elseif obj.fuelTankType == "Spherical"
+                cylinder_volume = 0;
+            else
+                warning('fuelTankType unknown %s',obj.fuelTankType)
+            end
             obj.v_fuelMax = caps_volume + cylinder_volume;
             
 %             fprintf(formatSpec,obj.fuel_volume);
@@ -113,10 +128,26 @@ classdef FuelTank < matlab.mixin.Copyable
 
         function obj = find_t_structure(obj)
             % find structural thickness required for pressure specification
-            minimum_thickness = 7e-3;
-            tcc = obj.design_pressure*obj.diam_ext/(2*(obj.structural_material.yield_strength + 0.4*obj.design_pressure));%m
-            tcl = obj.design_pressure*obj.diam_ext/(2*(2*obj.structural_material.yield_strength + 1.4*obj.design_pressure));%m
-            th = obj.design_pressure*obj.diam_ext/(2*(2*obj.structural_material.yield_strength + 0.8*obj.design_pressure));%m
+            minimum_thickness = 1.5e-3;
+            % assuming t = A*R_internal, equation can be re-arranged to be
+            % t = A/(1+A) * R_external where R_external = R_internal + t
+            R_ext = obj.diam_ext/2; % External radius
+            P = obj.design_pressure; % Design pressure
+            E_struct = obj.structural_material.yield_strength; % Yield strength of structural material
+            
+            if obj.fuelTankType == "Cylindrical"
+                Acc = P/(E_struct - 0.6*P); %cylindrical shell resisting circumferential stresses
+                Acl = P/(2*E_struct + 0.4*P );%cylindrical shell resisting longitudinal stresses
+            elseif obj.fuelTankType == "Spherical"
+                Acc = 0;
+                Acl = 0;
+            end
+
+            Ah  = P/(2*E_struct - 0.2*P);%spherical shell resisting circumferential stresses
+            
+            tcc = Acc/(1+Acc) * R_ext * obj.safety_margin;%m
+            tcl = Acl/(1+Acl) * R_ext * obj.safety_margin;%m 
+            th  = Ah/(1+Ah) * R_ext * obj.safety_margin;%m 
             %http://docs.codecalculation.com/mechanical/pressure-vessel/thickness-calculation.html
             obj.t_structure = max([minimum_thickness,tcc,tcl,th]);
             %A larger diamter for constant everything else increases the
@@ -134,7 +165,12 @@ classdef FuelTank < matlab.mixin.Copyable
             t = obj.t_structure;
             R = D/2;
             rho = obj.structural_material.density;
-            cylinder_mass = rho*(pi*((t+R)^2 - R^2))*(L-D);
+            if obj.fuelTankType == "Cylindrical"
+                cylinder_mass = rho*(pi*((t+R)^2 - R^2))*(L-D);
+
+            elseif obj.fuelTankType == "Spherical"
+                cylinder_mass = 0;
+            end
             caps_mass = rho*4*pi/3 * ((t+R)^3 - R^3);   % mass of hemisphere
             obj.m_structure = cylinder_mass + caps_mass;
         end
@@ -151,7 +187,7 @@ classdef FuelTank < matlab.mixin.Copyable
 
             % calculate allowable heat transfer through insulation
             boil_off_rate = 0.05;   % percentage of contents per hour
-            M_boil = boil_off_rate*obj.m_fuelMax() / 100;     % kg / hour
+            M_boil = boil_off_rate*obj.m_fuelMax / 100;     % kg / hour
             m_boil = M_boil / 3600; % kg / sec
             H_vap = 222700;         % J / kg
             Q_boil = m_boil * H_vap;% W
@@ -159,7 +195,7 @@ classdef FuelTank < matlab.mixin.Copyable
 %             % heat transfer calculation to find insulation thickness
 %             alpha = 2*pi*(Tins - Tliq)*obj.length_int/Q_boil;
 %             R = obj.diam_int / 2 + obj.t_structure;
-            R = obj.diam_ext / 2;
+            R = obj.diam_ext / 2 ;
 %             beta = (1/k_wall)*log((R + obj.t_structure)/R);
 %             gamma = alpha - beta;
 %             min_thickness = (R + obj.t_structure)*(exp(gamma*k_ins) - 1);
@@ -172,14 +208,20 @@ classdef FuelTank < matlab.mixin.Copyable
         end
         
         function obj = find_m_insulation(obj)
-            D = obj.diam_int;
+            D = obj.diam_int; % internal diameter
             R = D / 2;   % m
             L = obj.length_int;
             t = obj.t_insulation;
-            w_t = obj.t_structure;
-            cylinder_mass = obj.insulation_material.density*pi*((R + w_t + t)^2 - (R + w_t)^2) * (L - D);
-            caps_mass = obj.insulation_material.density*4*pi/3 * ((R + w_t + t)^3 - (R + w_t)^3);
-            obj.m_insulation = cylinder_mass + caps_mass;
+            t_struct = obj.t_structure;
+            
+            if obj.fuelTankType == "Cylindrical"
+                cylinder_vol = pi*((R + t_struct + t)^2 - (R + t_struct)^2) * (L - D);
+            elseif obj.fuelTankType == "Spherical"
+                cylinder_vol = 0;
+            end
+            caps_vol = 4*pi/3 * ((R + t_struct + t)^3 - (R + t_struct)^3);
+            v_insulation = cylinder_vol + caps_vol;
+            obj.m_insulation = v_insulation * obj.insulation_material.density;
         end
         
     end
