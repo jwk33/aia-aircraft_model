@@ -17,16 +17,18 @@ for r = 1:height(aircraftDataTable)
     WS = aircraftDataTable{r,10}{1};
     L_D = aircraftDataTable{r,11}{1};
     OEW = aircraftDataTable{r,12}{1};
-    Alt = aircraftDataTable{r,13}{1};
-    theta = aircraftDataTable{r,14}{1};
-    Vcr = aircraftDataTable{r,15}{1};
-    Vcl = aircraftDataTable{r,16}{1};
-    Vapp = aircraftDataTable{r,17}{1};
-    Range = aircraftDataTable{r,18}{1};
-    TOW = aircraftDataTable{r,19}{1};
-    FB = aircraftDataTable{r,20}{1};
-    F = aircraftDataTable{r,21}{1};
-    DR = aircraftDataTable{r,22}{1};
+    ZFW = aircraftDataTable{r,13}{1};
+    MTOW = aircraftDataTable{r,14}{1};
+    Alt = aircraftDataTable{r,15}{1};
+    theta = aircraftDataTable{r,16}{1};
+    Vcr = aircraftDataTable{r,17}{1};
+    Vcl = aircraftDataTable{r,18}{1};
+    Vapp = aircraftDataTable{r,19}{1};
+    Range = aircraftDataTable{r,20}{1};
+    TOW = aircraftDataTable{r,21}{1};
+    FB = aircraftDataTable{r,22}{1};
+    F = aircraftDataTable{r,23}{1};
+    DR = aircraftDataTable{r,24}{1};
     
     Error = 0;
 
@@ -195,8 +197,13 @@ for r = 1:height(aircraftDataTable)
     end
 
     if OEW < OEW_Lower || OEW > OEW_Upper
-        disp(['OEW Error: ',num2str(round(OEW/1000,0)),'t'])
-        Error = Error + 1;
+%         disp(['OEW Error: ',num2str(round(OEW/1000,0)),'t'])
+%         Error = Error + 1;
+    end
+
+    if MTOW < MTOW_Lower || MTOW > MTOW_Upper
+%         disp(['MTOW Error: ',num2str(round(MTOW/1000,0)),'t'])
+%         Error = Error + 1;
     end
 
     if Alt < ALt_Lower || Alt > Alt_Upper
@@ -233,23 +240,58 @@ for r = 1:height(aircraftDataTable)
         disp(['NaN index Error for row ',num2str(r)])
         Error = Error + 1;
     end
-    
-    %% Check that MTOW is appropriate and design point spec is correct
-    if LF == 1
-        if TOW(I-1) < MTOW_Lower || TOW(I-1) > MTOW_Upper
-            disp(['MTOW Error: ',num2str(round(TOW(I-1)/1000,0)),'t'])
-            Error = Error + 1;
-        end
-    %% Check that Fuel Burns are appropriate
-        Fuel_kWh = F(I-1)*PAX;
-        if Fuel_kWh < F_Lower || Fuel_kWh > F_Upper
-            disp(['Fuel Burn Error - Kerosene equivalent Mass: = ',num2str(round(Fuel_kWh/12000,1)),'t'])
-            Error = Error + 1;
-        end
-    end
-    if Error > 0
-        disp([num2str(year),optimism,AC,Fuel])
-        disp('---------------------------------------------------')
+
+    %% Fuel Checks
+    if Fuel == 'Fossil Jet Fuel'
+        delta_h = 43.2e6;
+    else
+        delta_h = 120e6;
     end
 
+    Fuel_kWh = F(I-1)*PAX;
+    Fuel_Burn_kWh = FB(I-1)*Range(I-1)*1000*delta_h/(3.6e6);
+
+    if Fuel_kWh < 0.99*Fuel_Burn_kWh || Fuel_kWh > 1.01*Fuel_Burn_kWh
+        disp(['Fuel Match Error: ',num2str(round(Fuel_Burn_kWh/Fuel_kWh,2))])
+        Error = Error + 1;
+    end
+    
+    if AC == "Short Haul"
+        Breguet_Fuel_Burn = ( TOW(I-1)*9.81*Alt/delta_h + ...
+            ZFW*(exp((Range(I-1)*1000*9.81)/(TE*PE*L_D*delta_h)) - 1))*1.15; %15% reserve fuel + climb
+        Breguet_Fuel_Energy = Breguet_Fuel_Burn*delta_h/(3.6e6);
+    else
+        Breguet_Fuel_Burn = ( TOW(I-1)*9.81*Alt/delta_h + ...
+        ZFW*(exp((Range(I-1)*1000*9.81)/(TE*PE*L_D*delta_h)) - 1))*1.1; %10% reserve fuel + climb
+        Breguet_Fuel_Energy = Breguet_Fuel_Burn*delta_h/(3.6e6);
+    end
+
+    if Fuel_kWh < 0.9*Breguet_Fuel_Energy || Fuel_kWh > 1.1*Breguet_Fuel_Energy
+        disp(['Breguet Error: ',num2str(round(Fuel_kWh,0)),' vs ',num2str(round(Breguet_Fuel_Energy,0))])
+        Error = Error + 1;
+    end
+
+    %% Functional Checks that numbers match
+    if LF == 1
+        if TOW(I-1) < 0.99*MTOW || TOW(I-1) > 1.01*MTOW
+            disp(['TOW Error: ',num2str(round(TOW(I-1)/1000,0)),' vs ',num2str(round(MTOW/1000,0)),'t'])
+            Error = Error + 1;
+        end
+    end
+
+    Calced_ZFW = TOW(I-1)-Fuel_kWh*3.6e6/delta_h;
+    if ZFW < 0.99* Calced_ZFW || ZFW > 1.01*Calced_ZFW
+        disp(['ZFW Error: ',num2str(round(ZFW/1000,0)),' vs ',num2str(round(Calced_ZFW/1000,0)),'t'])
+            Error = Error + 1;
+    end
+
+    if MR < Range(I-1) - 100 || MR > Range(I-1) + 100
+        disp(['Max Range Error: ',num2str(round(MR,1)),' vs ',num2str(round(Range(I-1),0)),'km'])
+            Error = Error + 1;
+    end
+
+    if Error > 0
+        disp([num2str(year),optimism,AC,Fuel,num2str(LF)])
+        disp('---------------------------------------------------')
+    end
 end
