@@ -1,6 +1,7 @@
 close all
 clear all
 clc
+tic
 %% load constants
 load("Ker_Fuel.mat","Ker")
 load("LH2_fuel.mat","LH2")
@@ -139,6 +140,8 @@ PropEfficiency = cell(n_entries,1);
 ThermalEfficiency = cell(n_entries,1);
 LoD = cell(n_entries,1);
 OEW = cell(n_entries,1);
+ZFW = cell(n_entries,1);
+MTOW = cell(n_entries,1);
 ClimbAngle = cell(n_entries,1);
 CruiseSpeed = cell(n_entries,1);
 ClimbSpeed = cell(n_entries,1);
@@ -249,6 +252,8 @@ for i=1:length(year_array)
                     WingSpan{count} = current.ac.aero.b;
                     LoD{count} = current.ac.aero.LovD;
                     OEW{count} = current.ac.weight.m_OEW;
+                    ZFW{count} = current.ac.weight.m_ZFW;
+                    MTOW{count} = current.ac.weight.m_maxTO;
                     Altitude{count} = current.ac.design_mission.cruise_alt;
                     ClimbAngle{count} = current.ac.design_mission.angle_TO;
                     CruiseSpeed{count} = current.ac.design_mission.cruise_speed;
@@ -282,6 +287,8 @@ aircraftDataTable = table(...
                     WingSpan,...
                     LoD,...
                     OEW,...
+                    ZFW,...
+                    MTOW,...
                     Altitude,...
                     ClimbAngle,...
                     CruiseSpeed,...
@@ -308,6 +315,8 @@ clear ThermalEfficiency
 clear WingSpan
 clear LoD
 clear OEW
+clear ZFW
+clear MTOW
 clear Altitude
 clear ClimbAngle
 clear CruiseSpeed
@@ -323,6 +332,7 @@ disp("Table generated")
 
 %% Save table
 save("aircraftDataTable.mat","aircraftDataTable")
+toc
 %%
 % tableTest = table(Year, FuelBurnKgm);
 
