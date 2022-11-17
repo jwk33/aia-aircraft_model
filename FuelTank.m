@@ -186,7 +186,7 @@ classdef FuelTank < matlab.mixin.Copyable
             k_ins = obj.insulation_material.thermal_conductivity;           % W / m K
 
             % calculate allowable heat transfer through insulation
-            boil_off_rate = 0.05;   % percentage of contents per hour
+            boil_off_rate = 0.02;   % percentage of contents per hour
             M_boil = boil_off_rate*obj.m_fuelMax / 100;     % kg / hour
             m_boil = M_boil / 3600; % kg / sec
             H_vap = 222700;         % J / kg

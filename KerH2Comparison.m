@@ -51,7 +51,7 @@ length_frac_array = 0.2:0.01:1.0;
 seats_abreast_array = [7,8,9,10,11,12,13,14];
 acTemplate = Aircraft(LH2,design_mission,dimension);
 acMat = repmat(acTemplate,[length(seats_abreast_array),length(length_frac_array)]);
-
+%%
 for i = 1:length(seats_abreast_array)
     seats_abreast = seats_abreast_array(i);
     for j=1:length(length_frac_array)

@@ -139,7 +139,7 @@ classdef Dimension < matlab.mixin.Copyable
             obj.tank_external_length_i = tank_length_i*obj.cabin_length;
 
 
-            if tank_length_u > 100
+            if tank_length_u > 1
                 cab_length = obj.cabin_length*tank_lenght_u;
             else
                 cab_length = obj.cabin_length;
