@@ -33,8 +33,9 @@ classdef FuelTank < matlab.mixin.Copyable
     properties (Constant)
         fusThickness = 120.0; % TODO: Not needed
         excThickness = 450.0; % TODO: Not needed
-        intExtFactor = 0.98; % TODO: Not needed
+
         safety_margin = 2.25;
+        safety_margin_insulation = 1.3;
         storage_pressure = 0.25e6;%Pa
         design_pressure = 0.34e6;%Pa
     end
@@ -181,6 +182,7 @@ classdef FuelTank < matlab.mixin.Copyable
             % define properties
             Tliq = 23.9;            % K
             Tins = 280;             % K
+            dT = Tins-Tliq;         % K
             
             k_wall = obj.structural_material.thermal_conductivity;           % W / m K
             k_ins = obj.insulation_material.thermal_conductivity;           % W / m K
@@ -192,19 +194,32 @@ classdef FuelTank < matlab.mixin.Copyable
             H_vap = 222700;         % J / kg
             Q_boil = m_boil * H_vap;% W
 
+            R = obj.diam_ext / 2 ;
+            L = obj.length_ext - 2*R;
+            thicknesses = 0.001:0.001:0.1;            
+            Q_actual = zeros(length(thicknesses),1);
+            for i = 1:length(thicknesses)
+                t = thicknesses(i);
+                Rcyl = log((R-t)/(R-obj.t_structure-t))/(2*pi*L*k_wall) + ...
+                    log((R)/(R-t))/(2*pi*L*k_ins);
+                Rs = obj.t_structure/(4*pi*k_wall*(R-t)*(R-obj.t_structure-t)) + ...
+                    t/(4*pi*k_ins*(R)*(R-t));
+    
+                Q_actual(i) = dT*(1/Rcyl + 1/Rs);
+            end
+            obj.t_insulation = interp1(Q_actual,thicknesses,Q_boil)*obj.safety_margin_insulation;
 %             % heat transfer calculation to find insulation thickness
 %             alpha = 2*pi*(Tins - Tliq)*obj.length_int/Q_boil;
 %             R = obj.diam_int / 2 + obj.t_structure;
-            R = obj.diam_ext / 2 ;
 %             beta = (1/k_wall)*log((R + obj.t_structure)/R);
 %             gamma = alpha - beta;
 %             min_thickness = (R + obj.t_structure)*(exp(gamma*k_ins) - 1);
 % 
 %             obj.t_insulation = min_thickness * obj.safety_margin;
 
-            syms t
-            eqn = t == (R-t)*(exp(2*pi*k_ins*(Tins - Tliq)*(obj.length_ext-obj.t_structure-t)/Q_boil - (k_ins/k_wall)*log((R - t)/(R - t - obj.t_structure)))-1);
-            obj.t_insulation = vpasolve(eqn,t,obj.t_structure);
+%             syms t
+%             eqn = t == (R-t)*(exp(2*pi*k_ins*(Tins - Tliq)*(obj.length_ext-obj.t_structure-t)/Q_boil - (k_ins/k_wall)*log((R - t)/(R - t - obj.t_structure)))-1);
+%             obj.t_insulation = vpasolve(eqn,t,obj.t_structure);
         end
         
         function obj = find_m_insulation(obj)

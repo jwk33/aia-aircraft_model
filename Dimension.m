@@ -26,7 +26,7 @@ classdef Dimension < matlab.mixin.Copyable
     end
 
     properties (Constant)
-        fuselage_thickness = 0.15;%m
+        fuselage_thickness = 0.12;%m
         seat_height = 1.8;
         seat_width = 0.4;
 %         seat_length = 0.81;

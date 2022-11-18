@@ -1,6 +1,7 @@
 clear all
 load("LH2_fuel.mat", "LH2")
 ins_material = structfun(@(x) x,load('MLI.mat','MLI'));
+
 struct_material = structfun(@(x) x,load('Aluminium.mat','aluminium'));
 %%
 
@@ -45,8 +46,8 @@ disp("tank calculated")
 
 tic
         
-len = 10;
-diameter = len;
+len = 3.9;
+diameter = 3.9;
 dimension = {};
 dimension.tank_external_length_i = len;
 dimension.tank_external_diameter_i = diameter;
@@ -56,7 +57,7 @@ h2_tank.fuelTankType = "Spherical";
 h2_tank.finalise(dimension);
 grav = h2_tank.gravimetric_efficiency;
 toc
-
+%%
 tic
         
 len = 10;
