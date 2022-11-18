@@ -196,15 +196,15 @@ for r = 1:height(aircraftDataTable)
         Error = Error + 1;
     end
 
-    if OEW < OEW_Lower || OEW > OEW_Upper
+%     if OEW < OEW_Lower || OEW > OEW_Upper
 %         disp(['OEW Error: ',num2str(round(OEW/1000,0)),'t'])
 %         Error = Error + 1;
-    end
-
-    if MTOW < MTOW_Lower || MTOW > MTOW_Upper
+%     end
+% 
+%     if MTOW < MTOW_Lower || MTOW > MTOW_Upper
 %         disp(['MTOW Error: ',num2str(round(MTOW/1000,0)),'t'])
 %         Error = Error + 1;
-    end
+%     end
 
     if Alt < ALt_Lower || Alt > Alt_Upper
         disp(['Altitude Error: ',num2str(Alt)])

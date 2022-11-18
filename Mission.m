@@ -14,6 +14,9 @@ classdef Mission < matlab.mixin.Copyable
         pax(1,1) double {mustBeNonnegative, mustBeFinite}
         m_cargo (1,1) double {mustBeFinite} %allowing negative for design
         
+        % Atmopshere variables
+        atmosphere Atmosphere
+
         % saving operation results for given mission
         fuel_burn FuelBurnModel
         weight Weight
@@ -29,8 +32,8 @@ classdef Mission < matlab.mixin.Copyable
             obj.range = range;
             obj.M = M;
             obj.cruise_alt = cruise_alt;
-            [T,sos,P,rho] = atmosisa(cruise_alt);
-            obj.cruise_speed = sos*M;%m/s
+            obj.atmosphere = Atmosphere(cruise_alt, M);
+            obj.cruise_speed = obj.atmosphere.V;%m/s
             obj.angle_TO = 4; %degrees
             obj.reserve_fuel = 0; %To Be Added Later
             obj.max_pax = max_pax;
