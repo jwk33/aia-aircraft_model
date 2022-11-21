@@ -1,8 +1,4 @@
 function ac = designH2AC(ac_inputs, year, optimism)
-    struct_material = ac_inputs.struct_material;
-    ins_material = ac_inputs.ins_material;
-    fuel = ac_inputs.fuel;
-
     seats_abreast_array = ac_inputs.seats_abreast_array;
     ac_list = cell(size(seats_abreast_array));
     minFuel = 9999999;

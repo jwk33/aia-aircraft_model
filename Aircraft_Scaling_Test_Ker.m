@@ -3,7 +3,7 @@ clear all
 close all
 
 %% DD CONSTANT INPUTS
-load("Ker_Fuel.mat","Ker")
+load("Fuels\Ker.mat","Ker")
 
 range = 12222;%km
 M = 0.83;
@@ -41,7 +41,7 @@ A380 = A380.finalise();
 save('./saved-ac/A380.mat','A380');
 
 %% B737 CONSTANT INPUTS
-load("Ker_Fuel.mat","Ker")
+load("Fuels\Ker.mat","Ker")
 
 range = 4815;%km
 M = 0.79;
@@ -81,7 +81,7 @@ B737.text_gen("B737")
 
 
 %% B777300ER CONSTANT INPUTS
-load("Ker_Fuel.mat","Ker")
+load("Fuels\Ker.mat","Ker")
 
 range = 10550;%km
 M = 0.84;
@@ -116,7 +116,7 @@ B777 = B777.finalise();
 save('./saved-ac/B777.mat','B777');
 
 %% ATR-72-600 CONSTANT INPUTS
-load("Ker_Fuel.mat","Ker")
+load("Fuels\Ker.mat","Ker")
 
 range = 1370;%km
 M = 0.44;
@@ -151,7 +151,7 @@ ATR_72_600 = ATR_72_600.finalise();
 save('./saved-ac/ATR_72_600.mat','ATR_72_600');
 
 %% A320neo CONSTANT INPUTS
-load("Ker_Fuel.mat","Ker")
+load("Fuels\Ker.mat","Ker")
 
 range = 4500;%km
 M = 0.78;
@@ -189,7 +189,7 @@ save('./saved-ac/A320neo.mat','A320neo');
 A320neo.text_gen("A320neo")
 
 %% A330neo - 900 CONSTANT INPUTS
-load("Ker_Fuel.mat","Ker")
+load("Fuels\Ker.mat","Ker")
 
 range = 8800;%km
 M = 0.84;
@@ -224,7 +224,7 @@ A330neo = A330neo.finalise();
 save('./saved-ac/A330neo.mat','A330neo');
 A330neo.text_gen("A330neo")
 %% A350 - 900 CONSTANT INPUTS
-load("Ker_Fuel.mat","Ker")
+load("Fuels\Ker.mat","Ker")
 
 range = 10750;%km
 M = 0.85;
@@ -263,7 +263,7 @@ save('./saved-ac/A350_900.mat','A350_900');
 A350_900.text_gen("A350")
 
 %% A350 - 1000 CONSTANT INPUTS
-load("Ker_Fuel.mat","Ker")
+load("Fuels\Ker.mat","Ker")
 
 range = 10370;%km
 M = 0.85;
@@ -298,7 +298,7 @@ A350_1000 = A350_1000.finalise();
 save('./saved-ac/A350_1000.mat','A350_1000');
 
 %% B787 - 10 CONSTANT INPUTS
-load("Ker_Fuel.mat","Ker")
+load("Fuels\Ker.mat","Ker")
 
 range = 7777;%km
 M = 0.85;
@@ -333,7 +333,7 @@ B787_10 = B787_10.finalise();
 save('./saved-ac/B787_10.mat','B787_10');
 
 %% B787 - 10 CONSTANT INPUTS
-load("Ker_Fuel.mat","Ker")
+load("Fuels\Ker.mat","Ker")
 
 range = 7777;%km
 M = 0.85;

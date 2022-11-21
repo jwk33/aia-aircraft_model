@@ -3,16 +3,16 @@ clear all
 clc
 tic
 %% load constants
-load("Ker_Fuel.mat","Ker")
-load("LH2_fuel.mat","LH2")
+load("Fuels\Ker.mat","Ker")
+load("Fuels\LH2.mat","LH2")
 
 % define tank structural material
-load("Aluminium.mat", "aluminium")
+load("Materials\Aluminium.mat", "aluminium")
 struct_material = aluminium;
 
 
 % define tank insulation material
-load("MLI.mat", "MLI")
+load("Materials\MLI.mat", "MLI")
 ins_material = MLI;
 
 cruise_alt = 10000; %m

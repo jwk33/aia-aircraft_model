@@ -2,7 +2,7 @@ close all
 clear all
 %% CONSTANT INPUTS
 
-load("LH2_Fuel.mat","LH2")
+load("Fuels\LH2.mat","LH2")
 
 range = 3790;%km
 M = 0.78;

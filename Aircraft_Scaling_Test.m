@@ -1,17 +1,10 @@
 close all
 clear all
-%% set fuel properties
 
-Ker = Fuel("Fossil Jet Fuel",43.2e6,807.5,0);
-save("Ker_Fuel.mat","Ker")
-
-LH2 = Fuel("Liquid Hydrogen", 120e6,70.17,1);
-save("LH2_Fuel.mat","LH2")
 
 %% CONSTANT INPUTS
-load("Ker_Fuel.mat","Ker")
-
-load("LH2_Fuel.mat","LH2")
+load("Fuels\Ker.mat","Ker")
+load("Fuels\LH2.mat","LH2")
 
 range = 3790;%km
 M = 0.78;
@@ -29,22 +22,7 @@ dimension.fuselage_length = 39.47;
 dimension.fuselage_diameter = 3.74;
 dimension = dimension.finalise();
 
-%% Setup a fuel tank
-% define tank structural material
-density = 2700; %kg/m3
-yield_strength = 276e6; %MPa
-thermal_conductivity = 0.5; %W / m K
-struct_material = Material("Aluminium","Structural",density,yield_strength,thermal_conductivity);
 
-
-% define tank insulation material
-density = 50; %kg/m3
-yield_strength = 1e6; %MPa
-thermal_conductivity = 1e-4; %W / m K
-ins_material = Material("Insulation","Insulation",density,yield_strength,thermal_conductivity);
-
-
-h2_tank = FuelTank(LH2,struct_material, ins_material);
 
 %% SETUP AN INSTANCE OF AIRCRAFT CLASS
 

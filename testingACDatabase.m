@@ -1,6 +1,6 @@
 clear all
 %% load constants
-load("Ker_Fuel.mat","Ker")
+load("Fuels\Ker.mat","Ker")
 load("aircraftDataTable.mat","aircraftDataTable")
 table = aircraftDataTable;
 count_max = height(table);
