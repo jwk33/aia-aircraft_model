@@ -60,3 +60,26 @@ ac_inputs.fuel = CH4;
 ac_inputs.ac = designH2AC(ac_inputs,year,optimism);
 ac_inputs.ac.text_gen("CH4")
 toc
+
+%% h2 test function
+
+load("Fuels\LH2.mat", "LH2")
+tic
+
+ac_inputs = {};
+ac_inputs.range =range;
+ac_inputs.M = M;
+ac_inputs.m_cargo = cargo;
+ac_inputs.max_pax = max_pax;
+ac_inputs.seats_abreast_array = seats_per_row;
+ac_inputs.N_deck = N_deck;
+%ac_inputs.eta = 0.48;
+ac_inputs.number_engines = 2;
+ac_inputs.design_mission = copy(design_mission);
+ac_inputs.struct_material = struct_material;
+ac_inputs.ins_material = ins_material;
+ac_inputs.fuel = LH2;
+
+ac_inputs.ac = designH2AC(ac_inputs,year,optimism);
+ac_inputs.ac.text_gen("H2")
+toc
