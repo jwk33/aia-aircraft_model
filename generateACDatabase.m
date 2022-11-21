@@ -337,10 +337,8 @@ toc
 
 %% clear variables
 
-clearvars except aircraftDataTable Ker_group LH2_group
+clearvars -except aircraftDataTable aircraftDataTableWhole Ker_group LH2_group
 disp("Table generated")
-%%
-% tableTest = table(Year, FuelBurnKgm);
 
 
 
