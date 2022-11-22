@@ -3,7 +3,7 @@ classdef Fuel
     
     % builds physical model for different fuel types
     properties (SetAccess = immutable)
-        name(1,:) char
+        name(1,:) string
         lhv(1,1) double {mustBeNonnegative, mustBeFinite}
         density(1,1) double {mustBeNonnegative, mustBeFinite}
         T(1,1) double % fuel storage temperature. Needed if tank is designed

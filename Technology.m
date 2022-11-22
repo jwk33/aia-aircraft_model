@@ -85,7 +85,7 @@ classdef Technology
             end
             
             mzf_base = weight.m_OEW + weight.m_payload;
-            mzf_delta = mzf_base*(obj.mzf_factor-1);
+            mzf_delta = mzf_base*(obj.mzf_factor*0.5-1);
             weight.m_mzf_delta = mzf_delta;
             
             weight = weight.finalise(aircraft,mission);
