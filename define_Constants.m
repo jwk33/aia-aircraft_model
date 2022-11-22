@@ -43,7 +43,7 @@ Ker = Fuel(name, lhv,density, specific_CO2);
 save("Fuels\Ker.mat", "Ker")
 
 name = "Methane";
-lhv = 55.528e6; %J/kg
+lhv = 50.0e6; %J/kg
 density = 422.8; %kg/m3
 Temperature = 111.15; % K % Fuel storage temperature
 useTankModel = 1;

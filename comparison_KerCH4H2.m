@@ -14,7 +14,7 @@ design_mission = Mission(range, M, cruise_alt, max_pax,load_factor, cargo);
 
 N_deck = 1;
 seats_per_row = 10;
-year = 2021;
+year = 2035;
 optimism = "basic";
 
 %% kerosene aircraft
@@ -33,7 +33,7 @@ ac_Ker.year = year;
 ac_Ker.optimism = optimism;
 ac_Ker = ac_Ker.finalise();
 
-ac_Ker.text_gen("Ker")
+ac_Ker.text_gen("2035-Ker")
 
 %%
 tic
@@ -58,7 +58,7 @@ ac_inputs.ins_material = ins_material;
 ac_inputs.fuel = CH4;
 
 ac_inputs.ac = designH2AC(ac_inputs,year,optimism);
-ac_inputs.ac.text_gen("CH4")
+ac_inputs.ac.text_gen("2035-CH4")
 toc
 
 %% h2 test function
@@ -81,5 +81,5 @@ ac_inputs.ins_material = ins_material;
 ac_inputs.fuel = LH2;
 
 ac_inputs.ac = designH2AC(ac_inputs,year,optimism);
-ac_inputs.ac.text_gen("H2")
+ac_inputs.ac.text_gen("2035-H2")
 toc
