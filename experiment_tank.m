@@ -1,8 +1,8 @@
 clear all
-load("LH2_fuel.mat", "LH2")
-ins_material = structfun(@(x) x,load('MLI.mat','MLI'));
+load("Fuels\LH2.mat","LH2")
+ins_material = structfun(@(x) x,load('Materials\MLI.mat','MLI'));
 
-struct_material = structfun(@(x) x,load('Aluminium.mat','aluminium'));
+struct_material = structfun(@(x) x,load('Materials\Aluminium.mat','aluminium'));
 %%
 
 diam_array = 4:2:8;

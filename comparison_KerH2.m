@@ -15,7 +15,7 @@ optimism = "basic";
 
 %% kerosene aircraft
 
-load("Ker_fuel.mat","Ker");
+load("Fuels\Ker.mat","Ker");
 
 dimension = Dimension(design_mission, seats_per_row, N_deck);
 dimension = dimension.finalise();
@@ -32,7 +32,7 @@ ac_Ker = ac_Ker.finalise();
 ac_Ker.text_gen("Ker")
 %% Hydrogen Aircraft
 tic
-load("LH2_Fuel.mat","LH2")
+load("Fuels\LH2.mat","LH2")
 
 % define tank structural material
 density = 2700; %kg/m3
@@ -129,7 +129,7 @@ ac_H2.text_gen("H2_whole");
 toc
 %% H2 Aircraft Optimised
 tic
-load("LH2_Fuel.mat","LH2")
+load("Fuels\LH2.mat","LH2")
 
 % define tank structural material
 density = 2700; %kg/m3

@@ -7,6 +7,9 @@ classdef FuelTank < matlab.mixin.Copyable
         length_ext(1,1) double {mustBeNonnegative, mustBeFinite}
         diam_ext(1,1) double {mustBeNonnegative, mustBeFinite}
         diam_int(1,1) double {mustBeNonnegative, mustBeFinite}
+        T_ext(1,1) double = 280
+        T_int(1,1) double
+        
         fuelTankType (1,:) char {mustBeMember(fuelTankType,{'Cylindrical', 'Spherical'})} = 'Cylindrical';
         gravimetric_efficiency(1,1) double {mustBeNonnegative, mustBeFinite}
         m_tank(1,1) double {mustBeNonnegative, mustBeFinite}
@@ -46,7 +49,7 @@ classdef FuelTank < matlab.mixin.Copyable
             obj.fuel = fuel;
             obj.structural_material = struct_material;
             obj.insulation_material = ins_material;
-            
+            obj.T_int = fuel.T;
 
             
         end
@@ -180,8 +183,8 @@ classdef FuelTank < matlab.mixin.Copyable
             % taken from MVM v4.4 'Tank Model' sheet
             
             % define properties
-            Tliq = 23.9;            % K
-            Tins = 280;             % K
+            Tliq = obj.T_int;            % K
+            Tins = obj.T_ext;             % K
             dT = Tins-Tliq;         % K
             
             k_wall = obj.structural_material.thermal_conductivity;           % W / m K

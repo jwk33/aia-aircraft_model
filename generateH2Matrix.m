@@ -2,7 +2,7 @@ close all
 clear all
 %% CONSTANT INPUTS
 
-load("LH2_Fuel.mat","LH2")
+load("Fuels\LH2.mat","LH2")
 
 % define tank structural material
 density = 2700; %kg/m3

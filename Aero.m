@@ -20,7 +20,8 @@ classdef Aero
     methods
         function obj = Aero(aircraft)
             %Construct an instance of an AERO class
-            [dyn_pressure, nu] = atmos_calc(obj, aircraft.design_mission.cruise_alt, aircraft.design_mission.cruise_speed);
+            %[dyn_pressure, ~] = atmos_calc(obj, aircraft.design_mission.cruise_alt, aircraft.design_mission.cruise_speed);
+            [dyn_pressure, ~] = aircraft.design_mission.atmosphere.atmos_dynP();
             
             % Handle inputs
             m_TO = aircraft.weight.m_TO;
@@ -71,7 +72,8 @@ classdef Aero
             m_TO = aircraft.weight.m_TO;
             
             %Get Atmospheric Data
-            [dyn_pressure, nu] = atmos_calc(obj, aircraft.design_mission.cruise_alt, aircraft.design_mission.cruise_speed);
+            %[dyn_pressure, nu] = atmos_calc(obj, aircraft.design_mission.cruise_alt, aircraft.design_mission.cruise_speed);
+            [dyn_pressure, nu] = aircraft.design_mission.atmosphere.atmos_dynP();
             
             %Calculate Wing Performance
             obj.C_L = m_TO*9.81/obj.S/dyn_pressure;
@@ -89,8 +91,10 @@ classdef Aero
             %for the wing based on mean chord, and for the fuselage based on length
         
             %Slight error compared to DBs calculation, unsure why
-            c_d_0_w = cf(obj.mac,aircraft.design_mission.cruise_speed,nu) * 1.4 * (1 + cosd(obj.sweep)^2 * (3.3 * obj.toc - 0.008 * obj.toc^2 + 27 * obj.toc^3)) * (S_wet_w / S_ref);
-            c_d_0_f = cf(aircraft.dimension.cabin_length,aircraft.design_mission.cruise_speed,nu) * (1 + 2.2 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-1.5) - 0.9 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-3)) * (S_wet_f / S_ref);
+            V_cruise = aircraft.design_mission.cruise_speed;
+            MAC = obj.mac;
+            c_d_0_w = obj.cf(MAC,V_cruise,nu) * 1.4 * (1 + cosd(obj.sweep)^2 * (3.3 * obj.toc - 0.008 * obj.toc^2 + 27 * obj.toc^3)) * (S_wet_w / S_ref);
+            c_d_0_f = obj.cf(aircraft.dimension.cabin_length,V_cruise,nu) * (1 + 2.2 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-1.5) - 0.9 * (aircraft.dimension.cabin_length / aircraft.dimension.fuselage_diameter)^(-3)) * (S_wet_f / S_ref);
         
             c_d_0 = c_d_0_w + c_d_0_f;
             
@@ -177,6 +181,18 @@ classdef Aero
             obj.m_wing = 0.86/sqrt(9.81) * (obj.AR^2/obj.wing_loading^3*m_gross)^(1/4) * aircraft.weight.m_maxTO;
         end
 
+        
+        function skin_friction_coefficient = cf(obj,l,U,nu)
+            %Calculate Cf for a component - for turbulent flow. l = reference
+            %length for Re
+        %     nu = 3.899*10^(-5); %11000 - is there a toolbox?
+        %     nu = 2.416e-5;
+            skin_friction_coefficient = 0.027/(obj.Re(U,l,nu)^(1/7));
+        end
+        
+        function reynolds = Re(obj,U,l,nu)
+            reynolds = U * l / nu;
+        end
 
     end
 end
