@@ -233,7 +233,7 @@ for i=1:length(year_array)
                     
                     range_array_sliced = find(range_array <= current.max_range); % slice it so only valid ranges are checked
                     for n=1:length(range_array_sliced)
-                        range = range_array_sliced(n);
+                        range = range_array(n);
                         current.oper_mission.range = range;
                         
                         current.ac = current.ac.operate(current.oper_mission);
@@ -242,7 +242,7 @@ for i=1:length(year_array)
                 
                         % load data into array
                         FuelBurnKgm_array(n) = m_fuel/(range*1e3); % this includes reserves
-                        FuelkWhPass_array(n) = m_fuel * fuel.lhv * 2.77778e-7/current.oper_mission.pax; % includes reserves
+                        FuelkWhPass_array(n) = m_fuel * fuel.lhv/(3.6e6*current.oper_mission.pax); % includes reserves
                         TakeOffWeight_array(n) = m_TO;
                     end
                     

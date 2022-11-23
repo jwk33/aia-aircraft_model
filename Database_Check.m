@@ -1,7 +1,8 @@
 clear all
 close all
 clc
-load("aircraftDataTable.mat")
+load("aircraftDataTable_Whole.mat", "aircraftDataTableWhole")
+aircraftDataTable = aircraftDataTableWhole;
 Dodgy_Rows = [];
 for r = 1:height(aircraftDataTable)
     %% Import all working variables
@@ -242,14 +243,14 @@ for r = 1:height(aircraftDataTable)
     end
 
     %% Fuel Checks
-    if Fuel == 'Fossil Jet Fuel'
+    if Fuel == "Fossil Jet Fuel"
         delta_h = 43.2e6;
     else
         delta_h = 120e6;
     end
 
     Fuel_kWh = F(I-1)*PAX;
-    Fuel_Burn_kWh = FB(I-1)*Range(I-1)*1000*delta_h/(3.6e6);
+    Fuel_Burn_kWh = FB(I-1)*Range(I-1)*1e3*delta_h/(3.6e6);
 
     if Fuel_kWh < 0.99*Fuel_Burn_kWh || Fuel_kWh > 1.01*Fuel_Burn_kWh
         disp(['Fuel Match Error: ',num2str(round(Fuel_Burn_kWh/Fuel_kWh,2))])
@@ -267,7 +268,8 @@ for r = 1:height(aircraftDataTable)
     end
 
     if Fuel_kWh < 0.9*Breguet_Fuel_Energy || Fuel_kWh > 1.1*Breguet_Fuel_Energy
-        disp(['Breguet Error: ',num2str(round(Fuel_kWh,0)),' vs ',num2str(round(Breguet_Fuel_Energy,0))])
+        warning(['Breguet Error: ',num2str(round(Fuel_kWh,0)),' vs ',num2str(round(Breguet_Fuel_Energy,0))])
+        disp(Range(I-1))
         Error = Error + 1;
     end
 
@@ -295,3 +297,4 @@ for r = 1:height(aircraftDataTable)
         disp('---------------------------------------------------')
     end
 end
+disp("Check complete")
