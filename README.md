@@ -1,5 +1,6 @@
-"# aia-aircraft_model" 
+# AIA Aircraft Model
 
+## General
 Code is used to size aircraft based on mission requirements with calculations for:
 1. Weight
 2. Drag
@@ -7,4 +8,295 @@ Code is used to size aircraft based on mission requirements with calculations fo
 
 Weight calculations are made using correlations and tank weight calculations are made using the AIA tank weight model.
 
-[![](https://mermaid.ink/img/eyJjb2RlIjoiY2xhc3NEaWFncmFtXG4gICAgZGlyZWN0aW9uIExSXG4gICAgICAgIE1pc3Npb24gXCIqXCIgLS18PiBcIjFcIiBBaXJjcmFmdFxuICAgICAgICBEaW1lbnNpb24gLS18PiBBaXJjcmFmdFxuICAgICAgICBEaW1lbnNpb24gLS18PiBGdWVsVGFua1xuXG4gICAgICAgIEFpcmNyYWZ0IDx8LS0gRnVlbEJ1cm5cbiAgICAgICAgQWlyY3JhZnQgPHwtLSBBZXJvXG4gICAgICAgIEFpcmNyYWZ0IDx8LS0gRW5naW5lXG4gICAgICAgIEFpcmNyYWZ0IDx8LS0gV2VpZ2h0XG4gICAgICAgIEFpcmNyYWZ0IDx8LS0gRnVlbFRhbmtcblxuICAgICAgICBBZXJvIDx8LS0gVGVjaG5vbG9neVxuICAgICAgICBFbmdpbmUgPHwtLSBUZWNobm9sb2d5XG4gICAgICAgIFdlaWdodCA8fC0tIFRlY2hub2xvZ3lcbiAgICAgICAgXG5cbiAgICAgICAgRnVlbFRhbmsgPHwtLSBGdWVsXG4gICAgICAgIEZ1ZWxUYW5rIFwiMVwiIDx8LS0gXCIyXCIgTWF0ZXJpYWxcblxuICAgIGNsYXNzIEFpcmNyYWZ0e1xuICAgICAgICArSW50ICAgICAgICB5ZWFyXG4gICAgICAgICtTdHJpbmcgICAgIG9wdGltaXNtXG4gICAgICAgICtGdWVsICAgICAgIGZ1ZWxcbiAgICAgICAgK0Flcm8gICAgICAgYWVyb1xuICAgICAgICArRW5naW5lICAgICBlbmdpbmVcbiAgICAgICAgK1dlaWdodCAgICAgd2VpZ2h0XG4gICAgICAgICtGdWVsQnVybiAgIGZ1ZWxCdXJuXG4gICAgICAgICtNaXNzaW9uICAgIGRlc2lnbl9taXNzaW9uXG4gICAgICAgICtNaXNzaW9uICAgIG9wZXJhdGlvbl9taXNzaW9uXG4gICAgICAgICtmaW5hbGlzZSgpXG4gICAgICAgICtvcGVyYXRlKG9wZXJhdGlvbl9taXNzaW9uKVxuICAgICAgICArbWF4X3JhbmdlKG9wZXJhdGlvbl9taXNzaW9uKVxuICAgIH1cbiAgICBjbGFzcyBNaXNzaW9ue1xuICAgICAgICArcmFuZ2VcbiAgICAgICAgK01heF9QYXNzZW5nZXJzXG4gICAgICAgICtQYXNzZW5nZXJzXG4gICAgICAgICtDYXJnb1xuICAgICAgICArTWF4X0NhcmdvXG4gICAgICAgICtMb2FkX0ZhY3RvclxuXG4gICAgICAgICtDcnVpc2VfTWFjaFxuICAgICAgICArQ3J1aXNlX0FsdGl0dWRlXG5cbiAgICAgICAgK3VwZGF0ZSgpXG4gICAgfVxuICAgIGNsYXNzIERpbWVuc2lvbntcbiAgICAgICAgK0Zsb2F0IGNhYmluX2xlbmd0aFxuICAgICAgICArRmxvYXQgY2FiaW5fd2lkdGhcbiAgICAgICAgK0Zsb2F0IGlubGluZV90YW5rX2xlbmd0aFxuICAgICAgICArRmxvYXQgaW5saW5lX3RhbmtfZGlhbWV0ZXJcbiAgICAgICAgK0Zsb2F0IHVuZGVyZmxvb3JfdGFua19sZW5ndGhcbiAgICAgICAgK0Zsb2F0IHVuZGVyZmxvb3JfdGFua19kaWFtZXRlclxuICAgICAgICArZmluYWxpc2UoKVxuICAgIH1cbiAgICBjbGFzcyBGdWVsQnVybntcbiAgICAgICAgK21fZnVlbF90b3RhbFxuICAgICAgICArbV9mdWVsX21pc3Npb25cbiAgICAgICAgK21fZnVlbF9yZXNlcnZlXG4gICAgICAgICttX2Z1ZWxfY2xpbWJcbiAgICAgICAgK21fZnVlbF9jcnVpc2VcbiAgICAgICAgK21fZnVlbF9kZXNjZW50XG4gICAgICAgICtGdWVsQnVybl9JdGVyYXRpb24oKVxuICAgICAgICArb3BlcmF0ZShvcGVyYXRpb25fbWlzc2lvbilcbiAgICB9XG4gICAgY2xhc3MgQWVyb3tcbiAgICAgICAgK0xvRFxuICAgICAgICArQ19MXG4gICAgICAgICtDX0RcbiAgICAgICAgK3dpbmdfYXJlYVxuICAgICAgICArd2luZ19zd2VlcFxuICAgICAgICArd2luZ190YXBlclxuICAgICAgICArd2luZ190aGlja25lc3NcbiAgICAgICAgK3dpbmdfbG9hZGluZ1xuXG4gICAgICAgICtBZXJvX0l0ZXJhdGlvbigpXG4gICAgICAgIC1jYWxjdWxhdGVfbWFzcygpXG4gICAgfVxuICAgIGNsYXNzIEVuZ2luZXtcbiAgICAgICAgK2V0YV9vdlxuICAgICAgICArZXRhX2VuZ1xuICAgICAgICArZXRhX3Byb3BcbiAgICAgICAgK3RocnVzdF90b3RhbFxuICAgICAgICArbnVtYmVyX2VuZ2luZXNcbiAgICAgICAgK2JwclxuICAgICAgICArbV9lbmdpbmVcblxuICAgICAgICArRW5naW5lX0l0ZXJhdGlvbigpXG4gICAgICAgIC1jYWxjdWxhdGVfbWFzcygpXG4gICAgfVxuICAgIGNsYXNzIFdlaWdodHtcbiAgICAgICAgK01UT1dcbiAgICAgICAgK01aRldcbiAgICAgICAgK09FV1xuICAgICAgICArTWF4X0Z1ZWxcbiAgICAgICAgK01heF9QYXlsb2FkXG4gICAgICAgICtGdWVsXG4gICAgICAgICtQYXlsb2FkXG4gICAgICAgICttX3dpbmdcbiAgICAgICAgK21fZnVzZWxhZ2VcbiAgICAgICAgK21fTEdcbiAgICAgICAgK21fdGFpbFxuICAgICAgICArbV9lbmdpbmVcbiAgICAgICAgK21fZnVlbHN5c1xuICAgICAgICArbV9mdXJuaXNoaW5nc1xuICAgICAgICArbV9vcF9pdGVtc1xuICAgICAgICArbV9NWkZfZGVsdGFcblxuICAgICAgICArV2VpZ2h0X0l0ZXJhdGlvbigpXG4gICAgICAgICtvcGVyYXRlKG9wZXJhdGlvbl9taXNzaW9uKVxuICAgICAgICAtZmluYWxpc2UoKVxuICAgICAgICBcbiAgICB9XG4gICAgY2xhc3MgRnVlbFRhbmt7XG4gICAgICAgICtmdWVsXG4gICAgICAgICtFeHRfZGlhbVxuICAgICAgICArRXh0X2xlbmd0aFxuICAgICAgICArSW50X2RpYW1cbiAgICAgICAgK0V4dF9sZW5ndGhcbiAgICAgICAgK2Z1ZWxfdm9sdW1lXG4gICAgICAgICtmdWVsX21hc3NcbiAgICAgICAgK2VtcHR5X21hc3NcbiAgICAgICAgK2ZpbmFsaXNlKClcbiAgICB9XG4gICAgY2xhc3MgRnVlbHtcbiAgICAgICAgK1N0cmluZyBmdWVsTmFtZVxuICAgICAgICArRmxvYXQgbGh2XG4gICAgICAgICtGbG9hdCBkZW5zaXR5XG4gICAgICAgICtCb29sIHVzZVRhbmtNb2RlbFxuICAgIH1cblxuICAgIGNsYXNzIE1hdGVyaWFse1xuICAgICAgICArU3RyaW5nIG1hdGVyaWFsTmFtZVxuICAgICAgICArRmxvYXQgWWllbGRfc3RyZW5ndGhcbiAgICAgICAgK0Zsb2F0IGRlbnNpdHlcbiAgICAgICAgK0Zsb2F0IHRoZXJtYWxfY29uZHVjaXRpdml0eVxuICAgIH1cblxuICAgIGNsYXNzIFRlY2hub2xvZ3l7XG4gICAgICAgICtZZWFyXG4gICAgICAgICtPcHRpbWlzbVxuICAgICAgICBcbiAgICAgICAgK2ltcHJvdmVfTG9EKGFlcm8pXG4gICAgICAgICtpbXByb3ZlX2V0YShlbmdpbmUpXG4gICAgICAgICtpbXByb3ZlX29ldyh3ZWlnaHQpXG5cbiAgICB9IiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)](https://mermaid-js.github.io/docs/mermaid-live-editor-beta/#/edit/eyJjb2RlIjoiY2xhc3NEaWFncmFtXG4gICAgZGlyZWN0aW9uIExSXG4gICAgICAgIE1pc3Npb24gXCIqXCIgLS18PiBcIjFcIiBBaXJjcmFmdFxuICAgICAgICBEaW1lbnNpb24gLS18PiBBaXJjcmFmdFxuICAgICAgICBEaW1lbnNpb24gLS18PiBGdWVsVGFua1xuXG4gICAgICAgIEFpcmNyYWZ0IDx8LS0gRnVlbEJ1cm5cbiAgICAgICAgQWlyY3JhZnQgPHwtLSBBZXJvXG4gICAgICAgIEFpcmNyYWZ0IDx8LS0gRW5naW5lXG4gICAgICAgIEFpcmNyYWZ0IDx8LS0gV2VpZ2h0XG4gICAgICAgIEFpcmNyYWZ0IDx8LS0gRnVlbFRhbmtcblxuICAgICAgICBBZXJvIDx8LS0gVGVjaG5vbG9neVxuICAgICAgICBFbmdpbmUgPHwtLSBUZWNobm9sb2d5XG4gICAgICAgIFdlaWdodCA8fC0tIFRlY2hub2xvZ3lcbiAgICAgICAgXG5cbiAgICAgICAgRnVlbFRhbmsgPHwtLSBGdWVsXG4gICAgICAgIEZ1ZWxUYW5rIFwiMVwiIDx8LS0gXCIyXCIgTWF0ZXJpYWxcblxuICAgIGNsYXNzIEFpcmNyYWZ0e1xuICAgICAgICArSW50ICAgICAgICB5ZWFyXG4gICAgICAgICtTdHJpbmcgICAgIG9wdGltaXNtXG4gICAgICAgICtGdWVsICAgICAgIGZ1ZWxcbiAgICAgICAgK0Flcm8gICAgICAgYWVyb1xuICAgICAgICArRW5naW5lICAgICBlbmdpbmVcbiAgICAgICAgK1dlaWdodCAgICAgd2VpZ2h0XG4gICAgICAgICtGdWVsQnVybiAgIGZ1ZWxCdXJuXG4gICAgICAgICtNaXNzaW9uICAgIGRlc2lnbl9taXNzaW9uXG4gICAgICAgICtNaXNzaW9uICAgIG9wZXJhdGlvbl9taXNzaW9uXG4gICAgICAgICtmaW5hbGlzZSgpXG4gICAgICAgICtvcGVyYXRlKG9wZXJhdGlvbl9taXNzaW9uKVxuICAgICAgICArbWF4X3JhbmdlKG9wZXJhdGlvbl9taXNzaW9uKVxuICAgIH1cbiAgICBjbGFzcyBNaXNzaW9ue1xuICAgICAgICArcmFuZ2VcbiAgICAgICAgK01heF9QYXNzZW5nZXJzXG4gICAgICAgICtQYXNzZW5nZXJzXG4gICAgICAgICtDYXJnb1xuICAgICAgICArTWF4X0NhcmdvXG4gICAgICAgICtMb2FkX0ZhY3RvclxuXG4gICAgICAgICtDcnVpc2VfTWFjaFxuICAgICAgICArQ3J1aXNlX0FsdGl0dWRlXG5cbiAgICAgICAgK3VwZGF0ZSgpXG4gICAgfVxuICAgIGNsYXNzIERpbWVuc2lvbntcbiAgICAgICAgK0Zsb2F0IGNhYmluX2xlbmd0aFxuICAgICAgICArRmxvYXQgY2FiaW5fd2lkdGhcbiAgICAgICAgK0Zsb2F0IGlubGluZV90YW5rX2xlbmd0aFxuICAgICAgICArRmxvYXQgaW5saW5lX3RhbmtfZGlhbWV0ZXJcbiAgICAgICAgK0Zsb2F0IHVuZGVyZmxvb3JfdGFua19sZW5ndGhcbiAgICAgICAgK0Zsb2F0IHVuZGVyZmxvb3JfdGFua19kaWFtZXRlclxuICAgICAgICArZmluYWxpc2UoKVxuICAgIH1cbiAgICBjbGFzcyBGdWVsQnVybntcbiAgICAgICAgK21fZnVlbF90b3RhbFxuICAgICAgICArbV9mdWVsX21pc3Npb25cbiAgICAgICAgK21fZnVlbF9yZXNlcnZlXG4gICAgICAgICttX2Z1ZWxfY2xpbWJcbiAgICAgICAgK21fZnVlbF9jcnVpc2VcbiAgICAgICAgK21fZnVlbF9kZXNjZW50XG4gICAgICAgICtGdWVsQnVybl9JdGVyYXRpb24oKVxuICAgICAgICArb3BlcmF0ZShvcGVyYXRpb25fbWlzc2lvbilcbiAgICB9XG4gICAgY2xhc3MgQWVyb3tcbiAgICAgICAgK0xvRFxuICAgICAgICArQ19MXG4gICAgICAgICtDX0RcbiAgICAgICAgK3dpbmdfYXJlYVxuICAgICAgICArd2luZ19zd2VlcFxuICAgICAgICArd2luZ190YXBlclxuICAgICAgICArd2luZ190aGlja25lc3NcbiAgICAgICAgK3dpbmdfbG9hZGluZ1xuXG4gICAgICAgICtBZXJvX0l0ZXJhdGlvbigpXG4gICAgICAgIC1jYWxjdWxhdGVfbWFzcygpXG4gICAgfVxuICAgIGNsYXNzIEVuZ2luZXtcbiAgICAgICAgK2V0YV9vdlxuICAgICAgICArZXRhX2VuZ1xuICAgICAgICArZXRhX3Byb3BcbiAgICAgICAgK3RocnVzdF90b3RhbFxuICAgICAgICArbnVtYmVyX2VuZ2luZXNcbiAgICAgICAgK2JwclxuICAgICAgICArbV9lbmdpbmVcblxuICAgICAgICArRW5naW5lX0l0ZXJhdGlvbigpXG4gICAgICAgIC1jYWxjdWxhdGVfbWFzcygpXG4gICAgfVxuICAgIGNsYXNzIFdlaWdodHtcbiAgICAgICAgK01UT1dcbiAgICAgICAgK01aRldcbiAgICAgICAgK09FV1xuICAgICAgICArTWF4X0Z1ZWxcbiAgICAgICAgK01heF9QYXlsb2FkXG4gICAgICAgICtGdWVsXG4gICAgICAgICtQYXlsb2FkXG4gICAgICAgICttX3dpbmdcbiAgICAgICAgK21fZnVzZWxhZ2VcbiAgICAgICAgK21fTEdcbiAgICAgICAgK21fdGFpbFxuICAgICAgICArbV9lbmdpbmVcbiAgICAgICAgK21fZnVlbHN5c1xuICAgICAgICArbV9mdXJuaXNoaW5nc1xuICAgICAgICArbV9vcF9pdGVtc1xuICAgICAgICArbV9NWkZfZGVsdGFcblxuICAgICAgICArV2VpZ2h0X0l0ZXJhdGlvbigpXG4gICAgICAgICtvcGVyYXRlKG9wZXJhdGlvbl9taXNzaW9uKVxuICAgICAgICAtZmluYWxpc2UoKVxuICAgICAgICBcbiAgICB9XG4gICAgY2xhc3MgRnVlbFRhbmt7XG4gICAgICAgICtmdWVsXG4gICAgICAgICtFeHRfZGlhbVxuICAgICAgICArRXh0X2xlbmd0aFxuICAgICAgICArSW50X2RpYW1cbiAgICAgICAgK0V4dF9sZW5ndGhcbiAgICAgICAgK2Z1ZWxfdm9sdW1lXG4gICAgICAgICtmdWVsX21hc3NcbiAgICAgICAgK2VtcHR5X21hc3NcbiAgICAgICAgK2ZpbmFsaXNlKClcbiAgICB9XG4gICAgY2xhc3MgRnVlbHtcbiAgICAgICAgK1N0cmluZyBmdWVsTmFtZVxuICAgICAgICArRmxvYXQgbGh2XG4gICAgICAgICtGbG9hdCBkZW5zaXR5XG4gICAgICAgICtCb29sIHVzZVRhbmtNb2RlbFxuICAgIH1cblxuICAgIGNsYXNzIE1hdGVyaWFse1xuICAgICAgICArU3RyaW5nIG1hdGVyaWFsTmFtZVxuICAgICAgICArRmxvYXQgWWllbGRfc3RyZW5ndGhcbiAgICAgICAgK0Zsb2F0IGRlbnNpdHlcbiAgICAgICAgK0Zsb2F0IHRoZXJtYWxfY29uZHVjaXRpdml0eVxuICAgIH1cblxuICAgIGNsYXNzIFRlY2hub2xvZ3l7XG4gICAgICAgICtZZWFyXG4gICAgICAgICtPcHRpbWlzbVxuICAgICAgICBcbiAgICAgICAgK2ltcHJvdmVfTG9EKGFlcm8pXG4gICAgICAgICtpbXByb3ZlX2V0YShlbmdpbmUpXG4gICAgICAgICtpbXByb3ZlX29ldyh3ZWlnaHQpXG5cbiAgICB9IiwibWVybWFpZCI6eyJ0aGVtZSI6ImRlZmF1bHQifSwidXBkYXRlRWRpdG9yIjpmYWxzZX0)
+## Flowchart
+
+### Basic Design Loop
+
+```mermaid
+flowchart LR
+    %% A: Aircraft Input
+    %% B: Manual Inputs
+    %% C: Design Mission
+    %% D: Dimension
+    %% E: Initial Guess
+    %% F: Weight
+    %% G: Aero
+    %% H: Engine
+    %% I: FuelBurn
+    %% J: MTOW check
+    %% K: FuelTank
+    %% Z: Output Aircraft
+
+    B[Manual Inputs \n _Optional_] -."Eta \n Wing Loading \n etc."....-> A{{Aircraft Input}}
+    
+    C[Design Mission] ---> A
+    C --"Cabin \n Layout"---> D[Dimension]
+    D ---> A
+
+    subgraph a[MAIN DESIGN LOOP]
+    E[Initial Guess] -.-> ANALYSIS
+
+    A --> ANALYSIS
+    subgraph ANALYSIS
+        G[Aero] --> H[Engine]
+        H --> I[FuelBurn]
+        I --> F[Weight]
+    end    
+
+    ANALYSIS --"Aircraft \n Iteration"--> J{MTOW Converged?}
+    J ----> |No|ANALYSIS
+
+
+    
+    
+
+    
+    end
+
+
+    Z{{Designed Aircraft}}
+    
+
+    J --> |Yes|Z
+    
+```
+### Hydrogen Aircraft Design Flowchart
+```mermaid
+flowchart LR
+    %% A: Aircraft Input
+    %% B: Manual Inputs
+    %% C: Design Mission
+    %% D: Dimension
+    %% E: Initial Guess
+    %% F: Weight
+    %% G: Aero
+    %% H: Engine
+    %% I: FuelBurn
+    %% J: MTOW check
+    %% K: FuelTank
+    %% Z: Output Aircraft
+
+    B[Manual Inputs \n _Optional_] -."Eta \n Wing Loading \n etc."....-> A{{Aircraft Input}}
+    
+    C[Design Mission] ---> A
+    C --"Cabin \n Layout"--> D[Dimension]
+    D ----> A
+
+    D --"Tank \n Dimensions"--> t
+    subgraph t[HYDROGEN TANK]
+        K[Structural] --> L[Insulation]
+
+    end
+    t --> A
+
+    subgraph a[MAIN DESIGN LOOP]
+    E[Initial Guess] -.-> ANALYSIS
+
+    A --> ANALYSIS
+    subgraph ANALYSIS
+        G[Aero] --> H[Engine]
+        H --> I[FuelBurn]
+        I --> F[Weight]
+    end    
+
+    ANALYSIS --"Aircraft \n Iteration"--> J{MTOW Converged?}
+    J ----> |No|ANALYSIS
+
+
+    
+    
+
+    
+    end
+
+
+    Z{{Designed Aircraft}}
+    
+
+    J --> |Yes|Z
+```
+### Operation Loop
+```mermaid
+flowchart LR
+    %% A: Operation Mission
+    %% B: Initial Mass Guess
+    %% C: Design Mission
+    %% D: Dimension
+    %% E: Initial Aircraft
+    %% F: Weight
+    %% H: Engine
+    %% K: FuelTank
+    %% Z: Output Aircraft
+
+    Z{{Designed Aircraft}}
+    A[Operation Mission]
+
+    Z --> I
+    A --> I
+    subgraph loop1[OPERATION LOOP]
+        C[Initial Mass Guess] -.-> ANALYSIS
+        subgraph ANALYSIS
+            I[FuelBurn] --> F[Weight]
+        end 
+
+        ANALYSIS --> D{TOW \n Converged?}
+        D -->|No|ANALYSIS
+
+      
+    end
+    
+    D ---->|Yes| X
+    X{{Operated Aircraft}}
+
+```
+## Class Diagram
+```mermaid
+classDiagram
+    direction TB
+        Mission "*" --|> "1" Aircraft
+        Dimension --|> Aircraft
+        Dimension --|> FuelTank
+
+        Aircraft <|-- FuelBurn
+        Aircraft <|-- Aero
+        Aircraft <|-- Engine
+        Aircraft <|-- Weight
+        Aircraft <|-- FuelTank
+
+        Aero <|-- Technology
+        Engine <|-- Technology
+        Weight <|-- Technology
+        
+
+        FuelTank <|-- Fuel
+        FuelTank "1" <|-- "2" Material
+
+    class Aircraft{
+        +Int        year
+        +String     optimism
+        +Fuel       fuel
+        +Aero       aero
+        +Engine     engine
+        +Weight     weight
+        +FuelBurn   fuelBurn
+        +Mission    design_mission
+        +Mission    operation_mission
+        +finalise()
+        +operate(operation_mission)
+        +max_range(operation_mission)
+    }
+    class Mission{
+        +range
+        +Max_Passengers
+        +Passengers
+        +Cargo
+        +Max_Cargo
+        +Load_Factor
+
+        +Cruise_Mach
+        +Cruise_Altitude
+
+        +update()
+    }
+    class Dimension{
+        +Float cabin_length
+        +Float cabin_width
+        +Float inline_tank_length
+        +Float inline_tank_diameter
+        +Float underfloor_tank_length
+        +Float underfloor_tank_diameter
+        +finalise()
+    }
+    class FuelBurn{
+        +m_fuel_total
+        +m_fuel_mission
+        +m_fuel_reserve
+        +m_fuel_climb
+        +m_fuel_cruise
+        +m_fuel_descent
+        +FuelBurn_Iteration()
+        +operate(operation_mission)
+    }
+    class Aero{
+        +LoD
+        +C_L
+        +C_D
+        +wing_area
+        +wing_sweep
+        +wing_taper
+        +wing_thickness
+        +wing_loading
+
+        +Aero_Iteration()
+        -calculate_mass()
+    }
+    class Engine{
+        +eta_ov
+        +eta_eng
+        +eta_prop
+        +thrust_total
+        +number_engines
+        +bpr
+        +m_engine
+
+        +Engine_Iteration()
+        -calculate_mass()
+    }
+    class Weight{
+        +MTOW
+        +MZFW
+        +OEW
+        +Max_Fuel
+        +Max_Payload
+        +Fuel
+        +Payload
+        +m_wing
+        +m_fuselage
+        +m_LG
+        +m_tail
+        +m_engine
+        +m_fuelsys
+        +m_furnishings
+        +m_op_items
+        +m_MZF_delta
+
+        +Weight_Iteration()
+        +operate(operation_mission)
+        -finalise()
+        
+    }
+    class FuelTank{
+        +fuel
+        +Ext_diam
+        +Ext_length
+        +Int_diam
+        +Ext_length
+        +fuel_volume
+        +fuel_mass
+        +empty_mass
+        +finalise()
+    }
+    class Fuel{
+        +String fuelName
+        +Float lhv
+        +Float density
+        +Bool useTankModel
+    }
+
+    class Material{
+        +String materialName
+        +Float Yield_strength
+        +Float density
+        +Float thermal_conducitivity
+    }
+
+    class Technology{
+        +Year
+        +Optimism
+        
+        +improve_LoD(aero)
+        +improve_eta(engine)
+        +improve_oew(weight)
+
+    }
+```
