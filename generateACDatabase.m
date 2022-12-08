@@ -118,16 +118,16 @@ clear LH
 %% Run all cases
 
 year_array = [2021, 2035, 2050];
-optimism_array = ["less","basic", "more"];
+optimism_array = ["less", "basic", "more"];
 load_factor_array = [0.7, 0.75, 0.8, 1.0];
-aircraft_array = ["Short Haul", "Medium Haul","Long Haul",];
+aircraft_array = ["Short Haul", "Medium Haul", "Long Haul"];
 fuel_array = ["Fossil Jet Fuel", "Liquid Hydrogen"];
-range_array = 500:100:18500;
+range_array = [200:50:950 1000:100:18100];
 
 n_entries = length(year_array) * length(optimism_array) * length(fuel_array) * length(aircraft_array) * length(load_factor_array);
 
 Year = cell(n_entries,1);
-Optimism = cell(n_entries,1);
+AircraftOptimism = cell(n_entries,1);
 AC = cell(n_entries,1);
 Fuel = cell(n_entries,1);
 LoadFactor = cell(n_entries,1);
@@ -158,55 +158,64 @@ count = 1;
 for i=1:length(year_array)
     for j=1:length(optimism_array)
         for l=1:length(fuel_array)
-            if fuel_array(l) == "Fossil Jet Fuel"
-                fuel = Ker;
-                group = Ker_group;
-            elseif fuel_array(l) == "Liquid Hydrogen"
-                fuel = LH2;
-                group = LH2_group;
-            else
-                disp("Fuel Entry Invalid")
-                continue
+            switch fuel_array(l)
+                case "Fossil Jet Fuel"
+                    fuel = Ker;
+                    group = Ker_group;
+                case "Liquid Hydrogen"
+                    fuel = LH2;
+                    group = LH2_group;
+                otherwise
+                    warning('Fuel Entry [%s] Invalid',fuel_array(l))
+                    continue
             end
 
             for k=1:length(aircraft_array)
-                if aircraft_array(k) == "Short Haul"
-                    current = group.SH;
-                elseif aircraft_array(k) == "Medium Haul"
-                    current = group.MH;
-                elseif aircraft_array(k) == "Long Haul"
-                    current = group.LH;
+                switch(aircraft_array(k))
+                    case 'Short Haul'
+                        current = group.SH;
+                    case 'Medium Haul'
+                        current = group.MH;
+                    case 'Long Haul'
+                        current = group.LH;
+                    otherwise
+                        warning('Aircraft Entry [%s] Invalid]', aircraft_array(k))
+                        continue
                 end
-                
-                if fuel_array(l) == "Fossil Jet Fuel"
-                    % setup aircraft dimensions
-                    current.dimensions = Dimension(current.design_mission, current.seats_per_row, current.N_deck);
-                    
-                    % setup aircraft
-                    current.ac = Aircraft(fuel,current.design_mission,current.dimensions);
-                    current.ac.manual_input.eta_eng = current.eta_eng;
-                    current.ac.manual_input.number_engines = current.number_engines;
-
-                    % update year
-                    current.ac.year = year_array(i);
-                    current.ac.optimism = optimism_array(j);
+                switch fuel_array(l)
+                    case "Fossil Jet Fuel"
+                        % setup aircraft dimensions
+                        current.dimensions = Dimension(current.design_mission, current.seats_per_row, current.N_deck);
+                        
+                        % setup aircraft
+                        current.ac = Aircraft(fuel,current.design_mission,current.dimensions);
+                        current.ac.manual_input.eta_eng = current.eta_eng;
+                        current.ac.manual_input.number_engines = current.number_engines;
     
-                    % iterate to design aircraft
-                    current.ac = current.ac.finalise();
-                elseif fuel_array(l) == "Liquid Hydrogen"
-                    year = year_array(i);
-                    optimism = optimism_array(j);
-                    
-                    current.struct_material = struct_material;
-                    current.ins_material = ins_material;
-                    current.fuel = fuel;
+                        % update year
+                        current.ac.year = year_array(i);
+                        current.ac.optimism = optimism_array(j);
+        
+                        % iterate to design aircraft
+                        current.ac = current.ac.finalise();
+                    case "Liquid Hydrogen"
+                        year = year_array(i);
+                        optimism = optimism_array(j);
+                        
+                        current.struct_material = struct_material;
+                        current.ins_material = ins_material;
+                        current.fuel = fuel;
+    
+                        % design h2 aircraft
+                        current.ac = designH2AC(current, year, optimism);
+                        %current.ac.text_gen("H2_current")
+                    otherwise
+                        warning('Fuel Entry [%s] Invalid',fuel_array(l))
+                        continue
 
-                    % design h2 aircraft
-                    current.ac = designH2AC(current, year, optimism);
-                    %current.ac.text_gen("H2_current")
-
-                
                 end
+                
+                
                 for m =1:length(load_factor_array)
                     
                     %calculate max range at load factor
@@ -221,27 +230,34 @@ for i=1:length(year_array)
                     FuelkWhPass_array = NaN(1,n_range);
                     TakeOffWeight_array = NaN(1,n_range);
                     FuelBurnKgm_array = NaN(1,n_range);
-
-                    for n=1:length(range_array)
-                        range = range_array(n);
-                        if range <= current.max_range
-                            current.oper_mission.range = range;
-                            
-                            current.ac = current.ac.operate(current.oper_mission);
-                            m_fuel = current.ac.oper_mission.weight.m_Fuel;
-                            m_TO = current.ac.oper_mission.weight.m_TO;
                     
-                            % load data into array
-                            FuelBurnKgm_array(n) = m_fuel/(range*1e3); % this includes reserves
-                            FuelkWhPass_array(n) = m_fuel * fuel.lhv * 2.77778e-7/current.oper_mission.pax; % includes reserves
-                            TakeOffWeight_array(n) = m_TO;
-                        end
-
-
+                    range_array_sliced = find(range_array <= current.max_range); % slice it so only valid ranges are checked
+                    for n=1:length(range_array_sliced)
+                        range = range_array(n);
+                        current.oper_mission.range = range;
+                        
+                        current.ac = current.ac.operate(current.oper_mission);
+                        m_fuel = current.ac.oper_mission.weight.m_Fuel;
+                        m_TO = current.ac.oper_mission.weight.m_TO;
+                
+                        % load data into array
+                        FuelBurnKgm_array(n) = m_fuel/(range*1e3); % this includes reserves
+                        FuelkWhPass_array(n) = m_fuel * fuel.lhv/(3.6e6*current.oper_mission.pax); % includes reserves
+                        TakeOffWeight_array(n) = m_TO;
                     end
                     
                     Year{count} = current.ac.year;
-                    Optimism{count} = current.ac.optimism;
+                    switch current.ac.optimism
+                        case "less"
+                            AircraftOptimism{count} = "Less Technology";
+                        case "basic"
+                            AircraftOptimism{count} = "Basic Technology";
+                        case "more"
+                            AircraftOptimism{count} = "More Technology";
+                        otherwise
+                            AircraftOptimism{count} = "Unknown";
+                            warning('Optimism unrecognised: %s', current.ac.optimism)
+                    end
                     AC{count} = aircraft_array(k);
                     Fuel{count} = current.ac.fuel.name;
                     LoadFactor{count} = current.ac.oper_mission.load_factor;
@@ -276,7 +292,7 @@ end
 Aircraft = AC; % needed because Aircraft is also a class name
 aircraftDataTable = table(...
                     Year,...
-                    Optimism,...
+                    AircraftOptimism,...
                     Aircraft,...
                     Fuel,...
                     LoadFactor,...
@@ -285,10 +301,6 @@ aircraftDataTable = table(...
                     PropEfficiency,...
                     ThermalEfficiency,...
                     WingSpan,...
-                    LoD,...
-                    OEW,...
-                    ZFW,...
-                    MTOW,...
                     Altitude,...
                     ClimbAngle,...
                     CruiseSpeed,...
@@ -297,14 +309,13 @@ aircraftDataTable = table(...
                     Range,...
                     TakeOffWeight,...
                     FuelBurnKgm,...
-                    FuelkWhPass,...
-                    DesignRange...
+                    FuelkWhPass ...
                     );
 
 
 aircraftDataTableWhole = table(...
                     Year,...
-                    Optimism,...
+                    AircraftOptimism,...
                     Aircraft,...
                     Fuel,...
                     LoadFactor,...
