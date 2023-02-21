@@ -292,7 +292,6 @@ aircraftDataTableWhole = table(...
 %% Save table
 save("generatedaircraft.mat","aircraftDataTable")
 save("generatedaircraft_Whole.mat","aircraftDataTableWhole")
-toc
 
 %% clear variables
 
@@ -307,13 +306,22 @@ for i=1:length(load_factor_array):height(aircraftDataTableWhole)
     figure_number = figure_number + 1;
     payloads = zeros(length(load_factor_array)+1,1);
     ranges = zeros(length(load_factor_array)+1,1);
+    fuel_burns = zeros(length(load_factor_array)+1,1);
+    erpk = zeros(length(load_factor_array)+1,1);
+
+
     for k = 1:length(load_factor_array)
         j = k+i-1;
         payloads(end-k+1) = aircraftDataTableWhole{j,"Passengers"}{1,1};
         ranges(end-k+1) = aircraftDataTableWhole{j,"MaxRange"}{1,1};
+        fuel_array = aircraftDataTableWhole{j,"FuelBurnKgm"}{1,1};
+        fuel_burns(end-k+1) = fuel_array(find(~isnan(fuel_array),1,'last'))*ranges(end-k+1)*1000;
+        erpk(end-k+1) = (fuel_burns(end-k+1)*aircraftDataTableWhole{j,"AcObject"}{1,1}.fuel.lhv/(10^6))/(ranges(end-k+1)*payloads(end-k+1));
     end
     payloads(1) = max(payloads);
+    fuel_burns(1) = 0;
     ranges(1) = 0;
+    erpk(1) = erpk(2);
     figure(figure_number)
     plot(ranges,payloads)
     title([aircraftDataTableWhole{i,"Aircraft"}{1,1},num2str(ac.year),ac.optimism,ac.fuel.name])
@@ -321,4 +329,35 @@ for i=1:length(load_factor_array):height(aircraftDataTableWhole)
     ylabel('Passengers')
     xlim([0,ceil(max(ranges)/1000)*1000])
     ylim([0,ceil(max(payloads)/100)*100])
+
+%     figure_number = figure_number + 1;
+%     figure(figure_number)
+%     plot(ranges,erpk)
+%     title([aircraftDataTableWhole{i,"Aircraft"}{1,1},num2str(ac.year),ac.optimism,ac.fuel.name])
+%     xlabel('Range (km)')
+%     ylabel('Energy/RPK (MJ/RPK)')
+%     xlim([0,ceil(max(ranges)/1000)*1000])
+%     ylim([0,3])
+
+    figure_number = figure_number+1;
+    max_R = aircraftDataTableWhole{i+length(load_factor_array)-1,"MaxRange"}{1,1};
+    max_R_index = find(aircraftDataTableWhole{i+length(load_factor_array)-1,"Range"}{1,1} >= max_R,1,'first');
+    fuel_burns2 = zeros(max_R_index,1);
+    erpk2 = zeros(max_R_index+length(load_factor_array),1);
+    Ranges2 = zeros(max_R_index+length(load_factor_array),1);
+    ac_index = i+length(load_factor_array)-1;
+    for j = 1:max_R_index
+        Ranges2(j) = aircraftDataTableWhole{ac_index,"Range"}{1,1}(j);
+        fuel_burns2(j) = aircraftDataTableWhole{ac_index,"FuelBurnKgm"}{1,1}(j)*Ranges2(j)*1000;
+        erpk2(j) = (fuel_burns2(j)*aircraftDataTableWhole{ac_index,"AcObject"}{1,1}.fuel.lhv/(10^6))/(Ranges2(j)*aircraftDataTableWhole{ac_index,"Passengers"}{1,1});
+    end
+    Ranges2(max_R_index+1:end) = ranges(2:end);
+    erpk2(max_R_index+1:end) = erpk(2:end);
+    figure(figure_number)
+    plot(Ranges2,erpk2)
+    title([aircraftDataTableWhole{i,"Aircraft"}{1,1},num2str(ac.year),ac.optimism,ac.fuel.name])
+    xlabel('Range (km)')
+    ylabel('Energy/RPK (MJ/RPK)')
+    xlim([0,ceil(max(ranges)/1000)*1000])
+    ylim([0,3])
 end
