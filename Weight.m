@@ -85,6 +85,7 @@ classdef Weight < matlab.mixin.Copyable
             % Max Fuel
             obj.m_maxFuel = aircraft.fuelburn.m_fuel; % for design portion, max fuel is equal to fuel at design point
 
+
             % Max Takeoff Weight
             obj.m_maxTO = obj.m_OEW + obj.m_max_payload + obj.m_maxFuel;
 
