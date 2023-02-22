@@ -25,12 +25,15 @@ SH.range = 3900;
 SH.M = 0.79;
 SH.m_cargo = 2726; %2500;
 SH.max_pax = 180;
-SH.seats_per_row = 6;
-SH.N_deck = 1;
+SH.m_eng = 2500;
+SH.eta_prop = 0.8;
 SH.eta_eng = 0.45;
 SH.number_engines = 2;
+
+SH.seats_per_row = 6;
+SH.N_deck = 1;
 SH.seats_abreast_array = [4,5,6,7,8,9];
-% SH.m_eng = 2500;
+
 
 SH.design_mission = Mission(SH.range,SH.M,cruise_alt, SH.max_pax, 1.0, SH.m_cargo);
 
@@ -39,12 +42,15 @@ MH.range = 8000;
 MH.M = 0.79;
 MH.m_cargo = 2726; %2500;
 MH.max_pax = 180;
-MH.seats_per_row = 6;
-MH.N_deck = 1;
 MH.eta_eng = 0.45;
 MH.number_engines = 2;
+MH.m_eng = 2500;
+MH.eta_prop = 0.8;
+
+MH.seats_per_row = 6;
+MH.N_deck = 1;
 MH.seats_abreast_array = [4,5,6,7,8,9];
-% MH.m_eng = 2500;
+
 
 MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_cargo);
 size_inputs.SH = SH;
@@ -154,9 +160,19 @@ for i=1:length(year_array)
                         
                         % setup aircraft
                         current.ac = Aircraft(fuel,current.design_mission,current.dimensions);
-                        current.ac.manual_input.eta_eng = current.eta_eng;
-                        current.ac.manual_input.number_engines = current.number_engines;
-    
+                        if any(ismember(fields(current),'eta_eng'))
+                            current.ac.manual_input.eta_eng = current.eta_eng;
+                        end
+                        if any(ismember(fields(current),'eta_prop'))
+                            current.ac.manual_input.eta_prop = current.eta_prop;
+                        end
+                        if any(ismember(fields(current),'m_eng'))
+                            current.ac.manual_input.m_eng = current.m_eng;
+                        end
+                        if any(ismember(fields(current),'number_engines'))
+                            current.ac.manual_input.number_engines = current.number_engines;
+                        end
+
                         % update year
                         current.ac.year = year_array(i);
                         current.ac.optimism = optimism_array(j);
