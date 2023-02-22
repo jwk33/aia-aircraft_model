@@ -140,7 +140,7 @@ classdef Weight < matlab.mixin.Copyable
 
             % Landing Gear mass % verified
             obj.m_LG = 0.039*(1+l/1100) * obj.m_maxTO;
-
+            
             % Fuselage mass % verified
             obj.m_fuselage = (60 * d^2 * (l + 1.5) + 160 * sqrt(3.75) * d * l)/(g);
 

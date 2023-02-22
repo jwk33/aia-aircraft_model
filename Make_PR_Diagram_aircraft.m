@@ -30,9 +30,25 @@ SH.N_deck = 1;
 SH.eta_eng = 0.45;
 SH.number_engines = 2;
 SH.seats_abreast_array = [4,5,6,7,8,9];
+% SH.m_eng = 2500;
 
 SH.design_mission = Mission(SH.range,SH.M,cruise_alt, SH.max_pax, 1.0, SH.m_cargo);
+
+MH = {};
+MH.range = 8000;
+MH.M = 0.79;
+MH.m_cargo = 2726; %2500;
+MH.max_pax = 180;
+MH.seats_per_row = 6;
+MH.N_deck = 1;
+MH.eta_eng = 0.45;
+MH.number_engines = 2;
+MH.seats_abreast_array = [4,5,6,7,8,9];
+% MH.m_eng = 2500;
+
+MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_cargo);
 size_inputs.SH = SH;
+size_inputs.MH = MH;
 size_initials = fieldnames(size_inputs);
 
 %Generate Kerosene Aircraft 
@@ -60,10 +76,11 @@ clear aluminium
 clear MLI
 clear el
 clear SH
+clear MH
 
 %% Which Cases to run you can edit these and have arrays or just single examples. ie you can look at all years
-load_factor_array = 0:0.1:1;%Leave this alone
-aircraft_array = "Short Haul";%leave this alone
+load_factor_array = 0:0.05:1;%Leave this alone
+aircraft_array = ["Short Haul","Medium Haul"];%leave this alone
 
 % year_array = [2021, 2035, 2050];
 year_array = 2021; %Chosen years to investigate

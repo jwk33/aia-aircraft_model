@@ -99,8 +99,8 @@ classdef Engine
 %             else
 %                 obj.number_engines = 2*ceil(aircraft.weight.m_maxTO/120e3);
 %             end
-            obj.m_eng = obj.number_engines*(eng_mass + nacelle); % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
-            
+            obj.m_eng = obj.number_engines*(eng_mass + nacelle); % Total engine weight overall??
+%             obj.m_eng = 2500; for both engines
         end
     end
 end
