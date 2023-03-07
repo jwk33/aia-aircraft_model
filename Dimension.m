@@ -79,7 +79,7 @@ classdef Dimension < matlab.mixin.Copyable
             % calculate non-seat fuselage dimensions (cockpit, tail,
             % galleys, cargo etc) (not including tanks)
             if obj.max_seats > 200
-                obj.cargo_height = 1.8;
+%                 obj.cargo_height = 1.8;
                 obj.rear_angle = 30;
                 obj.seat_length = 0.796 + 3.111e-4 * obj.max_seats;
                 if obj.max_seats > 300
@@ -88,11 +88,25 @@ classdef Dimension < matlab.mixin.Copyable
                     cabin_factor = 1.3;
                 end
             else
-                obj.cargo_height = 0;
+%                 obj.cargo_height = 0;
                 obj.rear_angle = 30;
                 obj.seat_length = 0.8;
                 cabin_factor = 1.3;
             end
+            if N_deck == 1
+                number_toilets = ceil(obj.max_seats/100);
+                obj.cabin_length = ceil(obj.max_seats/(obj.seats_per_row))*obj.seat_length + number_toilets*obj.toilet_length + obj.kitchen_length;
+            else
+                number_toilets = ceil(obj.max_seats/(N_deck*100));%avg toilets per deck % TODO: how many toilets per deck?
+                delta_cab_length = 0;
+                overall_cab_length = ceil(obj.max_seats/(obj.seats_per_row))*obj.seat_length + number_toilets*N_deck*obj.toilet_length + N_deck*obj.kitchen_length;
+                cab_length = ceil((overall_cab_length - 0.5*delta_cab_length*N_deck*(N_deck-1))/(obj.seat_length*N_deck))*obj.seat_length;% top cabin
+                obj.cabin_length = cab_length + (N_deck-1)*delta_cab_length;
+            end
+            obj.cargo_height = design_mission.m_cargo/(70*obj.cabin_width*obj.cabin_length);
+
+
+
             obj.cabin_height = N_deck*(obj.seat_height + obj.bag_height) + obj.cargo_height;
 
             obj.tank_external_diameter_u = tank_diameter_u*obj.cabin_width/100;

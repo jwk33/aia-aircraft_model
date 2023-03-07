@@ -59,7 +59,7 @@ for f = 1:length(ranges_tested)
     elseif passengers >= 500
         SH.seats_per_row = 10;
     else
-     SH.seats_per_row = floor(0.0125*passengers + 4.26);
+     SH.seats_per_row = floor(0.0125*passengers+4);
     end
     
     SH.max_pax = passengers;
