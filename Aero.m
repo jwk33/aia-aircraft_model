@@ -3,7 +3,7 @@ classdef Aero
 
     properties (SetAccess = public)
         LovD(1,1) double {mustBeNonnegative, mustBeFinite} = 16 % Aircraft Lift to Drag
-        AR(1,1) double {mustBeNonnegative, mustBeFinite} = 10 %Wing Aspect Ratio
+        AR(1,1) double {mustBeNonnegative, mustBeFinite} = 12 %Wing Aspect Ratio
         b(1,1) double {mustBeNonnegative, mustBeFinite} %Wingspan
         toc(1,1) double {mustBeNonnegative, mustBeFinite}  = 0.15 %Thickness over Chord
         S(1,1) double {mustBeNonnegative, mustBeFinite} %Wing area (excluding fuselage)

@@ -90,7 +90,7 @@ classdef Engine
             if obj.thrust_eng < 600
                 nacelle = 6.8*obj.thrust_eng/9.81; % Jenkinson et al. approximation of nacelle weight if take-off thrust < 600 kN
             elseif obj.thrust_eng > 600
-                nacelle = 2760 + 2.2*obj.thrust_eng/9.81; % Jenkinson et al. approximation of nacelle weight if take-off thrust > 600 kN
+                nacelle = (2760 + 2.2*obj.thrust_eng)/9.81; % Jenkinson et al. approximation of nacelle weight if take-off thrust > 600 kN
             end
 
 

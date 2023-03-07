@@ -2,6 +2,18 @@
 close all
 clear all
 
+%% use this space to setup the aircraft
+range = 12000;
+passengers = ceil(0.031894*range +55);
+year = 2021;
+
+
+
+
+
+%% Ignore all code below this point except:
+%% Fiddle in the next section with the exact parameters of the aircraft
+%% Fiddle with the graph plotting in the last section
 %load constants
 load("Fuels\Ker.mat","Ker")
 load("Fuels\LH2.mat","LH2")
@@ -18,43 +30,66 @@ ins_material = MLI;
 cruise_alt = 10000; %m
 
 %% Aircraft Size Dependent Inputs
-
 % Short haul
 SH = {};
-SH.range = 5500;
-SH.M = 0.79;
-SH.m_cargo = 2726; %2500;
-SH.max_pax = 180;
-SH.m_eng = 5000;
+SH.range = range;
+
+ 
+if passengers >= 157
+    SH.m_cargo = 26917*log(passengers) - 136030;
+    SH.M = 0.77313 + passengers*9.375*10^(-5);
+else
+    SH.m_cargo = 0;
+    SH.M = 0.78;
+end
+
+if passengers>=300
+    SH.eta_eng = 0.5;
+else
+    SH.eta_eng = 0.45 + passengers*1.66666666*10^(-4);
+end
+
+if passengers <= 180
+    SH.seats_per_row = 6;
+elseif passengers >= 500
+    SH.seats_per_row = 10;
+else
+    SH.seats_per_row = floor(0.0125*passengers + 4.26);
+end
+
+SH.max_pax = passengers;
+% SH.m_eng = 5000;
+% SH.M = 0.79;
+% SH.m_cargo = 2726; %2500;
 SH.eta_prop = 0.8;
-SH.eta_eng = 0.4;
+% SH.eta_eng = 0.4;
 SH.number_engines = 2;
 
-SH.seats_per_row = 6;
+% SH.seats_per_row = 6;
 SH.N_deck = 1;
 SH.seats_abreast_array = [4,5,6,7,8,9];
 
 
 SH.design_mission = Mission(SH.range,SH.M,cruise_alt, SH.max_pax, 1.0, SH.m_cargo);
+% 
+% MH = {};
+% MH.range = 3900;
+% MH.M = 0.79;
+% MH.m_cargo = 2726; %2500;
+% MH.max_pax = 180;
+% MH.eta_eng = 0.4;
+% MH.number_engines = 2;
+% MH.m_eng = 5000;
+% MH.eta_prop = 0.8;
+% 
+% MH.seats_per_row = 6;
+% MH.N_deck = 1;
+% MH.seats_abreast_array = [4,5,6,7,8,9];
 
-MH = {};
-MH.range = 3900;
-MH.M = 0.79;
-MH.m_cargo = 2726; %2500;
-MH.max_pax = 180;
-MH.eta_eng = 0.4;
-MH.number_engines = 2;
-MH.m_eng = 5000;
-MH.eta_prop = 0.8;
 
-MH.seats_per_row = 6;
-MH.N_deck = 1;
-MH.seats_abreast_array = [4,5,6,7,8,9];
-
-
-MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_cargo);
+% MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_cargo);
 size_inputs.SH = SH;
-size_inputs.MH = MH;
+% size_inputs.MH = MH;
 size_initials = fieldnames(size_inputs);
 
 %Generate Kerosene Aircraft 
@@ -85,11 +120,11 @@ clear SH
 clear MH
 
 %% Which Cases to run you can edit these and have arrays or just single examples. ie you can look at all years
-load_factor_array = 0:0.05:1;%Leave this alone
-aircraft_array = ["Short Haul","Medium Haul"];%leave this alone
+load_factor_array = 0:0.02:1;%Leave this alone
+aircraft_array = "Short Haul";%leave this alone
 
 % year_array = [2021, 2035, 2050];
-year_array = 2021; %Chosen years to investigate
+year_array = year; %Chosen years to investigate
 % optimism_array = ["less", "basic", "more"];
 optimism_array = "basic"; %Chosen tech to investigate
 fuel_array = ["Fossil Jet Fuel", "Liquid Hydrogen"]; %Chosaen fuels to investigate
@@ -328,73 +363,127 @@ save("generatedaircraft_Whole.mat","aircraftDataTableWhole")
 
 %% clear variables
 
-% clearvars -except aircraftDataTable aircraftDataTableWhole Ker_group LH2_group
+
 disp("Table generated")
 
 % %% create PR diagrams
-figure_number = 0;
-for i=1:length(load_factor_array):height(aircraftDataTableWhole)
-    ac = aircraftDataTableWhole{i,"AcObject"}{1,1};
-%     disp(i)
-    figure_number = figure_number + 1;
-    passengers = zeros(length(load_factor_array)+1,1);
-    payloads = zeros(length(load_factor_array)+1,1);
-    ranges = zeros(length(load_factor_array)+1,1);
-    fuel_burns = zeros(length(load_factor_array)+1,1);
-    erpk = zeros(length(load_factor_array)+1,1);
+output_cell = cell(10,2);
 
+%Aircraft
+output_cell{1,1} = copy(aircraftDataTableWhole{length(load_factor_array),"AcObject"}{1,1});
+output_cell{1,2} = copy(aircraftDataTableWhole{end,"AcObject"}{1,1});
 
-    for k = 1:length(load_factor_array)
-        j = k+i-1;
-        passengers(end-k+1) = aircraftDataTableWhole{j,"Passengers"}{1,1};
-        payloads(end-k+1) = aircraftDataTableWhole{j,"AcObject"}{1,1}.design_mission.m_cargo + ...
-            aircraftDataTableWhole{j,"AcObject"}{1,1}.weight.m_pax*passengers(end-k+1);
-        ranges(end-k+1) = aircraftDataTableWhole{j,"MaxRange"}{1,1};
-        fuel_array = aircraftDataTableWhole{j,"FuelBurnKgm"}{1,1};
-        fuel_burns(end-k+1) = fuel_array(find(~isnan(fuel_array),1,'last'))*ranges(end-k+1)*1000;
-        erpk(end-k+1) = (fuel_burns(end-k+1)*aircraftDataTableWhole{j,"AcObject"}{1,1}.fuel.lhv/(10^6))/(ranges(end-k+1)*passengers(end-k+1));
-    end
-    passengers(1) = max(passengers);
-    payloads(1) = max(payloads);
-    fuel_burns(1) = 0;
-    ranges(1) = 0;
-    erpk(1) = erpk(2);
-    figure(figure_number)
-    plot(ranges,payloads)
-    title([aircraftDataTableWhole{i,"Aircraft"}{1,1},num2str(ac.year),ac.optimism,ac.fuel.name])
-    xlabel('Range (km)')
-    ylabel('Passengers')
-    xlim([0,ceil(max(ranges)/1000)*1000])
-    ylim([0,ceil(max(payloads)/1000)*1000])
+%Ranges
+output_cell{2,1} = aircraftDataTableWhole{1,"Range"}{1,1};
+output_cell{2,2} = aircraftDataTableWhole{1,"Range"}{1,1};
 
-%     figure_number = figure_number + 1;
-%     figure(figure_number)
-%     plot(ranges,erpk)
-%     title([aircraftDataTableWhole{i,"Aircraft"}{1,1},num2str(ac.year),ac.optimism,ac.fuel.name])
-%     xlabel('Range (km)')
-%     ylabel('Energy/RPK (MJ/RPK)')
-%     xlim([0,ceil(max(ranges)/1000)*1000])
-%     ylim([0,3])
-
-    figure_number = figure_number+1;
-    max_R = aircraftDataTableWhole{i+length(load_factor_array)-1,"MaxRange"}{1,1};
-    max_R_index = find(aircraftDataTableWhole{i+length(load_factor_array)-1,"Range"}{1,1} >= max_R,1,'first');
-    fuel_burns2 = zeros(max_R_index,1);
-    erpk2 = zeros(max_R_index+length(load_factor_array),1);
-    Ranges2 = zeros(max_R_index+length(load_factor_array),1);
-    ac_index = i+length(load_factor_array)-1;
-    for j = 1:max_R_index
-        Ranges2(j) = aircraftDataTableWhole{ac_index,"Range"}{1,1}(j);
-        fuel_burns2(j) = aircraftDataTableWhole{ac_index,"FuelBurnKgm"}{1,1}(j)*Ranges2(j)*1000;
-        erpk2(j) = (fuel_burns2(j)*aircraftDataTableWhole{ac_index,"AcObject"}{1,1}.fuel.lhv/(10^6))/(Ranges2(j)*aircraftDataTableWhole{ac_index,"Passengers"}{1,1});
-    end
-    Ranges2(max_R_index+1:end) = ranges(2:end);
-    erpk2(max_R_index+1:end) = erpk(2:end);
-    figure(figure_number)
-    plot(Ranges2,erpk2)
-    title([aircraftDataTableWhole{i,"Aircraft"}{1,1},num2str(ac.year),ac.optimism,ac.fuel.name])
-    xlabel('Range (km)')
-    ylabel('Energy/RPK (MJ/RPK)')
-    xlim([0,ceil(max(ranges)/1000)*1000])
-    ylim([0,3])
+%Max Range for each load factor
+for i=1:length(load_factor_array)
+    output_cell{3,1}(i,1) = aircraftDataTableWhole{i,"MaxRange"}{1,1};
+    output_cell{3,2}(i,1) = aircraftDataTableWhole{i+length(load_factor_array),"MaxRange"}{1,1};
 end
+
+
+output_cell{4,1} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{4,2} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{5,1} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{5,2} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{6,1} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{6,2} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{7,1} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{7,2} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{8,1} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{8,2} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{9,1} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{9,2} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{10,1} = nan(length(load_factor_array),length(output_cell{2,1}));
+output_cell{10,2} = nan(length(load_factor_array),length(output_cell{2,1}));
+
+%Load Factors
+for i=1:length(load_factor_array)
+    max_range_index = find(output_cell{2,1} <= output_cell{3,1}(i), 1,'last');
+    output_cell{4,1}(i,1:max_range_index) = load_factor_array(i);
+    max_range_index = find(output_cell{2,2} <= output_cell{3,2}(i), 1,'last');
+    output_cell{4,2}(i,1:max_range_index) = load_factor_array(i);
+end 
+
+%Passengers
+output_cell{5,1} = output_cell{4,1}.*output_cell{1,1}.design_mission.max_pax;
+output_cell{5,2} = output_cell{4,2}.*output_cell{1,2}.design_mission.max_pax;
+
+%Payloads
+cargo_mass = output_cell{1,1}.design_mission.m_cargo;
+output_cell{6,1} = output_cell{5,1}.*output_cell{1,1}.weight.m_pax + cargo_mass;
+output_cell{6,2} = output_cell{5,2}.*output_cell{1,2}.weight.m_pax + cargo_mass;
+
+%Fuel Burn & Fuel Burn/RPK
+for i=1:length(load_factor_array)
+    max_range_index = find(output_cell{2,1} <= output_cell{3,1}(i), 1,'last');
+    for j=1:max_range_index
+        output_cell{7,1}(i,j) = aircraftDataTableWhole{i,"FuelBurnKgm"}{1,1}(j).*output_cell{2,1}(1,j)*1000;%kg
+        output_cell{8,1}(i,j) = output_cell{7,1}(i,j)./(output_cell{2,1}(1,j).*output_cell{5,1}(i,j));
+
+        output_cell{7,2}(i,j) = aircraftDataTableWhole{i+length(load_factor_array),"FuelBurnKgm"}{1,1}(j).*output_cell{2,2}(1,j)*1000;%kg
+        output_cell{8,2}(i,j) = output_cell{7,2}(i,j)./(output_cell{2,2}(1,j).*output_cell{5,2}(i,j));
+    end
+end
+
+%Energy 
+output_cell{9,1} = output_cell{7,1}*output_cell{1,1}.fuel.lhv/1e6;
+output_cell{10,1} = output_cell{8,1}*output_cell{1,1}.fuel.lhv/1e6;
+
+output_cell{9,2} = output_cell{7,2}*output_cell{1,2}.fuel.lhv/1e6;
+output_cell{10,2} = output_cell{8,2}*output_cell{1,2}.fuel.lhv/1e6;
+
+clearvars -except aircraftDataTable aircraftDataTableWhole Ker_group LH2_group output_cell
+
+
+
+%% Use this space to plot graphs
+
+% output cell is what you get out. This is a two columned cell that
+% contains data as follows:
+
+%       Kerosene                                    Hydrogen
+%1   Aircraft Data                               Aircraft Data
+%2   Range array                                 Range array
+%3   Max Range                                   Max Range
+%4   Load Factor Array                           Load Factor Array
+% the next rows contain 51x188 matrices that gives you parameters for each
+% range (column) and payload (row)
+%5   Passengers                                  Passengers
+%6   Payload mass                                Payload mass
+%7   Fuel burn in kg                             Fuel burn in kg
+%8   Fuel burn in kg/RPK                         Fuel Burn in kg/RPK
+%9   Energy burn in MJ                           Energy Burn in MJ
+%10  Energy Burn in MJ/RPK                       Energy Burn in MJ/RPK
+
+
+% An example graph showing contours of energy per passenger-km for a
+% kerosene aircraft
+figure(1)
+hold on
+contour(output_cell{2,1},output_cell{5,1}(:,1),output_cell{10,1},[0.6,0.7,0.8,0.9,1,1.25,1.5,2,3,4,5,10],'ShowText','on','DisplayName','Energy (MJ/RPK)')
+top_line_x = [output_cell{3,1}(end);0];
+top_line_y = [output_cell{5,1}(end,1);output_cell{5,1}(end,1)];
+PR_x = cat(1,output_cell{3,1},top_line_x);
+PR_y = cat(1,output_cell{5,1}(:,1),top_line_y);
+
+plot(PR_x,PR_y,'DisplayName','Payload Range Diagram')
+xlim([0,ceil(max(output_cell{3,1})/1000)*1000])
+ylim([0,ceil(max(output_cell{5,1}(:,1))/100)*100])
+legend()
+
+% hydrogen aircraft
+figure(2)
+hold on
+contour(output_cell{2,2},output_cell{5,2}(:,1),output_cell{10,2},[0.6,0.7,0.8,0.9,1,1.25,1.5,2,3,4,5,10],'ShowText','on','DisplayName','Energy (MJ/RPK)')
+top_line_x = [output_cell{3,2}(end);0];
+top_line_y = [output_cell{5,2}(end,1);output_cell{5,2}(end,1)];
+PR_x = cat(1,output_cell{3,2},top_line_x);
+PR_y = cat(1,output_cell{5,2}(:,1),top_line_y);
+
+plot(PR_x,PR_y,'DisplayName','Payload Range Diagram')
+xlim([0,ceil(max(output_cell{3,2})/1000)*1000])
+ylim([0,ceil(max(output_cell{5,2}(:,1))/100)*100])
+legend()

@@ -28,17 +28,24 @@ classdef Weight < matlab.mixin.Copyable
         m_shell(1,1) double {mustBeNonnegative, mustBeFinite}
         m_floor(1,1) double {mustBeNonnegative, mustBeFinite}
         m_mzf_delta(1,1) double {mustBeFinite} = 0 % change in mzf due to technology improvements applied to oew
+        m_pax(1,1) double
     end
 
     properties (Constant)
-        m_pax = 102; % kg per passenger
+%         m_pax = 102; % kg per passenger
     end
 
     methods
         function obj = Weight()
             %creates empty weight class
+            
         end
         function obj = first_calc(obj,aircraft)
+            if aircraft.fuel.name == "Liquid Hydrogen"
+                obj.m_pax = 105;
+            else
+                obj.m_pax = 105;
+            end
 
             obj = torenbeek(obj,aircraft);
             
