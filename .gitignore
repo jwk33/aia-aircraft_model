@@ -1,0 +1,13 @@
+#autosave-files
+*.asv
+#local-aircraft-saves
+/saved-ac
+#test-scripts
+/test
+*.mat
+!isa_table.mat
+!LH2.mat
+!Ker.mat
+!CH4.mat
+*.txt
+
