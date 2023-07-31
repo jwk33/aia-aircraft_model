@@ -90,7 +90,7 @@ classdef Engine
             if obj.thrust_eng < 600
                 nacelle = 6.8*obj.thrust_eng/9.81; % Jenkinson et al. approximation of nacelle weight if take-off thrust < 600 kN
             elseif obj.thrust_eng > 600
-                nacelle = 2760 + 2.2*obj.thrust_eng/9.81; % Jenkinson et al. approximation of nacelle weight if take-off thrust > 600 kN
+                nacelle = (2760 + 2.2*obj.thrust_eng)/9.81; % Jenkinson et al. approximation of nacelle weight if take-off thrust > 600 kN
             end
 
 
@@ -99,8 +99,8 @@ classdef Engine
 %             else
 %                 obj.number_engines = 2*ceil(aircraft.weight.m_maxTO/120e3);
 %             end
-            obj.m_eng = obj.number_engines*(eng_mass + nacelle); % Total engine weight (engine + nacelle) Unsure if this is per engine or overall??
-            
+            obj.m_eng = obj.number_engines*(eng_mass + nacelle); % Total engine weight overall??
+%             obj.m_eng = 2500; for both engines
         end
     end
 end

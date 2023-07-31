@@ -123,6 +123,12 @@ function ac = sizeAC(ac_inputs, dimension, year, optimism, tank_type)
         if any(ismember(fields(ac_inputs),'number_engines'))
             ac.manual_input.number_engines = ac_inputs.number_engines;
         end
+        if any(ismember(fields(ac_inputs),'m_eng'))
+            ac.manual_input.m_eng = ac_inputs.m_eng;
+        end
+        if any(ismember(fields(ac_inputs),'eta_prop'))
+            ac.manual_input.eta_prop = ac_inputs.eta_prop;
+        end
         
         
         % update year

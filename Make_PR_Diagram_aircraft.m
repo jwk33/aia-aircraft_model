@@ -1,8 +1,8 @@
+%% Make a PR diagram for a given aircraft
 close all
 clear all
-clc
-tic
-%% load constants
+
+%load constants
 load("Fuels\Ker.mat","Ker")
 load("Fuels\LH2.mat","LH2")
 
@@ -21,48 +21,43 @@ cruise_alt = 10000; %m
 
 % Short haul
 SH = {};
-SH.range = 3900;
+SH.range = 5500;
 SH.M = 0.79;
 SH.m_cargo = 2726; %2500;
 SH.max_pax = 180;
+SH.m_eng = 5000;
+SH.eta_prop = 0.8;
+SH.eta_eng = 0.4;
+SH.number_engines = 2;
+
 SH.seats_per_row = 6;
 SH.N_deck = 1;
-SH.eta_eng = 0.45;
-SH.number_engines = 2;
 SH.seats_abreast_array = [4,5,6,7,8,9];
+
 
 SH.design_mission = Mission(SH.range,SH.M,cruise_alt, SH.max_pax, 1.0, SH.m_cargo);
 
-
-% Medium haul
-MH.range = 9000;
-MH.M = 0.81;
-MH.m_cargo = 20000; %20000;
-MH.max_pax = 300;
-MH.seats_per_row = 8;
-MH.N_deck = 1;
-MH.eta_eng = 0.475;
+MH = {};
+MH.range = 3900;
+MH.M = 0.79;
+MH.m_cargo = 2726; %2500;
+MH.max_pax = 180;
+MH.eta_eng = 0.4;
 MH.number_engines = 2;
-MH.seats_abreast_array = [7,8,9,10,11,12,13,14];
+MH.m_eng = 5000;
+MH.eta_prop = 0.8;
+
+MH.seats_per_row = 6;
+MH.N_deck = 1;
+MH.seats_abreast_array = [4,5,6,7,8,9];
+
+
 MH.design_mission = Mission(MH.range,MH.M,cruise_alt, MH.max_pax, 1.0, MH.m_cargo);
-
-% Long haul
-LH.range = 14000;
-LH.M = 0.83;
-LH.m_cargo = 30000; % 30000;
-LH.max_pax = 500;
-LH.seats_per_row = 10;
-LH.N_deck = 2;
-LH.eta_eng = 0.5;
-LH.number_engines = 4;
-LH.seats_abreast_array = [7,8,9,10,11,12,13,14];
-LH.design_mission = Mission(LH.range,LH.M,cruise_alt, LH.max_pax, 1.0, LH.m_cargo); % design mission is always at 100% load factor
-
 size_inputs.SH = SH;
 size_inputs.MH = MH;
-size_inputs.LH = LH;
 size_initials = fieldnames(size_inputs);
-%% Generate Kerosene Aircraft 
+
+%Generate Kerosene Aircraft 
 %NOTE: Fuel is immutable so aircraft instance cannot be shared across fuels
 Ker_group = {};
 
@@ -70,33 +65,7 @@ for el=1:length(size_initials)
     size = char(size_initials(el));
     Ker_group.(size) = size_inputs.(size);
 end
-
-
-% Ker.SH.ac.manual_input.m_eng = 6000;
-% Ker.SH.ac.manual_input.AR = 10;
-% Ker.SH.ac.manual_input.sweep = 25;
-% Ker.SH.ac.manual_input.wing_area = 130;
-
-
-% Medium haul
-
-
-
-% Ker.MH.ac.manual_input.m_eng = 13000;
-% Ker.MH.ac.manual_input.AR = 9;
-% Ker.MH.ac.manual_input.sweep = 30;
-% Ker.MH.ac.manual_input.wing_area = 470;
-
-
-% Long haul
-
-
-
-%LH.ac.manual_input.AR = 8;
-%LH.ac.manual_input.sweep = 32;
-%LH.ac.manual_input.wing_area = 800;
-
-%% Generate Hydrogen Aircraft
+%Generate Hydrogen Aircraft
 LH2_group = {};
 
 for el=1:length(size_initials)
@@ -104,7 +73,7 @@ for el=1:length(size_initials)
     LH2_group.(size) = size_inputs.(size);
 end
 
-%% Clear Unused Variables
+%Clear Unused Variables
 clear size
 clear size_initials
 clear size_inputs
@@ -114,14 +83,16 @@ clear MLI
 clear el
 clear SH
 clear MH
-clear LH
-%% Run all cases
 
-year_array = [2023,2030,2035,2040,2050,2060];
-optimism_array = ["BAU","Intermediate","Advanced"];
-load_factor_array = [0.7, 0.8, 0.9, 1.0];
-aircraft_array = ["Short Haul", "Medium Haul", "Long Haul"];
-fuel_array = ["Fossil Jet Fuel", "Liquid Hydrogen"];
+%% Which Cases to run you can edit these and have arrays or just single examples. ie you can look at all years
+load_factor_array = 0:0.05:1;%Leave this alone
+aircraft_array = ["Short Haul","Medium Haul"];%leave this alone
+
+% year_array = [2021, 2035, 2050];
+year_array = 2021; %Chosen years to investigate
+% optimism_array = ["less", "basic", "more"];
+optimism_array = "basic"; %Chosen tech to investigate
+fuel_array = ["Fossil Jet Fuel", "Liquid Hydrogen"]; %Chosaen fuels to investigate
 range_array = [200:50:950 1000:100:18100];
 
 n_entries = length(year_array) * length(optimism_array) * length(fuel_array) * length(aircraft_array) * length(load_factor_array);
@@ -151,9 +122,6 @@ FuelkWhPass = cell(n_entries,1);
 FuelBurnKgm = cell(n_entries,1);
 DesignRange = cell (n_entries,1);
 AcObject = cell (n_entries,1);
-Fuel_Emissions_RPK = cell(n_entries,1);
-Energy_RPK = cell(n_entries,1);
-
 
 
 count = 1;
@@ -192,9 +160,19 @@ for i=1:length(year_array)
                         
                         % setup aircraft
                         current.ac = Aircraft(fuel,current.design_mission,current.dimensions);
-                        current.ac.manual_input.eta_eng = current.eta_eng;
-                        current.ac.manual_input.number_engines = current.number_engines;
-    
+                        if any(ismember(fields(current),'eta_eng'))
+                            current.ac.manual_input.eta_eng = current.eta_eng;
+                        end
+                        if any(ismember(fields(current),'eta_prop'))
+                            current.ac.manual_input.eta_prop = current.eta_prop;
+                        end
+                        if any(ismember(fields(current),'m_eng'))
+                            current.ac.manual_input.m_eng = current.m_eng;
+                        end
+                        if any(ismember(fields(current),'number_engines'))
+                            current.ac.manual_input.number_engines = current.number_engines;
+                        end
+
                         % update year
                         current.ac.year = year_array(i);
                         current.ac.optimism = optimism_array(j);
@@ -251,12 +229,12 @@ for i=1:length(year_array)
                     
                     Year{count} = current.ac.year;
                     switch current.ac.optimism
-                        case "BAU"
-                            AircraftOptimism{count} = "BAU";
-                        case "Intermediate"
-                            AircraftOptimism{count} = "Intermediate";
-                        case "Advanced"
-                            AircraftOptimism{count} = "Advanced";
+                        case "less"
+                            AircraftOptimism{count} = "Less Technology";
+                        case "basic"
+                            AircraftOptimism{count} = "Basic Technology";
+                        case "more"
+                            AircraftOptimism{count} = "More Technology";
                         otherwise
                             AircraftOptimism{count} = "Unknown";
                             warning('Optimism unrecognised: %s', current.ac.optimism)
@@ -276,17 +254,14 @@ for i=1:length(year_array)
                     Altitude{count} = current.ac.design_mission.cruise_alt;
                     ClimbAngle{count} = current.ac.design_mission.angle_TO;
                     CruiseSpeed{count} = current.ac.design_mission.cruise_speed;
-                    ClimbSpeed{count} = 150; %TODO climb speed necessary?
-                    ApproachSpeed{count} = 190; % TODO approach speed
+                    ClimbSpeed{count} = current.ac.design_mission.cruise_speed; %TODO climb speed necessary?
+                    ApproachSpeed{count} = current.ac.design_mission.cruise_speed; % TODO approach speed
                     Range{count} = range_array;
                     TakeOffWeight{count} = TakeOffWeight_array;
                     FuelBurnKgm{count} = FuelBurnKgm_array;
                     FuelkWhPass{count} = FuelkWhPass_array;
                     DesignRange{count} = current.ac.design_mission.range;
                     AcObject{count} = current.ac;
-                    Fuel_Emissions_RPK{count} = 1000*3.16*1000.*FuelBurnKgm{count}./Passengers{count};
-                    Energy_RPK{count} = 42*1000.*FuelBurnKgm{count}./Passengers{count};
-                    
 
                     count = count + 1;
                 end
@@ -344,23 +319,82 @@ aircraftDataTableWhole = table(...
                     FuelBurnKgm,...
                     FuelkWhPass,...
                     DesignRange,...
-                    AcObject,...
-                    Fuel_Emissions_RPK,...
-                    Energy_RPK...
+                    AcObject...
                     );
 
 %% Save table
-save("aircraftDataTable.mat","aircraftDataTable")
-save("aircraftDataTable_Whole.mat","aircraftDataTableWhole")
-toc
+save("generatedaircraft.mat","aircraftDataTable")
+save("generatedaircraft_Whole.mat","aircraftDataTableWhole")
 
 %% clear variables
 
-clearvars -except aircraftDataTable aircraftDataTableWhole Ker_group LH2_group
+% clearvars -except aircraftDataTable aircraftDataTableWhole Ker_group LH2_group
 disp("Table generated")
 
+% %% create PR diagrams
+figure_number = 0;
+for i=1:length(load_factor_array):height(aircraftDataTableWhole)
+    ac = aircraftDataTableWhole{i,"AcObject"}{1,1};
+%     disp(i)
+    figure_number = figure_number + 1;
+    passengers = zeros(length(load_factor_array)+1,1);
+    payloads = zeros(length(load_factor_array)+1,1);
+    ranges = zeros(length(load_factor_array)+1,1);
+    fuel_burns = zeros(length(load_factor_array)+1,1);
+    erpk = zeros(length(load_factor_array)+1,1);
 
 
+    for k = 1:length(load_factor_array)
+        j = k+i-1;
+        passengers(end-k+1) = aircraftDataTableWhole{j,"Passengers"}{1,1};
+        payloads(end-k+1) = aircraftDataTableWhole{j,"AcObject"}{1,1}.design_mission.m_cargo + ...
+            aircraftDataTableWhole{j,"AcObject"}{1,1}.weight.m_pax*passengers(end-k+1);
+        ranges(end-k+1) = aircraftDataTableWhole{j,"MaxRange"}{1,1};
+        fuel_array = aircraftDataTableWhole{j,"FuelBurnKgm"}{1,1};
+        fuel_burns(end-k+1) = fuel_array(find(~isnan(fuel_array),1,'last'))*ranges(end-k+1)*1000;
+        erpk(end-k+1) = (fuel_burns(end-k+1)*aircraftDataTableWhole{j,"AcObject"}{1,1}.fuel.lhv/(10^6))/(ranges(end-k+1)*passengers(end-k+1));
+    end
+    passengers(1) = max(passengers);
+    payloads(1) = max(payloads);
+    fuel_burns(1) = 0;
+    ranges(1) = 0;
+    erpk(1) = erpk(2);
+    figure(figure_number)
+    plot(ranges,payloads)
+    title([aircraftDataTableWhole{i,"Aircraft"}{1,1},num2str(ac.year),ac.optimism,ac.fuel.name])
+    xlabel('Range (km)')
+    ylabel('Passengers')
+    xlim([0,ceil(max(ranges)/1000)*1000])
+    ylim([0,ceil(max(payloads)/1000)*1000])
 
+%     figure_number = figure_number + 1;
+%     figure(figure_number)
+%     plot(ranges,erpk)
+%     title([aircraftDataTableWhole{i,"Aircraft"}{1,1},num2str(ac.year),ac.optimism,ac.fuel.name])
+%     xlabel('Range (km)')
+%     ylabel('Energy/RPK (MJ/RPK)')
+%     xlim([0,ceil(max(ranges)/1000)*1000])
+%     ylim([0,3])
 
-
+    figure_number = figure_number+1;
+    max_R = aircraftDataTableWhole{i+length(load_factor_array)-1,"MaxRange"}{1,1};
+    max_R_index = find(aircraftDataTableWhole{i+length(load_factor_array)-1,"Range"}{1,1} >= max_R,1,'first');
+    fuel_burns2 = zeros(max_R_index,1);
+    erpk2 = zeros(max_R_index+length(load_factor_array),1);
+    Ranges2 = zeros(max_R_index+length(load_factor_array),1);
+    ac_index = i+length(load_factor_array)-1;
+    for j = 1:max_R_index
+        Ranges2(j) = aircraftDataTableWhole{ac_index,"Range"}{1,1}(j);
+        fuel_burns2(j) = aircraftDataTableWhole{ac_index,"FuelBurnKgm"}{1,1}(j)*Ranges2(j)*1000;
+        erpk2(j) = (fuel_burns2(j)*aircraftDataTableWhole{ac_index,"AcObject"}{1,1}.fuel.lhv/(10^6))/(Ranges2(j)*aircraftDataTableWhole{ac_index,"Passengers"}{1,1});
+    end
+    Ranges2(max_R_index+1:end) = ranges(2:end);
+    erpk2(max_R_index+1:end) = erpk(2:end);
+    figure(figure_number)
+    plot(Ranges2,erpk2)
+    title([aircraftDataTableWhole{i,"Aircraft"}{1,1},num2str(ac.year),ac.optimism,ac.fuel.name])
+    xlabel('Range (km)')
+    ylabel('Energy/RPK (MJ/RPK)')
+    xlim([0,ceil(max(ranges)/1000)*1000])
+    ylim([0,3])
+end

@@ -28,17 +28,24 @@ classdef Weight < matlab.mixin.Copyable
         m_shell(1,1) double {mustBeNonnegative, mustBeFinite}
         m_floor(1,1) double {mustBeNonnegative, mustBeFinite}
         m_mzf_delta(1,1) double {mustBeFinite} = 0 % change in mzf due to technology improvements applied to oew
+        m_pax(1,1) double
     end
 
     properties (Constant)
-        m_pax = 102; % kg per passenger
+%         m_pax = 102; % kg per passenger
     end
 
     methods
         function obj = Weight()
             %creates empty weight class
+            
         end
         function obj = first_calc(obj,aircraft)
+            if aircraft.fuel.name == "Liquid Hydrogen"
+                obj.m_pax = 105;
+            else
+                obj.m_pax = 105;
+            end
 
             obj = torenbeek(obj,aircraft);
             
@@ -84,6 +91,7 @@ classdef Weight < matlab.mixin.Copyable
 
             % Max Fuel
             obj.m_maxFuel = aircraft.fuelburn.m_fuel; % for design portion, max fuel is equal to fuel at design point
+
 
             % Max Takeoff Weight
             obj.m_maxTO = obj.m_OEW + obj.m_max_payload + obj.m_maxFuel;
@@ -139,7 +147,7 @@ classdef Weight < matlab.mixin.Copyable
 
             % Landing Gear mass % verified
             obj.m_LG = 0.039*(1+l/1100) * obj.m_maxTO;
-
+            
             % Fuselage mass % verified
             obj.m_fuselage = (60 * d^2 * (l + 1.5) + 160 * sqrt(3.75) * d * l)/(g);
 
