@@ -6,8 +6,7 @@
 /test
 *.mat
 !isa_table.mat
-!LH2.mat
-!Ker.mat
-!CH4.mat
+!/Materials
+!/Fuels
 *.txt
 
